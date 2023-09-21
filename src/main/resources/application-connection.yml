@@ -1,0 +1,10 @@
+spring:
+  h2:
+    console:
+      enabled: true  # H2 Console 사용할지 여부
+      path: /h2-console  # H2 Console 의 Path
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:db;MODE=MYSQL
+    username: sa
+    password:
