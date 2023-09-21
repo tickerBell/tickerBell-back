@@ -1,10 +1,12 @@
 spring:
-  h2:
-    console:
-      enabled: true  # H2 Console 사용할지 여부
-      path: /h2-console  # H2 Console 의 Path
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:db;MODE=MYSQL
-    username: sa
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_ENDPOINT}:3306/${DB_SCHEMA_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
