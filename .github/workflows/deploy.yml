@@ -33,7 +33,7 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-      - name: Build with Gradle  # Gradle을 사용하여 빌드
+      - name: Build with Gradle  # Gradle 사용하여 빌드
         run: ./gradlew build
         shell: bash
 
