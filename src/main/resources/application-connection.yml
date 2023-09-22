@@ -4,6 +4,7 @@ spring:
     url: ${DB_ENDPOINT}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: create
