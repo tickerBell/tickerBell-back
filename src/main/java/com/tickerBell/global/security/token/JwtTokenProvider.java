@@ -1,6 +1,6 @@
 package com.tickerBell.global.security.token;
 
-import com.tickerBell.domain.member.entity.AuthProvider;
+import com.tickerBell.domain.member.entity.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,24 +20,22 @@ public class JwtTokenProvider {
     private static final Long REFRESH_TOKEN_EXPIRATION_TIME = 1000 * 60 * 60 * 24 * 30L; // 30 days
 
     @Autowired
-    public JwtTokenProvider(@Value("app.auth.security-secret") String secretKey) {
+    public JwtTokenProvider(@Value("${app.auth.secret-key}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createAccessToken(String userId, AuthProvider provider, String accessToken) {
+    public String createAccessToken(String username, Role role) {
         Map<String, Object> claim = new HashMap<>();
-        claim.put("userId", userId);
-        claim.put("provider", provider); // 어떤 플랫폼으로 로그인했는지
-        claim.put("accessToken", accessToken); // 플랫폼에서 발급해준 accessToken
+        claim.put("username", username); // 사용자 ID
+        claim.put("role", role); // 사용자 권한
         return createJwt("ACCESS_TOKEN", ACCESS_TOKEN_EXPIRATION_TIME, claim);
     }
 
-    public String createRefreshToken(String userId, AuthProvider provider, String refreshToken) {
+    public String createRefreshToken(String username, Role role) {
         HashMap<String, Object> claim = new HashMap<>();
-        claim.put("userId", userId); // ID 저장
-        claim.put("provider", provider); // 어떤 소셜 로그인인지 저장
-        claim.put("refreshToken", refreshToken);
+        claim.put("username", username); // 사용자 ID
+        claim.put("role", role); // 사용자 권한
         return createJwt("REFRESH_TOKEN", REFRESH_TOKEN_EXPIRATION_TIME, claim);
     }
 
