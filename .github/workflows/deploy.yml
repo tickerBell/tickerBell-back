@@ -31,9 +31,9 @@ jobs:
 
       - name: Set Environment Variables for Spring Boot
         run: |
-            echo "spring.datasource.url=jdbc:mysql://${DB_ENDPOINT}:3306/${DB_SCHEMA_NAME}" >> $GITHUB_WORKSPACE/application.properties
-            echo "spring.datasource.username=${DB_USERNAME}" >> $GITHUB_WORKSPACE/application.properties
-            echo "spring.datasource.password=${DB_PASSWORD}" >> $GITHUB_WORKSPACE/application.properties
+          echo "DB_ENDPOINT: $DB_ENDPOINT"
+          echo "spring.datasource.username=${DB_USERNAME}" >> $GITHUB_WORKSPACE/application.properties
+          echo "spring.datasource.password=${DB_PASSWORD}" >> $GITHUB_WORKSPACE/application.properties
         env:
           DB_ENDPOINT: ${{ secrets.DB_ENDPOINT }}
           DB_SCHEMA_NAME: ${{ secrets.DB_SCHEMA_NAME }}
