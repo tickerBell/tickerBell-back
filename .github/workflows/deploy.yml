@@ -29,6 +29,17 @@ jobs:
           distribution: 'adopt'
           java-version: 17
 
+      - name: Set Environment Variables for Spring Boot
+        run: |
+            echo "spring.datasource.url=jdbc:mysql://${DB_ENDPOINT}:3306/${DB_SCHEMA_NAME}" >> $GITHUB_WORKSPACE/application.properties
+            echo "spring.datasource.username=${DB_USERNAME}" >> $GITHUB_WORKSPACE/application.properties
+            echo "spring.datasource.password=${DB_PASSWORD}" >> $GITHUB_WORKSPACE/application.properties
+          env:
+            DB_ENDPOINT: ${{ secrets.DB_ENDPOINT }}
+            DB_SCHEMA_NAME: ${{ secrets.DB_SCHEMA_NAME }}
+            DB_USERNAME: ${{ secrets.DB_USERNAME }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
       - name: Grant execute permission for gradlew # gradlew 실행 권한 부여
         run: chmod +x ./gradlew
         shell: bash
