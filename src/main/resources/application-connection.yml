@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_ENDPOINT}:3306/${DB_SCHEMA_NAME}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://tickerbell-db.cgtvzaoa0zox.ap-northeast-2.rds.amazonaws.com:3306/tickerBellDB
+    username: admin
+    password: tickerBell1
   jpa:
     hibernate:
       ddl-auto: create
