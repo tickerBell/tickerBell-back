@@ -13,7 +13,7 @@ env:
   S3_BUCKET_NAME: tickerbell-s3
   CODE_DEPLOY_APPLICATION_NAME: tickerBell-codeDeploy-application
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: tickerBell-deploy-group
-  RESOURCE_PATH: ./tickerBell/src/main/resources/application.yml
+  RESOURCE_PATH: ../../src/main/resources/application-connection.yml
 
 # 작업 정의
 jobs:
