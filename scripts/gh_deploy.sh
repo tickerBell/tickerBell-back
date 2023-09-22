@@ -30,6 +30,8 @@ fi
 DEPLOY_JAR=$DEPLOY_PATH$JAR_NAME
 echo "> DEPLOY_JAR 배포" >> $DEPLOY_LOG_PATH
 source ~/.bashrc
+echo "환경 변수 DB_ENDPOINT의 값: $DB_ENDPOINT" >> DEPLOY_ERR_LOG_PATH
+
 nohup java -jar -Duser.timezone=Asia/Seoul $DEPLOY_JAR >> $APPLICATION_LOG_PATH 2> $DEPLOY_ERR_LOG_PATH &
 
 sleep 3
