@@ -1,4 +1,4 @@
-package com.tickerBell.test;
+package com.tickerBell.global.test;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
