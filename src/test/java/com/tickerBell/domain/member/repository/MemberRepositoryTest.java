@@ -55,6 +55,8 @@ class MemberRepositoryTest {
         assertThat(savedMember.getRole().getDeclaringClass()).isEqualTo(member.getRole().getDeclaringClass());
         assertThat(savedMember.getAuthProvider()).isEqualTo(member.getAuthProvider());
         assertThat(savedMember.getAuthProvider().getDeclaringClass()).isEqualTo(member.getAuthProvider().getDeclaringClass());
+        assertThat(savedMember.getCreatedDate()).isNotNull();
+        assertThat(savedMember.getLastModifiedDate()).isNotNull();
     }
 
     @Test

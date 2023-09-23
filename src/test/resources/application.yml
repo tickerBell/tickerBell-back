@@ -12,3 +12,26 @@ spring:
         show_sql: true
         format_sql: true
         default_batch_fetch_size: 100
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: 8fd7a1f394d9bbd09fdfdd3827146d73
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+            client-authentication-method: POST
+            authorization-grant-type: authorization_code # 웹 애플리케이션 또는 모바일 앱과 같은 안전한 환경에서 사용
+            scope: profile_nickname, profile_image, account_email
+            client-name: Kakao
+        provider:
+          kakao:
+            authorization_uri: https://kauth.kakao.com/oauth/authorize
+            token_uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user_name_attribute: id
+
+app:
+  auth:
+    secret-key: c2VjcmV0a2V5aW50ZXN0Y2xhc3Nlc2p1bml0aXRzc29sdHN0cmluZw==
+
