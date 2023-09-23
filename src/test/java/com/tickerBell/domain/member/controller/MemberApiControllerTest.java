@@ -143,4 +143,23 @@ class MemberApiControllerTest {
         // then
         perform.andExpect(status().isUnauthorized());
     }
+
+    @Test
+    @DisplayName("사용자가 비밀번호를 잘못 입력했을 시 발생하는 오류 테스트")
+    void loginPasswordFailTest() throws Exception {
+        // given
+        String username = "testUsername";
+        String password = "failPassword1!";
+        LoginDto loginDto = new LoginDto();
+        loginDto.setUsername(username);
+        loginDto.setPassword(password);
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDto)));
+
+        // then
+        perform.andExpect(status().isUnauthorized());
+    }
 }
