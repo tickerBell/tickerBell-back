@@ -9,6 +9,7 @@ import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.global.security.dtos.LoginDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -52,6 +53,7 @@ class MemberApiControllerTest {
     }
 
     @Test
+    @DisplayName("회원가입 테스트")
     void joinMemberTest() throws Exception {
         // given
         JoinMemberRequest joinMemberRequest = new JoinMemberRequest();
@@ -73,6 +75,7 @@ class MemberApiControllerTest {
     }
 
     @Test
+    @DisplayName("회원가입 시 작동하는 분기 테스트")
     void checkRoleTest() throws Exception {
         // given
         JoinMemberRequest joinMemberRequest = new JoinMemberRequest();
@@ -102,6 +105,7 @@ class MemberApiControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 테스트")
     void loginTest() throws Exception {
         // given
         String username = "testUsername";
@@ -119,5 +123,24 @@ class MemberApiControllerTest {
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").isNotEmpty())
                 .andExpect(jsonPath("$.refreshToken").isNotEmpty());
+    }
+
+    @Test
+    @DisplayName("사용자가 아이디를 잘못 입력했을 시 발생하는 오류 테스트")
+    void loginUsernameFailTest() throws Exception {
+        // given
+        String username = "failUsername";
+        String password = "testPassword1!";
+        LoginDto loginDto = new LoginDto();
+        loginDto.setUsername(username);
+        loginDto.setPassword(password);
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginDto)));
+
+        // then
+        perform.andExpect(status().isUnauthorized());
     }
 }
