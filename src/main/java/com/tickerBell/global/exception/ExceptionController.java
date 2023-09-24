@@ -18,12 +18,11 @@ public class ExceptionController {
         model.addAttribute("errorMessage", e.getErrorMessage());
         model.addAttribute("status", e.getStatus().toString());
         log.info("핸들링한 에러 발생");
-        return ResponseEntity.badRequest().body(new Response(e.getMessage()));
+        return ResponseEntity.badRequest().body(new Response(e.getErrorMessage()));
     }
 
 //    @ExceptionHandler(Exception.class)
 //    public ResponseEntity<?> handleCustomException(Exception e, Model model) {
-//        model.addAttribute("errorMessage", e.getMessage());
 //        log.info("핸들링하지 않은 에러 발생");
 //        log.info("exception: " + e);
 //        return ResponseEntity.badRequest().body(new Response(e.getMessage()));
