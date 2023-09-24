@@ -2,7 +2,7 @@ package com.tickerBell.domain.member.controller;
 
 import com.tickerBell.domain.member.dtos.TokenRequest;
 import com.tickerBell.domain.member.service.OauthService;
-import com.tickerBell.global.security.dtos.LoginSuccessDto;
+import com.tickerBell.global.dto.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,19 +19,19 @@ public class OauthController {
 
     // 플랫폼에서 응답 받음
     @GetMapping("/login/oauth2/code/{registrationId}")
-    public ResponseEntity<LoginSuccessDto> redirect(
+    public ResponseEntity<Response> redirect(
             @PathVariable("registrationId") String registrationId
             , @RequestParam("code") String code
             , @RequestParam(required = false ,value = "state") String state) {
         log.info("auth code 응답 완료: " + code);
         log.info("state 응답 완료: " + state);
-        return ResponseEntity.ok(
+        return
                 oauthService.redirect(
                         TokenRequest.builder()
                                 .registrationId(registrationId)
                                 .code(code)
                                 .state(state)
-                                .build()));
+                                .build());
     }
 }
 

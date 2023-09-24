@@ -1,7 +1,8 @@
 package com.tickerBell.domain.member.entity;
 
 public enum AuthProvider {
-    KAKAO("카카오 로그인");
+    KAKAO("카카오 로그인"),
+    NORMAL("일반 로그인");
 
     private String description;
 

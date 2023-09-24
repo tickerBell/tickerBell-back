@@ -1,14 +1,16 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.member.dtos.KakaoUserInfo;
 import com.tickerBell.domain.member.dtos.TokenRequest;
 import com.tickerBell.domain.member.dtos.TokenResponse;
-import com.tickerBell.global.security.dtos.LoginSuccessDto;
+import com.tickerBell.global.dto.Response;
+import org.springframework.http.ResponseEntity;
+
+import java.util.Map;
 
 public interface OauthService {
-    LoginSuccessDto redirect(TokenRequest tokenRequest);
+    ResponseEntity<Response> redirect(TokenRequest tokenRequest);
     TokenResponse getToken(TokenRequest tokenRequest);
-    KakaoUserInfo getUserInfo(String accessToken);
+    Map<String, Object> getUserInfo(String accessToken);
     TokenResponse getRefreshToken(String provider, String refreshToken);
 
 }

@@ -5,7 +5,7 @@ import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.global.security.context.MemberContext;
 import com.tickerBell.global.security.dtos.LoginDto;
-import com.tickerBell.global.security.dtos.LoginSuccessDto;
+import com.tickerBell.global.security.dtos.LoginResponseDto;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,10 +63,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         String accessToken = jwtTokenProvider.createAccessToken(username, role);
         String refreshToken = jwtTokenProvider.createRefreshToken(username, role);
 
-        LoginSuccessDto loginSuccessDto = new LoginSuccessDto();
-        loginSuccessDto.setAccessToken(accessToken);
-        loginSuccessDto.setRefreshToken(refreshToken);
-        String loginSuccess = objectMapper.writeValueAsString(loginSuccessDto);
+        LoginResponseDto loginResponseDto = new LoginResponseDto();
+        loginResponseDto.setAccessToken(accessToken);
+        loginResponseDto.setRefreshToken(refreshToken);
+        String loginSuccess = objectMapper.writeValueAsString(loginResponseDto);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

@@ -15,6 +15,7 @@ public class KakaoUserInfo {
         private String email;
         private Profile profile;
 
+
         @Getter
         private static class Profile {
             private String nickname;

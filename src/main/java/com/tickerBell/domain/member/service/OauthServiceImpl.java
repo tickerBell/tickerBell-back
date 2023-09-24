@@ -1,23 +1,28 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.member.dtos.KakaoUserInfo;
 import com.tickerBell.domain.member.dtos.TokenRequest;
 import com.tickerBell.domain.member.dtos.TokenResponse;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
-import com.tickerBell.global.security.dtos.LoginSuccessDto;
+import com.tickerBell.global.dto.Response;
+import com.tickerBell.global.security.dtos.LoginResponseDto;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -40,34 +45,65 @@ public class OauthServiceImpl implements OauthService{
     @Value("${spring.security.oauth2.client.provider.kakao.token_uri}")
     private String TOKEN_URI; // https://kauth.kakao.com/oauth/token
 
-    public LoginSuccessDto redirect(TokenRequest tokenRequest) {
+    public ResponseEntity<Response> redirect(TokenRequest tokenRequest) {
         TokenResponse tokenResponse = getToken(tokenRequest); // WebClient 호출, 카카오에 accessToken 요청
-        KakaoUserInfo kakaoUserInfo = getUserInfo(tokenResponse.getAccessToken()); // 유저 resource 요청
-        Optional<Member> findMember = memberRepository.findById(kakaoUserInfo.getId());
+        Map<String, Object> infoResponse = getUserInfo(tokenResponse.getAccessToken());
+        log.info("카카오 api 호출 완료");
 
-        // kakaoUserId 로 DB 에서 조회
-        if(findMember.isPresent()){
+        Map<String, Object> kakaoAccountMap = (Map<String, Object>) infoResponse.get("kakao_account");
+        Map<String, String> profileMap = (Map<String, String>) kakaoAccountMap.get("profile"); // 이름, 프로필
+        Map<String, String> responseMap = new HashMap<>();
+
+        // 닉네임 정보 담기
+        if (StringUtils.hasText(profileMap.get("nickname"))) {
+            responseMap.put("nickname", profileMap.get("nickname"));
+        }
+        // 프로필 사진 정보 담기
+        if (StringUtils.hasText(profileMap.get("profile_image_url"))) {
+            responseMap.put("profileImageUrl", profileMap.get("profile_image_url"));
+        }
+        // 이메일 정보 담기
+        if ("true".equals(kakaoAccountMap.get("has_email").toString())) {
+            responseMap.put("email", kakaoAccountMap.get("email").toString());
+        }
+        // 성별 정보 담기
+        if ("true".equals(kakaoAccountMap.get("has_gender").toString())) {
+            responseMap.put("gender", kakaoAccountMap.get("gender").toString());
+        }
+        // 연령대 정보 담기
+        if ("true".equals(kakaoAccountMap.get("has_age_range").toString())) {
+            responseMap.put("ageRange", kakaoAccountMap.get("age_range").toString());
+        }
+        // 생일 정보 담기
+        if ("true".equals(kakaoAccountMap.get("has_birthday").toString())) {
+            responseMap.put("birthday", kakaoAccountMap.get("birthday").toString());
+        }
+
+        // todo: 현재 email 이 필수항목은 아니지만 필수항목이라 가정
+        Optional<Member> findMember = memberRepository.findByUsername(responseMap.get("email"));
+
+        if (findMember.isPresent()) {
             String accessToken = jwtTokenProvider.createAccessToken(
-                    String.valueOf(findMember.get().getId()), findMember.get().getRole());
+                    String.valueOf(findMember.get().getUsername()), findMember.get().getRole());
             String refreshToken = jwtTokenProvider.createRefreshToken(
-                    String.valueOf(findMember.get().getId()), findMember.get().getRole());
+                    String.valueOf(findMember.get().getUsername()), findMember.get().getRole());
 
-            // 로그인 완료 시 토큰과 함께 반환
-            return LoginSuccessDto.builder()
+            LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                     .authProvider(AuthProvider.KAKAO)
                     .kakaoUserInfo(null)
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
+            // 로그인 완료 시 토큰과 함께 반환
+            return ResponseEntity.ok(new Response(loginResponseDto, "카카오 로그인 성공"));
         }
-        // 회원이 아닐 경우 카카오 유저 정보만 반환. 이 정보로 회원가입 창으로 이동
+        // 회원이 아닐 경우 카카오 유저 정보만 반환. 이 정보로 회원가입 창으로 이동.
         else {
-            return LoginSuccessDto.builder()
-                    .authProvider(AuthProvider.KAKAO)
-                    .kakaoUserInfo(kakaoUserInfo)
-                    .build();
+            log.info("가입되지 않은 Oauth 요청");
+            return ResponseEntity.ok(new Response(responseMap, "회원가입하지 않은 회원의 Oauth 접근. 카카오 유저 정보 반환"));
         }
     }
+
 
     public TokenResponse getToken(TokenRequest tokenRequest) {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
@@ -88,16 +124,29 @@ public class OauthServiceImpl implements OauthService{
                 .block(); // 비동기적 요청 후, 응답을 블로킹하여 대기. 최종적으로 TokenResponse 객체를 반환
     }
 
-    public KakaoUserInfo getUserInfo(String accessToken) {
-        return webClient.mutate()
-                .baseUrl("https://kapi.kakao.com")
-                .build()
-                .get()
-                .uri("/v2/user/me")
-                .headers(h -> h.setBearerAuth(accessToken)) // 받아온 accessToken 으로 자원 요청
-                .retrieve()
-                .bodyToMono(KakaoUserInfo.class) // 받아온 Kakao 정보를 class로 변환
-                .block();
+    public Map<String, Object> getUserInfo(String accessToken) {
+        /**
+         * accessToken으로 로그인 사용자가 동의한 정보 확인하기
+         */
+        // webClient 설정
+        WebClient kakaoApiWebClient =
+                WebClient.builder()
+                        .baseUrl("https://kapi.kakao.com")
+                        .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                        .build();
+
+        // info api 설정
+        Map<String, Object> infoResponse =
+                kakaoApiWebClient
+                        .post()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/v2/user/me")
+                                .build())
+                        .header("Authorization", "Bearer " + accessToken)
+                        .retrieve()
+                        .bodyToMono(Map.class)
+                        .block();
+        return infoResponse;
     }
 
     public TokenResponse getRefreshToken(String provider, String refreshToken) {
