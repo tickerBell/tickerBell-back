@@ -94,7 +94,7 @@ class MemberApiControllerTest {
                     .andExpect(content().string("회원가입이 완료되었습니다."));
 
             // then
-            Member findMember = memberRepository.findByUsername("username" + i);
+            Member findMember = memberRepository.findByUsername("username" + i).get();
             if (isRegistration) {
                 assertThat(findMember.getRole()).isEqualTo(Role.ROLE_REGISTRANT);
             } else {

@@ -60,7 +60,7 @@ class MemberServiceTest {
         Role role = Role.ROLE_USER;
 
         // stub
-        when(memberRepository.findByUsername(username)).thenReturn(Member.builder().build());
+        when(memberRepository.findByUsername(username).get()).thenReturn(Member.builder().build());
 
         // when
         assertThatThrownBy(() -> memberService.join(username, password, phone, email, role, null))
