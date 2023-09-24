@@ -42,14 +42,14 @@ public class JwtFilter extends OncePerRequestFilter {
             String authorizationHeader = request.getHeader("Authorization");
             String token;
             String username;
-            log.info("header: " + authorizationHeader);
             // 헤더가 null 이 아니고 올바른 토큰이라면
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && !request.getRequestURI().equals("/reissue")) {
                 // 토큰 추출
                 token = authorizationHeader.substring(7);
-                // 만료 체크 //todo: refresh 토큰 기능
+                // 만료 체크
                 if (jwtProvider.isExpiration(token)) {
-                    throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+                    log.info("access token 만료");
+                    throw new CustomException(ErrorCode.ACCESS_TOKEN_EXPIRED);
                 }
 
                 // claim 을 받아와 정보 추출
@@ -69,13 +69,13 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             // 만료된 토큰 에러라면
-            if (e.getMessage().equalsIgnoreCase("EXPIRED_ACCESS_TOKEN")) {
+            if (e.getMessage().equalsIgnoreCase("만료된 access token 입니다.")) {
                 writeErrorLogs("EXPIRED_ACCESS_TOKEN", e.getMessage(), e.getStackTrace());
                 JSONObject jsonObject = createJsonError(String.valueOf(UNAUTHORIZED.value()), e.getMessage());
                 setJsonResponse(response, UNAUTHORIZED, jsonObject.toString());
             }
             // DB 에 없는 유저라면
-            else if (e.getMessage().equalsIgnoreCase("CANNOT_FOUND_USER")) {
+            else if (e.getMessage().equalsIgnoreCase("회원이 존재하지 않습니다.")) {
                 writeErrorLogs("CANNOT_FOUND_USER", e.getMessage(), e.getStackTrace());
                 JSONObject jsonObject = createJsonError(String.valueOf(UNAUTHORIZED.value()), e.getMessage());
                 setJsonResponse(response, UNAUTHORIZED, jsonObject.toString());
@@ -108,6 +108,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
     // 에러 응답 반환
     private void setJsonResponse(HttpServletResponse response, HttpStatus httpStatus, String jsonValue) {
+        // 반환 데이터 인코딩 처리
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8"); // JSON 응답을 UTF-8로 설정
+
         response.setStatus(httpStatus.value());
         response.setContentType(APPLICATION_JSON_VALUE);
 
