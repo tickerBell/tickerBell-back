@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class LoginSuccessDto {
+public class LoginResponseDto {
 
     private String accessToken;
     private String refreshToken;
