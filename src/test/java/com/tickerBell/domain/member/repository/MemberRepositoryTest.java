@@ -3,6 +3,8 @@ package com.tickerBell.domain.member.repository;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
+import com.tickerBell.global.exception.CustomException;
+import com.tickerBell.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -65,7 +67,8 @@ class MemberRepositoryTest {
         String username = "initUsername";
 
         // when
-        Member findMember = memberRepository.findByUsername(username);
+        Member findMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // then
         assertThat(findMember.getUsername()).isEqualTo(username);

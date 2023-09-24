@@ -2,6 +2,8 @@ package com.tickerBell.global.security.service;
 
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.global.exception.CustomException;
+import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.global.security.context.MemberContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +27,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Member findMember = memberRepository.findByUsername(username);
+        Member findMember = memberRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        if (findMember == null) {
-            throw new IllegalArgumentException("Invalid Username");
-        }
 
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority(findMember.getRole().name()));
