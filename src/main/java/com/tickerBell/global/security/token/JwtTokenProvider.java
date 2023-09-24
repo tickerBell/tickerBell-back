@@ -50,6 +50,7 @@ public class JwtTokenProvider {
             jwtBuilder.setClaims(claim);
         }
 
+        // 만료 기한 설정
         if (expiration != null) {
             jwtBuilder.setExpiration(new Date(new Date().getTime() + expiration));
         }

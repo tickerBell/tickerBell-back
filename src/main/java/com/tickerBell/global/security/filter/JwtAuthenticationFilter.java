@@ -19,7 +19,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import java.io.IOException;
 
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-
+    /**
+     * 일반 회원 (Oauth x)
+     */
     private final JwtTokenProvider jwtTokenProvider;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -34,12 +36,14 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         ObjectMapper objectMapper = new ObjectMapper();
         LoginDto loginDto = null;
 
+        // 로그인 요청 데이터 -> loginDto 로 변환
         try {
             loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
+        // authentication token 생성 후 UserDetailsService 호출
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
@@ -55,6 +59,7 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
         String username = loginMember.getUsername();
         Role role = loginMember.getRole();
 
+        // 토큰 생성
         String accessToken = jwtTokenProvider.createAccessToken(username, role);
         String refreshToken = jwtTokenProvider.createRefreshToken(username, role);
 
