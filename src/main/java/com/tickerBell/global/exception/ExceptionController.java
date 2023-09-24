@@ -15,10 +15,8 @@ public class ExceptionController {
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<?> handleCustomException(CustomException e, Model model) {
-        model.addAttribute("errorMessage", e.getErrorMessage());
-        model.addAttribute("status", e.getStatus().toString());
         log.info("핸들링한 에러 발생");
-        return ResponseEntity.badRequest().body(new Response(e.getErrorMessage()));
+        return ResponseEntity.badRequest().body(new Response(e, "커스텀 예외 반환"));
     }
 
 //    @ExceptionHandler(Exception.class)
