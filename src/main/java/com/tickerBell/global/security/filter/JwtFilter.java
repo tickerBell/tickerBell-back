@@ -2,6 +2,7 @@ package com.tickerBell.global.security.filter;
 
 
 import com.tickerBell.domain.member.entity.AuthProvider;
+import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
@@ -22,6 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -39,32 +41,29 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             String authorizationHeader = request.getHeader("Authorization");
             String token;
-            String userId;
-            String provider;
-
+            String username;
+            log.info("header: " + authorizationHeader);
             // 헤더가 null 이 아니고 올바른 토큰이라면
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && !request.getRequestURI().equals("/reissue")) {
                 // 토큰 추출
                 token = authorizationHeader.substring(7);
-
-                // 만료 체크
+                // 만료 체크 //todo: refresh 토큰 기능
                 if (jwtProvider.isExpiration(token)) {
                     throw new CustomException(ErrorCode.EXPIRED_TOKEN);
                 }
 
                 // claim 을 받아와 정보 추출
-                userId = (String) jwtProvider.get(token).get("userId");
-                provider = (String) jwtProvider.get(token).get("provider");
+                username = (String) jwtProvider.get(token).get("username");
 
                 // DB 에 정보가 있는지 확인
-                if(!memberRepository.existsByIdAndAuthProvider(userId, AuthProvider.KAKAO)){
-                    throw new CustomException(ErrorCode.MEMBER_NOT_FOUND);
-                }
+                Member member = memberRepository.findByUsername(username)
+                        .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
                 // 인증 정보 생성
-                Authentication authentication = new UsernamePasswordAuthenticationToken(userId, null, null);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, null);
                 // SecurityContextHolder에 인증 정보 설정
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("회원 인증 완료");
             }
 
             filterChain.doFilter(request, response);
@@ -81,15 +80,16 @@ public class JwtFilter extends OncePerRequestFilter {
                 JSONObject jsonObject = createJsonError(String.valueOf(UNAUTHORIZED.value()), e.getMessage());
                 setJsonResponse(response, UNAUTHORIZED, jsonObject.toString());
             }
-        } catch (Exception e) {
-            writeErrorLogs("Exception", e.getMessage(), e.getStackTrace());
-
-            if (response.getStatus() == HttpStatus.OK.value()) {
-                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            }
-        } finally {
-            log.debug("**** SECURITY FILTER FINISH");
         }
+//        } catch (Exception e) {
+//            writeErrorLogs("Exception", e.getMessage(), e.getStackTrace());
+//
+//            if (response.getStatus() == HttpStatus.OK.value()) {
+//                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            }
+//        } finally {
+//            log.debug("**** SECURITY FILTER FINISH");
+//        }
     }
 
     // 에러 content

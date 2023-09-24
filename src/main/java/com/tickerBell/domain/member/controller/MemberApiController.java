@@ -1,6 +1,8 @@
 package com.tickerBell.domain.member.controller;
 
 import com.tickerBell.domain.member.dtos.JoinMemberRequest;
+import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
+import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.global.dto.Response;
@@ -32,10 +34,16 @@ public class MemberApiController {
                 request.getPhone(),
                 request.getEmail(),
                 role,
-                null
+                request.getIsKakaoJoin() ? AuthProvider.KAKAO : AuthProvider.NORMAL
         );
 
         return ResponseEntity.ok(new Response("회원가입이 완료되었습니다."));
+    }
+
+    @Operation(summary = "refresh 토큰 요청")
+    @PostMapping("/reissue")
+    public ResponseEntity<Response> regenerateToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return memberService.regenerateToken(refreshTokenRequest);
     }
 
     private Role checkRole(Boolean isRegistration) {
