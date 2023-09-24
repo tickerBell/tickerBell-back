@@ -1,8 +1,11 @@
 package com.tickerBell.domain.member.service;
 
+import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.global.exception.CustomException;
+import com.tickerBell.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +41,7 @@ class MemberServiceTest {
         Role role = Role.ROLE_USER;
 
         // stub
-        when(memberRepository.findByUsername(username)).thenReturn(null);
+        when(memberRepository.findByUsername(username)).thenReturn(Optional.empty());
         when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
         when(memberRepository.save(any(Member.class))).thenReturn(Member.builder().build());
 
@@ -60,12 +65,12 @@ class MemberServiceTest {
         Role role = Role.ROLE_USER;
 
         // stub
-        when(memberRepository.findByUsername(username).get()).thenReturn(Member.builder().build());
+        when(memberRepository.findByUsername(username)).thenReturn(Optional.of(Member.builder().build()));
 
         // when
-        assertThatThrownBy(() -> memberService.join(username, password, phone, email, role, null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Duplicated Username");
+        assertThatThrownBy(() -> memberService.join(username, password, phone, email, role, AuthProvider.NORMAL))
+                .isInstanceOf(CustomException.class)
+                .hasMessageContaining("이미 존재하는 아이디입니다.");
 
         // then
         verify(memberRepository, times(1)).findByUsername(username);
