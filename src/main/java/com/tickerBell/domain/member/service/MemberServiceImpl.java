@@ -4,6 +4,8 @@ import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.global.exception.CustomException;
+import com.tickerBell.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,9 +24,9 @@ public class MemberServiceImpl implements MemberService{
     @Override
     @Transactional
     public Long join(String username, String password, String phone, String email, Role role, AuthProvider authProvider) {
-
-        if (checkUsername(username) == false) {
-            throw new IllegalArgumentException("Duplicated Username");
+        // validation 체크
+        if(memberRepository.findByUsername(username).isPresent()) {
+            new CustomException(ErrorCode.MEMBER_ALREADY_EXIST);
         }
 
         Member member = Member.builder()
@@ -39,12 +41,4 @@ public class MemberServiceImpl implements MemberService{
         return savedMember.getId();
     }
 
-    private boolean checkUsername(String username) {
-        Member findUsername = memberRepository.findByUsername(username);
-
-        if (findUsername != null) {
-            return false;
-        }
-        return true;
-    }
 }
