@@ -84,9 +84,9 @@ public class OauthServiceImpl implements OauthService{
 
         if (findMember.isPresent()) {
             String accessToken = jwtTokenProvider.createAccessToken(
-                    String.valueOf(findMember.get().getUsername()), findMember.get().getRole());
+                    String.valueOf(findMember.get().getUsername()));
             String refreshToken = jwtTokenProvider.createRefreshToken(
-                    String.valueOf(findMember.get().getUsername()), findMember.get().getRole());
+                    String.valueOf(findMember.get().getUsername()));
 
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                     .authProvider(AuthProvider.KAKAO)

@@ -1,6 +1,5 @@
 package com.tickerBell.global.security.token;
 
-import com.tickerBell.domain.member.entity.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -37,17 +36,15 @@ public class JwtTokenProvider {
      * Oauth 일 경우 username (이메일)
      * 를 username 에 저장
      */
-    public String createAccessToken(String username, Role role) {
+    public String createAccessToken(String username) {
         Map<String, Object> claim = new HashMap<>();
         claim.put("username", username); // 사용자 ID
-        claim.put("role", role); // 사용자 권한
         return createJwt("ACCESS_TOKEN", ACCESS_TOKEN_EXPIRATION_TIME, claim);
     }
 
-    public String createRefreshToken(String username, Role role) {
+    public String createRefreshToken(String username) {
         HashMap<String, Object> claim = new HashMap<>();
         claim.put("username", username); // 사용자 ID
-        claim.put("role", role); // 사용자 권한
         String refreshToken = createJwt("REFRESH_TOKEN", REFRESH_TOKEN_EXPIRATION_TIME, claim);
         saveRefreshTokenInRedis(username, refreshToken);
         return refreshToken;
