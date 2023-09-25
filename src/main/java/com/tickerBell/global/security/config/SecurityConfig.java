@@ -31,7 +31,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-                .cors()
+                .cors() // cors 커스텀 설정
                 .and()
 
                 .sessionManagement()//세션 사용 x

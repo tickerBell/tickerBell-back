@@ -11,6 +11,7 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 1000
+        dialect: org.hibernate.dialect.MySQLDialect
   data:
     redis:
       host: localhost
