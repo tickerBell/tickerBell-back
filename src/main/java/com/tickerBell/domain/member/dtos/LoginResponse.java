@@ -1,4 +1,4 @@
-package com.tickerBell.global.security.dtos;
+package com.tickerBell.domain.member.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class LoginResponseDto {
+public class LoginResponse {
 
     private String accessToken;
     private String refreshToken;
