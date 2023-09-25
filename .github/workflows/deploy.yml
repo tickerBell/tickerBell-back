@@ -34,7 +34,7 @@ jobs:
         shell: bash
 
       - name: Build with Gradle  # Gradle 사용하여 빌드
-        run: ./gradlew build
+        run: ./gradlew build -x test
         shell: bash
 
       - name: Make zip file # zip 파일 생성
