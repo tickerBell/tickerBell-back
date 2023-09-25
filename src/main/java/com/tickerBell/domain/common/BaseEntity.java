@@ -1,4 +1,4 @@
-package com.tickerBell.domain;
+package com.tickerBell.domain.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
