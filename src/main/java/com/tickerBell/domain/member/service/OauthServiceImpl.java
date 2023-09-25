@@ -89,8 +89,6 @@ public class OauthServiceImpl implements OauthService{
                     String.valueOf(findMember.get().getUsername()));
 
             LoginResponse loginResponse = LoginResponse.builder()
-                    .authProvider(AuthProvider.KAKAO)
-                    .kakaoUserInfo(null)
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();

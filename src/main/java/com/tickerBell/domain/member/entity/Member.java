@@ -1,6 +1,6 @@
 package com.tickerBell.domain.member.entity;
 
-import com.tickerBell.domain.BaseEntity;
+import com.tickerBell.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
