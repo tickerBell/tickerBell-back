@@ -6,7 +6,7 @@ import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.global.dto.Response;
-import com.tickerBell.global.security.dtos.LoginResponseDto;
+import com.tickerBell.domain.member.dtos.LoginResponse;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,14 +88,14 @@ public class OauthServiceImpl implements OauthService{
             String refreshToken = jwtTokenProvider.createRefreshToken(
                     String.valueOf(findMember.get().getUsername()));
 
-            LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+            LoginResponse loginResponse = LoginResponse.builder()
                     .authProvider(AuthProvider.KAKAO)
                     .kakaoUserInfo(null)
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
                     .build();
             // 로그인 완료 시 토큰과 함께 반환
-            return ResponseEntity.ok(new Response(loginResponseDto, "카카오 로그인 성공"));
+            return ResponseEntity.ok(new Response(loginResponse, "카카오 로그인 성공"));
         }
         // 회원이 아닐 경우 카카오 유저 정보만 반환. 이 정보로 회원가입 창으로 이동.
         else {

@@ -6,8 +6,8 @@ import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.global.dto.Response;
-import com.tickerBell.global.security.dtos.LoginDto;
-import com.tickerBell.global.security.dtos.LoginResponseDto;
+import com.tickerBell.domain.member.dtos.LoginRequest;
+import com.tickerBell.domain.member.dtos.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,14 +45,15 @@ public class MemberApiController {
     @Operation(summary = "refresh 토큰 요청")
     @PostMapping("/reissue")
     public ResponseEntity<Response> regenerateToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        LoginResponseDto loginResponseDto = memberService.regenerateToken(refreshTokenRequest);
+        LoginResponse loginResponse = memberService.regenerateToken(refreshTokenRequest);
 
-        return ResponseEntity.ok(new Response(loginResponseDto, "refresh 토큰으로 access 토큰 재발행"));
+        return ResponseEntity.ok(new Response(loginResponse, "refresh 토큰으로 access 토큰 재발행"));
     }
 
+    @Operation(summary = "로그인 요청")
     @PostMapping("/api/login")
-    public ResponseEntity<Response> login(@RequestBody LoginDto loginDto) {
-        LoginResponseDto loginResponse = memberService.login(loginDto.getUsername(), loginDto.getPassword());
+    public ResponseEntity<Response> login(@RequestBody LoginRequest loginRequest) {
+        LoginResponse loginResponse = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
         return ResponseEntity.ok(new Response(loginResponse, "로그인이 완료되었습니다."));
     }
