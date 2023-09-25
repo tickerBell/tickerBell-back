@@ -7,7 +7,7 @@ import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
-import com.tickerBell.global.security.dtos.LoginResponseDto;
+import com.tickerBell.domain.member.dtos.LoginResponse;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public LoginResponseDto regenerateToken(RefreshTokenRequest refreshTokenRequest) {
+    public LoginResponse regenerateToken(RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
         try {
             // Refresh Token 검증
@@ -68,7 +68,7 @@ public class MemberServiceImpl implements MemberService{
 
             // 토큰 재발행
             String new_refresh_token = jwtTokenProvider.createRefreshToken(username);
-            LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+            LoginResponse loginResponse = LoginResponse.builder()
                     .refreshToken(new_refresh_token)
                     .accessToken(jwtTokenProvider.createAccessToken(username))
                     .build();
@@ -76,14 +76,14 @@ public class MemberServiceImpl implements MemberService{
             // refresh 토큰 업데이트
             jwtTokenProvider.saveRefreshTokenInRedis(username, new_refresh_token);
 
-            return loginResponseDto;
+            return loginResponse;
         } catch (CustomException e) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_UNKNOWN_ERROR);
         }
     }
 
     @Override
-    public LoginResponseDto login(String username, String password) {
+    public LoginResponse login(String username, String password) {
         // 사용자가 입력한 Id 검증
         Member findMember = memberRepository.findByUsername(username).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
@@ -100,7 +100,7 @@ public class MemberServiceImpl implements MemberService{
         // refresh Token redis 저장
         jwtTokenProvider.saveRefreshTokenInRedis(findMember.getUsername(), refreshToken);
 
-        return LoginResponseDto.builder()
+        return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

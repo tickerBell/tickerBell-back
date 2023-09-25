@@ -6,7 +6,7 @@ import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.service.MemberService;
-import com.tickerBell.global.security.dtos.LoginDto;
+import com.tickerBell.domain.member.dtos.LoginRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -110,14 +110,14 @@ class MemberApiControllerTest {
         // given
         String username = "testUsername";
         String password = "testPassword1!";
-        LoginDto loginDto = new LoginDto();
-        loginDto.setUsername(username);
-        loginDto.setPassword(password);
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username);
+        loginRequest.setPassword(password);
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginDto)));
+                .content(objectMapper.writeValueAsString(loginRequest)));
 
         // then
         perform.andExpect(status().isOk())
@@ -131,14 +131,14 @@ class MemberApiControllerTest {
         // given
         String username = "failUsername";
         String password = "testPassword1!";
-        LoginDto loginDto = new LoginDto();
-        loginDto.setUsername(username);
-        loginDto.setPassword(password);
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username);
+        loginRequest.setPassword(password);
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginDto)));
+                .content(objectMapper.writeValueAsString(loginRequest)));
 
         // then
         perform.andExpect(status().isUnauthorized());
@@ -150,14 +150,14 @@ class MemberApiControllerTest {
         // given
         String username = "testUsername";
         String password = "failPassword1!";
-        LoginDto loginDto = new LoginDto();
-        loginDto.setUsername(username);
-        loginDto.setPassword(password);
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username);
+        loginRequest.setPassword(password);
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(loginDto)));
+                .content(objectMapper.writeValueAsString(loginRequest)));
 
         // then
         perform.andExpect(status().isUnauthorized());
