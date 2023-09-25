@@ -5,7 +5,6 @@ import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
-import com.tickerBell.global.dto.Response;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.global.security.dtos.LoginResponseDto;
@@ -13,7 +12,6 @@ import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +48,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public ResponseEntity<Response> regenerateToken(RefreshTokenRequest refreshTokenRequest) {
+    public LoginResponseDto regenerateToken(RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
         try {
             // Refresh Token 검증
@@ -78,7 +76,7 @@ public class MemberServiceImpl implements MemberService{
             // refresh 토큰 업데이트
             jwtTokenProvider.saveRefreshTokenInRedis(username, new_refresh_token);
 
-            return ResponseEntity.ok(new Response(loginResponseDto, "refresh 토큰으로 access 토큰 재발행"));
+            return loginResponseDto;
         } catch (CustomException e) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_UNKNOWN_ERROR);
         }
@@ -86,16 +84,20 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public LoginResponseDto login(String username, String password) {
+        // 사용자가 입력한 Id 검증
         Member findMember = memberRepository.findByUsername(username).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
+        // 사용자가 입력한 Password 검증
         if(!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
+        // access & refresh Token 생성
         String accessToken = jwtTokenProvider.createAccessToken(findMember.getUsername());
         String refreshToken = jwtTokenProvider.createRefreshToken(findMember.getUsername());
 
+        // refresh Token redis 저장
         jwtTokenProvider.saveRefreshTokenInRedis(findMember.getUsername(), refreshToken);
 
         return LoginResponseDto.builder()
