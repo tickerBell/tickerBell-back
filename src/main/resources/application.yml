@@ -5,4 +5,4 @@ spring:
 
 app:
   auth:
-    secret-key: ${secret-key}
+    secret-key: ${SECRET_KEY}
