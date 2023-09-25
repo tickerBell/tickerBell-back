@@ -9,12 +9,12 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter
 @Builder
 public class Image extends BaseEntity {
     @Id
     @GeneratedValue
-    @Column(name = "event_id")
+    @Column(name = "image_id")
     private Long id;
 
     private String storeImgName; // 저장된 사진 명

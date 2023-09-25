@@ -10,7 +10,7 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter
+@Getter
 @Builder
 public class Ticketing extends BaseEntity {
     @Id
