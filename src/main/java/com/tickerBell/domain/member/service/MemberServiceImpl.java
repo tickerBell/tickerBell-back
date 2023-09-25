@@ -69,10 +69,10 @@ public class MemberServiceImpl implements MemberService{
             }
 
             // 토큰 재발행
-            String new_refresh_token = jwtTokenProvider.createRefreshToken(username, null);
+            String new_refresh_token = jwtTokenProvider.createRefreshToken(username);
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                     .refreshToken(new_refresh_token)
-                    .accessToken(jwtTokenProvider.createAccessToken(username, null))
+                    .accessToken(jwtTokenProvider.createAccessToken(username))
                     .build();
 
             // refresh 토큰 업데이트
@@ -82,6 +82,26 @@ public class MemberServiceImpl implements MemberService{
         } catch (CustomException e) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_UNKNOWN_ERROR);
         }
+    }
+
+    @Override
+    public LoginResponseDto login(String username, String password) {
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+        if(!passwordEncoder.matches(password, findMember.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        String accessToken = jwtTokenProvider.createAccessToken(findMember.getUsername());
+        String refreshToken = jwtTokenProvider.createRefreshToken(findMember.getUsername());
+
+        jwtTokenProvider.saveRefreshTokenInRedis(findMember.getUsername(), refreshToken);
+
+        return LoginResponseDto.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
 }

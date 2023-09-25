@@ -6,6 +6,8 @@ import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.global.dto.Response;
+import com.tickerBell.global.security.dtos.LoginDto;
+import com.tickerBell.global.security.dtos.LoginResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +46,13 @@ public class MemberApiController {
     @PostMapping("/reissue")
     public ResponseEntity<Response> regenerateToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         return memberService.regenerateToken(refreshTokenRequest);
+    }
+
+    @PostMapping("/api/login")
+    public ResponseEntity<Response> login(@RequestBody LoginDto loginDto) {
+        LoginResponseDto loginResponse = memberService.login(loginDto.getUsername(), loginDto.getPassword());
+
+        return ResponseEntity.ok(new Response(loginResponse, "로그인이 완료되었습니다."));
     }
 
     private Role checkRole(Boolean isRegistration) {
