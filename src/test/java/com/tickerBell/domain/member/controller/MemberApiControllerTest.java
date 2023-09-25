@@ -62,6 +62,7 @@ class MemberApiControllerTest {
         joinMemberRequest.setPhone("phone");
         joinMemberRequest.setEmail("email");
         joinMemberRequest.setIsRegistration(false);
+        joinMemberRequest.setIsKakaoJoin(false);
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/members")
@@ -71,7 +72,7 @@ class MemberApiControllerTest {
         // then
         perform
                 .andExpect(status().isOk())
-                .andExpect(content().string("회원가입이 완료되었습니다."));
+                .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."));
     }
 
     @Test
@@ -81,17 +82,19 @@ class MemberApiControllerTest {
         JoinMemberRequest joinMemberRequest = new JoinMemberRequest();
         joinMemberRequest.setPassword("pass123");
         Boolean isRegistration = true;
+        Boolean isKaKaoLogin = true;
 
         for (int i = 0; i < 2; i++) {
             joinMemberRequest.setUsername("username" + i);
             joinMemberRequest.setIsRegistration(isRegistration);
+            joinMemberRequest.setIsKakaoJoin(isKaKaoLogin);
 
             // when
             ResultActions perform = mockMvc.perform(post("/api/members")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(joinMemberRequest)))
                     .andExpect(status().isOk())
-                    .andExpect(content().string("회원가입이 완료되었습니다."));
+                    .andExpect(jsonPath("$.message").value("회원가입이 완료되었습니다."));
 
             // then
             Member findMember = memberRepository.findByUsername("username" + i).get();
@@ -101,6 +104,7 @@ class MemberApiControllerTest {
                 assertThat(findMember.getRole()).isEqualTo(Role.ROLE_USER);
             }
             isRegistration = !isRegistration;
+            isKaKaoLogin = !isKaKaoLogin;
         }
     }
 
@@ -121,8 +125,9 @@ class MemberApiControllerTest {
 
         // then
         perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken").isNotEmpty())
-                .andExpect(jsonPath("$.refreshToken").isNotEmpty());
+                .andExpect(jsonPath("$.data.accessToken").isNotEmpty())
+                .andExpect(jsonPath("$.data.refreshToken").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("로그인이 완료되었습니다."));
     }
 
     @Test
@@ -141,7 +146,7 @@ class MemberApiControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequest)));
 
         // then
-        perform.andExpect(status().isUnauthorized());
+        perform.andExpect(status().isBadRequest());
     }
 
     @Test
@@ -160,6 +165,6 @@ class MemberApiControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequest)));
 
         // then
-        perform.andExpect(status().isUnauthorized());
+        perform.andExpect(status().isBadRequest());
     }
 }
