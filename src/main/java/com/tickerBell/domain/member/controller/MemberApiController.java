@@ -45,7 +45,9 @@ public class MemberApiController {
     @Operation(summary = "refresh 토큰 요청")
     @PostMapping("/reissue")
     public ResponseEntity<Response> regenerateToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        return memberService.regenerateToken(refreshTokenRequest);
+        LoginResponseDto loginResponseDto = memberService.regenerateToken(refreshTokenRequest);
+
+        return ResponseEntity.ok(new Response(loginResponseDto, "refresh 토큰으로 access 토큰 재발행"));
     }
 
     @PostMapping("/api/login")
