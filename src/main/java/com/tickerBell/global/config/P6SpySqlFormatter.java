@@ -1,4 +1,4 @@
-package com.tickerBell.config;
+package com.tickerBell.global.config;
 
 import com.p6spy.engine.logging.Category;
 import com.p6spy.engine.spy.P6SpyOptions;

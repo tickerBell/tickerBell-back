@@ -1,3 +1,3 @@
 app:
   auth:
-    security-key: ogihzelsighzlseuifgzlsegfiluzseglfiugeslfizsveluifve
+    secret-key: ${secret-key}
