@@ -7,9 +7,11 @@ import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.global.exception.CustomException;
+import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.assertj.core.api.AbstractObjectAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -156,5 +158,28 @@ class MemberServiceTest {
         verify(jwtTokenProvider, times(1)).saveRefreshTokenInRedis(username, refreshToken);
         assertThat(loginResponse.getAccessToken()).isEqualTo(accessToken);
         assertThat(loginResponse.getRefreshToken()).isEqualTo(refreshToken);
+    }
+
+    @Test
+    @DisplayName("로그인 회원조회 실패 테스트")
+    void loginUsernameFailTest() {
+        // given
+        String username = "mockUsername";
+        String password = "mockPassword";
+
+        // stub
+        when(memberRepository.findByUsername(username)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.login(username, password))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+            assertThat(ex.getStatus()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getStatus().toString());
+            assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
+        });
     }
 }
