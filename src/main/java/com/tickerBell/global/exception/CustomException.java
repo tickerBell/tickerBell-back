@@ -1,9 +1,8 @@
 package com.tickerBell.global.exception;
 
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter @Setter
+@Getter
 public class CustomException extends RuntimeException {
     private ErrorCode errorCode;
     private String status;
@@ -11,7 +10,8 @@ public class CustomException extends RuntimeException {
 
     public CustomException(ErrorCode errorCode) {
         super(errorCode.getErrorMessage());
-        setStatus(errorCode.getStatus().toString());
-        setErrorMessage(errorCode.getErrorMessage());
+        this.errorCode = errorCode;
+        this.status = errorCode.getStatus().toString();
+        this.errorMessage = errorCode.getErrorMessage();
     }
 }
