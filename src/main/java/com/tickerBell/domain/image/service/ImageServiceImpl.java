@@ -96,6 +96,7 @@ public class ImageServiceImpl implements ImageService{
         return imageList;
     }
 
+    // 테스트를 위해 임시로 만든 함수입니다.
     @Override
     public List<ImageResponse> findAllImage() {
         List<ImageResponse> imageResponseList = imageRepository.findAll().stream()
@@ -111,7 +112,9 @@ public class ImageServiceImpl implements ImageService{
             DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket, storeImageName);
             amazonS3Client.deleteObject(deleteObjectRequest);
         }
+        imageRepository.deleteAll(imageList);
         log.info("S3 파일 삭제 완료");
+        log.info("DB 이미지 데이터 삭제 완료");
     }
 
     private String createStoreImageName(String extension) {
