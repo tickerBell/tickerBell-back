@@ -182,4 +182,29 @@ class MemberServiceTest {
             assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
         });
     }
+
+    @Test
+    @DisplayName("로그인 비밀번호 검증 실패 테스트")
+    void loginPasswordMatchFailTest() {
+        // given
+        String username = "mockUsername";
+        String password = "mockPassword";
+        Member mockMember = Member.builder().username(username).password(password).build();
+
+        // stub
+        when(memberRepository.findByUsername(username)).thenReturn(Optional.of(mockMember));
+        when(passwordEncoder.matches(password, mockMember.getPassword())).thenReturn(false);
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.login(username, password))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.INVALID_PASSWORD);
+            assertThat(ex.getStatus()).isEqualTo(ErrorCode.INVALID_PASSWORD.getStatus().toString());
+            assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.INVALID_PASSWORD.getErrorMessage());
+        });
+    }
 }
