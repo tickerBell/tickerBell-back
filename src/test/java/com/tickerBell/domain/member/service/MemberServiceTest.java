@@ -125,4 +125,36 @@ class MemberServiceTest {
         assertThat("newRefreshToken").isEqualTo(result.getRefreshToken());
         assertThat("mockAccessToken").isEqualTo(result.getAccessToken());
     }
+
+    // todo regenerate Fail Test
+
+    @Test
+    @DisplayName("로그인 성공 테스트")
+    void loginTest() {
+        // given
+        String username = "mockUsername";
+        String password = "mockPassword";
+        String refreshToken = "newRefreshToken";
+        String accessToken = "accessToken";
+        Member mockMember = Member.builder().username(username).password(password).build();
+
+        // stub
+        when(memberRepository.findByUsername(username)).thenReturn(Optional.of(mockMember));
+        when(passwordEncoder.matches(password, mockMember.getPassword())).thenReturn(true);
+        when(jwtTokenProvider.createAccessToken(username)).thenReturn(accessToken);
+        when(jwtTokenProvider.createRefreshToken(username)).thenReturn(refreshToken);
+        doNothing().when(jwtTokenProvider).saveRefreshTokenInRedis(username, refreshToken);
+
+        // when
+        LoginResponse loginResponse = memberService.login(username, password);
+
+        // then
+        verify(memberRepository, times(1)).findByUsername(username);
+        verify(passwordEncoder, times(1)).matches(password, mockMember.getPassword());
+        verify(jwtTokenProvider, times(1)).createAccessToken(username);
+        verify(jwtTokenProvider, times(1)).createRefreshToken(username);
+        verify(jwtTokenProvider, times(1)).saveRefreshTokenInRedis(username, refreshToken);
+        assertThat(loginResponse.getAccessToken()).isEqualTo(accessToken);
+        assertThat(loginResponse.getRefreshToken()).isEqualTo(refreshToken);
+    }
 }
