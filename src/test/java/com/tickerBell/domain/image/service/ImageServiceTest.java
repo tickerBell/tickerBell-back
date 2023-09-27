@@ -5,6 +5,8 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
+import com.tickerBell.global.exception.CustomException;
+import com.tickerBell.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,10 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -49,9 +50,10 @@ class ImageServiceTest {
 
         // stub
         when(amazonS3Client.getUrl(any(), any())).thenReturn(new URL("https://example-image.jpg"));
+        when(amazonS3Client.putObject(any())).thenReturn(any());
 
         // when
-        imageService.uploadImage(thumbnailImage, imageFiles);
+        List<Image> imageList = imageService.uploadImage(thumbnailImage, imageFiles);
 
         // then
         verify(amazonS3Client, times(3)).putObject(any(PutObjectRequest.class)); // s3 업로드 횟수 확인
@@ -82,5 +84,37 @@ class ImageServiceTest {
         // then
         verify(amazonS3Client, times(2)).deleteObject(any(DeleteObjectRequest.class)); // s3 삭제  횟수 확인
         verify(imageRepository, times(1)).deleteAll(any(List.class));
+    }
+
+    @DisplayName("사진이 아닌 확장자 예외 처리")
+    @Test
+    public void testInvalidFileExtension() throws IOException {
+        // given
+        MultipartFile thumbnailImage = new MockMultipartFile("thumbnail.jpg", "thumbnail.jpg", "application/octet-stream", new byte[0]);
+        List<MultipartFile> emptyMultipartFiles = new ArrayList<>();
+
+        // when
+        assertThatThrownBy(() -> imageService.uploadImage(thumbnailImage, emptyMultipartFiles))
+                .isInstanceOf(CustomException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.IMAGE_NOT_SUPPORTED_EXTENSION);
+
+        // then
+        verifyNoInteractions(amazonS3Client);
+    }
+
+    @DisplayName("확장자가 없는 파일 예외 처리")
+    @Test
+    public void testNullExtension() throws IOException {
+        // given
+        MultipartFile thumbnailImage = new MockMultipartFile("thumbnail.jpg", "thumbnail.jpg", "", new byte[0]);
+        List<MultipartFile> emptyMultipartFiles = new ArrayList<>();
+
+        // when
+        assertThatThrownBy(() -> imageService.uploadImage(thumbnailImage, emptyMultipartFiles))
+                .isInstanceOf(CustomException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.IMAGE_NOT_FOUND_EXTENSION);
+
+        // then
+        verifyNoInteractions(amazonS3Client);
     }
 }
