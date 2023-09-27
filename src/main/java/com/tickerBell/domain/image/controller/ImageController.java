@@ -6,6 +6,7 @@ import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.domain.image.service.ImageService;
 import com.tickerBell.global.dto.Response;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -23,7 +24,8 @@ public class ImageController {
     private final ImageRepository imageRepository;
 
     @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> uploadImage(@ModelAttribute ImageRequest imageRequest) throws IOException {
+    public ResponseEntity<Response> uploadImage(@Valid @ModelAttribute ImageRequest imageRequest) throws IOException {
+
         List<Image> imageList = imageService.uploadImage(imageRequest.getThumbNailImg(), imageRequest.getImageList());
         return ResponseEntity.ok(new Response(imageList, "이미지 업로드 완료"));
     }

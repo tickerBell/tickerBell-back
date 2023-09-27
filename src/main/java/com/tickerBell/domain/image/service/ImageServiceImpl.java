@@ -30,63 +30,58 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class ImageServiceImpl implements ImageService{
+public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final AmazonS3Client amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+
     @Override
     public List<Image> uploadImage(MultipartFile thumbNailImage, List<MultipartFile> multipartFiles) throws IOException {
         List<Image> imageList = new ArrayList<>();
         multipartFiles.add(thumbNailImage); // 일반 이미지 맨 뒤에 썸네일 이미지 추가
 
-        if (!CollectionUtils.isEmpty(multipartFiles)) {
 
-            for (MultipartFile multipartFile : multipartFiles) {
-                String extension; //확장자명
-                String contentType = multipartFile.getContentType();
+        for (MultipartFile multipartFile : multipartFiles) {
+            String extension; //확장자명
+            String contentType = multipartFile.getContentType();
 
-                // dummy data 필터
-                if (contentType.contains("application/octet-stream")) {
-                    break;
+            if (ObjectUtils.isEmpty(contentType)) {
+                throw new CustomException(ErrorCode.IMAGE_NOT_FOUND_EXTENSION);
+            } else { //확장자명이 jpeg, png 인 파일들만 받아서 처리
+                if (contentType.contains("image/jpeg")) extension = ".jpg";
+                else if (contentType.contains("image/png")) extension = ".png";
+                else {
+                    log.info("사진이 아닌 파일입니다.");
+                    throw new CustomException(ErrorCode.IMAGE_NOT_SUPPORTED_EXTENSION);
                 }
-                if (ObjectUtils.isEmpty(contentType)) {
-                    break;
-                } else { //확장자명이 jpeg, png 인 파일들만 받아서 처리
-                    if (contentType.contains("image/jpeg")) extension = ".jpg";
-                    else if (contentType.contains("image/png")) extension = ".png";
-                    else {
-                        log.info("사진이 아닌 파일입니다.");
-                        throw new CustomException(ErrorCode.IMAGE_NOT_SUPPORTED_EXTENSION);
-                    }
-                }
-
-                // unique 이름 생성
-                String storeImageName = createStoreImageName(extension);
-
-                InputStream inputStream = multipartFile.getInputStream();
-                ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentLength(multipartFile.getSize());
-                metadata.setContentType(multipartFile.getContentType());
-
-                PutObjectRequest request = new PutObjectRequest(bucket, storeImageName, inputStream, metadata);
-
-                // s3 put
-                amazonS3Client.putObject(request);
-                log.info("s3에 사진 저장");
-
-                // s3 get
-                String s3Url = getImgPath(storeImageName);
-
-                Image image = Image.builder()
-                        .originImgName(multipartFile.getOriginalFilename())
-                        .storeImgName(storeImageName)
-                        .s3Url(s3Url)
-                        .isThumbnail(false)
-                        .build();
-
-                imageList.add(image);
             }
+
+            // unique 이름 생성
+            String storeImageName = createStoreImageName(extension);
+
+            InputStream inputStream = multipartFile.getInputStream();
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(multipartFile.getSize());
+            metadata.setContentType(multipartFile.getContentType());
+
+            PutObjectRequest request = new PutObjectRequest(bucket, storeImageName, inputStream, metadata);
+
+            // s3 put
+            amazonS3Client.putObject(request);
+            log.info("s3에 사진 저장");
+
+            // s3 get
+            String s3Url = getImgPath(storeImageName);
+
+            Image image = Image.builder()
+                    .originImgName(multipartFile.getOriginalFilename())
+                    .storeImgName(storeImageName)
+                    .s3Url(s3Url)
+                    .isThumbnail(false)
+                    .build();
+
+            imageList.add(image);
         }
         // 맨 뒤 이미지 썸네일 처리
         imageList.get(imageList.size() - 1).setThumbnail(true);
