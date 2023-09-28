@@ -29,6 +29,4 @@ public class SmsController {
         SendSmsResponse sendSmsResponse = smsService.sendSms(messageDto.getTo(), messageDto.getContent());
         return ResponseEntity.ok(new Response(sendSmsResponse, "문자 발송 완료"));
     }
-
-
 }
