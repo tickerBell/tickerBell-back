@@ -7,10 +7,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Event extends BaseEntity {
 
     @Id
@@ -34,4 +32,21 @@ public class Event extends BaseEntity {
     private Integer seatXBound; // x 좌표 최대 값
     private Integer seatYBound; // y 좌표 최대 값
 
+    @Builder
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Boolean isSale, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place, Integer seatXBound, Integer seatYBound) {
+        this.name = name;
+        this.startEvent = startEvent;
+        this.endEvent = endEvent;
+        this.normalPrice = normalPrice;
+        this.premiumPrice = premiumPrice;
+        this.isSale = isSale;
+        this.saleDegree = saleDegree;
+        this.casting = casting;
+        this.totalSeat = totalSeat;
+        this.remainSeat = remainSeat;
+        this.host = host;
+        this.place = place;
+        this.seatXBound = seatXBound;
+        this.seatYBound = seatYBound;
+    }
 }
