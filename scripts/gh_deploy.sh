@@ -37,5 +37,5 @@ sleep 3
 
 echo "> 배포 종료 : $(date +%c)" >> $DEPLOY_LOG_PATH
 
-# nohup java -jar web-proj-0.0.1-SNAPSHOT.jar >> application.log 2 > deploy_err.log &
-# nohup java -jar -Duser.timezone=Asia/Seoul web-proj-0.0.1-SNAPSHOT.jar >> application.log 2> deploy_err.log &
+# nohup java -jar tickerBell-0.0.1-SNAPSHOT.jar >> application.log 2 > deploy_err.log &
+# nohup java -jar -Duser.timezone=Asia/Seoul tickerBell-0.0.1-SNAPSHOT.jar >> application.log 2> deploy_err.log &
