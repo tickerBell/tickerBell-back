@@ -31,8 +31,6 @@ class EventRepositoryTest {
         Integer remainSeat = 60 ;
         String host = "mockHost";
         String place = "mockPlace";
-        Integer seatXBound = 60;
-        Integer seatYBound = 60;
         Event event = Event.builder()
                 .name(name)
                 .startEvent(startEvent)
@@ -45,8 +43,6 @@ class EventRepositoryTest {
                 .remainSeat(remainSeat)
                 .host(host)
                 .place(place)
-                .seatXBound(seatXBound)
-                .seatYBound(seatYBound)
                 .build();
 
         // when
@@ -66,7 +62,5 @@ class EventRepositoryTest {
         assertThat(savedEvent.getRemainSeat()).isEqualTo(event.getRemainSeat());
         assertThat(savedEvent.getHost()).isEqualTo(event.getHost());
         assertThat(savedEvent.getPlace()).isEqualTo(event.getPlace());
-        assertThat(savedEvent.getSeatXBound()).isEqualTo(event.getSeatXBound());
-        assertThat(savedEvent.getSeatYBound()).isEqualTo(event.getSeatYBound());
     }
 }

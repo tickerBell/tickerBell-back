@@ -36,14 +36,12 @@ public class EventServiceTest {
         Integer totalSeat = 60;
         String host = "mockHost";
         String place = "mockPlace";
-        Integer seatXBound = 60;
-        Integer seatYBound = 60;
 
         // stub
         when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
 
         // when
-        Long savedEventId = eventService.saveEvent(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, totalSeat, host, place, seatXBound, seatYBound);
+        Long savedEventId = eventService.saveEvent(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, totalSeat, host, place);
 
         // then
         verify(eventRepository, times(1)).save(any(Event.class));

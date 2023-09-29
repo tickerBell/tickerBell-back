@@ -17,7 +17,7 @@ public class EventServiceImpl implements EventService {
 
     private EventRepository eventRepository;
 
-    public Long saveEvent(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, String host, String place, Integer seatXBound, Integer seatYBound) {
+    public Long saveEvent(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, String host, String place) {
         Event event = Event.builder()
                 .name(name)
                 .startEvent(startEvent)
@@ -30,8 +30,6 @@ public class EventServiceImpl implements EventService {
                 .remainSeat(totalSeat) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
                 .host(host)
                 .place(place)
-                .seatXBound(seatXBound)
-                .seatYBound(seatYBound)
                 .build();
 
         Event savedEvent = eventRepository.save(event);
