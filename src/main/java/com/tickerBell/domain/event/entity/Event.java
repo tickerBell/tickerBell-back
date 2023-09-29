@@ -1,6 +1,7 @@
 package com.tickerBell.domain.event.entity;
 
 import com.tickerBell.domain.common.BaseEntity;
+import com.tickerBell.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,9 +30,12 @@ public class Event extends BaseEntity {
     private String host; // 주최자, 스폰서 (, 로 구분해서 저장)
     private String place; // 주소
     private Integer age; // 제한연령
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member; // 이벤트, 회원 N : 1 다대일 단방향 맵핑
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place, Integer age) {
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place, Integer age, Member member) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -44,5 +48,6 @@ public class Event extends BaseEntity {
         this.host = host;
         this.place = place;
         this.age = age;
+        this.member = member;
     }
 }
