@@ -1,11 +1,11 @@
 package com.tickerBell.global.security.filter;
 
 
-import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
+import com.tickerBell.global.security.context.MemberContext;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,13 +17,16 @@ import net.minidev.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -59,8 +62,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 Member member = memberRepository.findByUsername(username)
                         .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
+                List<GrantedAuthority> roles = new ArrayList<>();
+                roles.add(new SimpleGrantedAuthority(member.getRole().name()));
+
+                MemberContext memberContext = new MemberContext(member, roles);
+
                 // 인증 정보 생성
-                Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, null);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(memberContext, null, memberContext.getAuthorities());
                 // SecurityContextHolder에 인증 정보 설정
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 log.info("회원 인증 완료");
