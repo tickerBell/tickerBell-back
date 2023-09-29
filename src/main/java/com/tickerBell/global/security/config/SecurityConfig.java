@@ -1,5 +1,6 @@
 package com.tickerBell.global.security.config;
 
+import com.tickerBell.global.security.filter.JwtFilter;
 import com.tickerBell.global.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -19,6 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -39,6 +42,7 @@ public class SecurityConfig {
                 .and()
 
                 .authorizeHttpRequests()
+                .requestMatchers("/api/event").hasRole("REGISTRANT") // 등록자 권한 설정
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .requestMatchers("/**").permitAll()
                 .and()
@@ -50,6 +54,9 @@ public class SecurityConfig {
 
         http
                 .userDetailsService(customUserDetailsService);
+
+        http
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
