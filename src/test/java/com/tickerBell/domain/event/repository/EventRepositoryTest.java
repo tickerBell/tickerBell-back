@@ -1,6 +1,8 @@
 package com.tickerBell.domain.event.repository;
 
 import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.member.entity.Member;
+import com.tickerBell.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,16 @@ class EventRepositoryTest {
 
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("이벤트 저장 테스트")
     void saveTest() {
         // given
+        Member member = Member.builder().build();
+        Member savedMember = memberRepository.save(member);
+
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
@@ -45,6 +52,7 @@ class EventRepositoryTest {
                 .host(host)
                 .place(place)
                 .age(age)
+                .member(member)
                 .build();
 
         // when
@@ -65,5 +73,6 @@ class EventRepositoryTest {
         assertThat(savedEvent.getHost()).isEqualTo(event.getHost());
         assertThat(savedEvent.getPlace()).isEqualTo(event.getPlace());
         assertThat(savedEvent.getAge()).isEqualTo(event.getAge());
+        assertThat(savedEvent.getMember()).isEqualTo(savedMember);
     }
 }
