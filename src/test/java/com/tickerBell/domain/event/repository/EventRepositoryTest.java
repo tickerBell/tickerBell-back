@@ -25,7 +25,6 @@ class EventRepositoryTest {
         LocalDateTime endEvent = LocalDateTime.now();
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
-        Boolean isSale = false;
         Float saleDegree = 0.0F;
         String casting = "mockCasting";
         Integer totalSeat = 60;
@@ -40,7 +39,6 @@ class EventRepositoryTest {
                 .endEvent(endEvent)
                 .normalPrice(normalPrice)
                 .premiumPrice(premiumPrice)
-                .isSale(isSale)
                 .saleDegree(saleDegree)
                 .casting(casting)
                 .totalSeat(totalSeat)
@@ -62,7 +60,6 @@ class EventRepositoryTest {
         assertThat(savedEvent.getEndEvent()).isEqualTo(event.getEndEvent());
         assertThat(savedEvent.getNormalPrice()).isEqualTo(event.getNormalPrice());
         assertThat(savedEvent.getPremiumPrice()).isEqualTo(event.getPremiumPrice());
-        assertThat(savedEvent.getIsSale()).isEqualTo(event.getIsSale());
         assertThat(savedEvent.getSaleDegree()).isEqualTo(event.getSaleDegree());
         assertThat(savedEvent.getCasting()).isEqualTo(event.getCasting());
         assertThat(savedEvent.getTotalSeat()).isEqualTo(event.getTotalSeat());
