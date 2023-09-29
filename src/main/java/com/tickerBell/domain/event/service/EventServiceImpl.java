@@ -15,9 +15,10 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 public class EventServiceImpl implements EventService {
 
-    private EventRepository eventRepository;
+    private final Integer TOTALSEAT = 60; // 총 좌석 수 60으로 고정
+    private final EventRepository eventRepository;
 
-    public Long saveEvent(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, String host, String place) {
+    public Long saveEvent(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, String host, String place) {
         Event event = Event.builder()
                 .name(name)
                 .startEvent(startEvent)
@@ -26,8 +27,8 @@ public class EventServiceImpl implements EventService {
                 .premiumPrice(premiumPrice)
                 .saleDegree(saleDegree)
                 .casting(casting)
-                .totalSeat(totalSeat)
-                .remainSeat(totalSeat) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
+                .totalSeat(TOTALSEAT)
+                .remainSeat(TOTALSEAT) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
                 .host(host)
                 .place(place)
                 .build();

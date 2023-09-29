@@ -41,7 +41,7 @@ public class EventServiceTest {
         when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
 
         // when
-        Long savedEventId = eventService.saveEvent(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, totalSeat, host, place);
+        Long savedEventId = eventService.saveEvent(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place);
 
         // then
         verify(eventRepository, times(1)).save(any(Event.class));
