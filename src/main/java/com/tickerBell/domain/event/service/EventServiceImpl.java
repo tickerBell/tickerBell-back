@@ -23,6 +23,8 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final MemberRepository memberRepository;
 
+    @Override
+    @Transactional
     public Long saveEvent(Long memberId, String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, String host, String place, Integer age) {
 
         Member findMember = memberRepository.findById(memberId).orElseThrow(
