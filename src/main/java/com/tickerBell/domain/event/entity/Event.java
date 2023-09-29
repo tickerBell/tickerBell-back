@@ -28,9 +28,10 @@ public class Event extends BaseEntity {
     private Integer remainSeat; // 남은 좌석 수
     private String host; // 주최자, 스폰서 (, 로 구분해서 저장)
     private String place; // 주소
+    private Integer age; // 제한연령
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place) {
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place, Integer age) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -42,5 +43,6 @@ public class Event extends BaseEntity {
         this.remainSeat = remainSeat;
         this.host = host;
         this.place = place;
+        this.age = age;
     }
 }

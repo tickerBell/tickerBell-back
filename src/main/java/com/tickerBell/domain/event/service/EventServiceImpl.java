@@ -18,7 +18,7 @@ public class EventServiceImpl implements EventService {
     private final Integer TOTALSEAT = 60; // 총 좌석 수 60으로 고정
     private final EventRepository eventRepository;
 
-    public Long saveEvent(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, String host, String place) {
+    public Long saveEvent(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, String host, String place, Integer age) {
         Event event = Event.builder()
                 .name(name)
                 .startEvent(startEvent)
