@@ -7,12 +7,15 @@ import lombok.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class Category {
 
     @Id
     @GeneratedValue
     @Column(name = "category_id")
     private Long id;
+    private String name; // 카테고리 명
 
     @Enumerated(EnumType.STRING)
     private Categories categories; // 카테고리 명
