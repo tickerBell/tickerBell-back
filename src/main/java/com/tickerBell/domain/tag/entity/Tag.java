@@ -8,17 +8,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag extends BaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "tag_id")
     private Long id;
 
-    private String name; // 태그 명
+    private String tagName; // 태그 명
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
@@ -26,4 +24,11 @@ public class Tag extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @Builder
+    public Tag(String tagName, Event event, Member member) {
+        this.tagName = tagName;
+        this.event = event;
+        this.member = member;
+    }
 }
