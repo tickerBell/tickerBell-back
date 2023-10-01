@@ -38,8 +38,8 @@ public class SaveEventRequest {
     private Boolean isSpecialB;
     @Schema(description = "C 좌석 특별석 여부", example = "true")
     private Boolean isSpecialC;
-    @Schema(description = "카테고리", example = "[\"MUSICAL\", \"CONCERT\"]")
-    private List<Categories> categories;
+    @Schema(description = "카테고리", example = "[뮤지컬, 콘서트, 공연, 클래식, 스포츠] 중 하나만 STRING 으로 요청")
+    private String categoryName;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags;
 }
