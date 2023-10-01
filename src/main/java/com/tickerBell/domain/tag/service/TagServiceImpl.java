@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
