@@ -1,5 +1,6 @@
 package com.tickerBell.domain.event.repository;
 
+import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
@@ -39,6 +40,7 @@ class EventRepositoryTest {
         String host = "mockHost";
         String place = "mockPlace";
         Integer age = 18;
+        Category category = Category.MUSICAL;
         Event event = Event.builder()
                 .name(name)
                 .startEvent(startEvent)
@@ -52,6 +54,7 @@ class EventRepositoryTest {
                 .host(host)
                 .place(place)
                 .age(age)
+                .category(category)
                 .member(member)
                 .build();
 
@@ -73,6 +76,9 @@ class EventRepositoryTest {
         assertThat(savedEvent.getHost()).isEqualTo(event.getHost());
         assertThat(savedEvent.getPlace()).isEqualTo(event.getPlace());
         assertThat(savedEvent.getAge()).isEqualTo(event.getAge());
+        assertThat(savedEvent.getCategory()).isEqualTo(event.getCategory());
+        assertThat(savedEvent.getCategory().name()).isEqualTo(event.getCategory().name());
+        assertThat(savedEvent.getCategory().getDescription()).isEqualTo(event.getCategory().getDescription());
         assertThat(savedEvent.getMember()).isEqualTo(savedMember);
     }
 }

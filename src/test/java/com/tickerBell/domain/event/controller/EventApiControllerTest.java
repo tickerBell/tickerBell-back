@@ -1,8 +1,8 @@
 package com.tickerBell.domain.event.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tickerBell.domain.category.entity.Categories;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
+import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import org.junit.jupiter.api.AfterEach;
@@ -84,10 +84,7 @@ public class EventApiControllerTest {
         request.setIsSpecialA(true);
         request.setIsSpecialB(true);
         request.setIsSpecialC(true);
-        List<Categories> categories = new ArrayList<>();
-        categories.add(Categories.MUSICAL);
-        categories.add(Categories.PLAY);
-        request.setCategories(categories);
+        request.setCategory(Category.CONCERT);
         List<String> tags = new ArrayList<>();
         tags.add("tag1");
         request.setTags(tags);

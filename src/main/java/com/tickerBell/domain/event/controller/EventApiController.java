@@ -1,7 +1,5 @@
 package com.tickerBell.domain.event.controller;
 
-import com.tickerBell.domain.category.entity.Categories;
-import com.tickerBell.domain.category.service.CategoryService;
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.service.EventService;
@@ -27,7 +25,6 @@ import java.util.List;
 public class EventApiController {
 
     private final EventService eventService;
-    private final CategoryService categoryService;
     private final SpecialSeatService specialSeatService;
     private final TagService tagService;
 
@@ -50,14 +47,7 @@ public class EventApiController {
                 request.getHost(),
                 request.getPlace(),
                 request.getAge(),
-                request.getCategoryName());
-
-
-        // 카테고리 저장
-//        List<Categories> categories = request.getCategories();
-//        for (Categories category : categories) {
-//            categoryService.saveCategory(savedEventId, category);
-//        }
+                request.getCategory());
 
         // 특수석 저장
         specialSeatService.saveSpecialSeat(savedEventId, request.getIsSpecialA(), request.getIsSpecialB(), request.getIsSpecialC());
