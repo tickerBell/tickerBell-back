@@ -2,6 +2,7 @@ package com.tickerBell.domain.event.controller;
 
 import com.tickerBell.domain.category.entity.Categories;
 import com.tickerBell.domain.category.service.CategoryService;
+import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.service.EventService;
 import com.tickerBell.domain.member.entity.Member;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,13 +49,15 @@ public class EventApiController {
                 request.getCasting(),
                 request.getHost(),
                 request.getPlace(),
-                request.getAge());
+                request.getAge(),
+                request.getCategoryName());
+
 
         // 카테고리 저장
-        List<Categories> categories = request.getCategories();
-        for (Categories category : categories) {
-            categoryService.saveCategory(savedEventId, category);
-        }
+//        List<Categories> categories = request.getCategories();
+//        for (Categories category : categories) {
+//            categoryService.saveCategory(savedEventId, category);
+//        }
 
         // 특수석 저장
         specialSeatService.saveSpecialSeat(savedEventId, request.getIsSpecialA(), request.getIsSpecialB(), request.getIsSpecialC());
@@ -65,5 +69,12 @@ public class EventApiController {
         }
 
         return ResponseEntity.ok(new Response("이벤트 등록에 성공하였습니다."));
+    }
+
+
+    @PostMapping("api/event/{categoryName}")
+    public ResponseEntity<Response> getEventByCategory(@PathVariable("categoryName") String categoryName) {
+        List<EventListResponse> eventListResponseList = eventService.getEventByCategory(categoryName);
+        return ResponseEntity.ok(new Response(eventListResponseList, "카테고리에 해당하는 event 목록 반환 완료"));
     }
 }

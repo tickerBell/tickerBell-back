@@ -20,13 +20,13 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private Categories categories; // 카테고리 명
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-
-    @Builder
-    public Category(Categories categories, Event event) {
-        this.categories = categories;
-        this.event = event;
-    }
+//    @ManyToOne
+//    @JoinColumn(name = "event_id")
+//    private Event event;
+//
+//    @Builder
+//    public Category(Categories categories, Event event) {
+//        this.categories = categories;
+//        this.event = event;
+//    }
 }

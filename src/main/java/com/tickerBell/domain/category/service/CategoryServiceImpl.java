@@ -27,13 +27,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Long saveCategory(Long eventId, Categories categories) {
-        Event findEvent = eventRepository.findById(eventId).orElseThrow(
-                () -> new CustomException(ErrorCode.EVENT_NOT_FOUND)
-        );
+//        Event findEvent = eventRepository.findById(eventId).orElseThrow(
+//                () -> new CustomException(ErrorCode.EVENT_NOT_FOUND)
+//        );
 
         Category category = Category.builder()
                 .categories(categories)
-                .event(findEvent)
+//                .event(findEvent)
                 .build();
         Category savedCategory = categoryRepository.save(category);
 
@@ -49,12 +49,6 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryResponseList;
     }
 
-    @Override
-    public List<CategoryResponse> getCategoryListByEvent(Long eventId) {
-        List<CategoryResponse> categoryResponseList = categoryRepository.findByEventId(eventId).stream()
-                .map(category -> CategoryResponse.from(category))
-                .collect(Collectors.toList());
-        log.info("eventId 에 해당하는 category 조회");
-        return categoryResponseList;
-    }
+
+
 }
