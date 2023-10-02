@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface EventService {
     Long saveEvent(Long memberId, String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, String host, String place, Integer age, Category category);
-    List<EventListResponse> getEventByCategory(String categoryName);
+    List<EventListResponse> getEventByCategory(Category category);
 }

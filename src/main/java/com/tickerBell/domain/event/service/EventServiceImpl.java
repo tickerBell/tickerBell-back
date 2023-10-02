@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -55,8 +56,15 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventListResponse> getEventByCategory(String categoryName) {
-        return null;
+    public List<EventListResponse> getEventByCategory(Category category) {
+        List<Event> findEventsByCategory = eventRepository.findByCategory(category);
+        List<EventListResponse> responses = new ArrayList<>();
+        for (Event event : findEventsByCategory) {
+            EventListResponse response = EventListResponse.from(event);
+            responses.add(response);
+        }
+
+        return responses;
     }
 }
 
