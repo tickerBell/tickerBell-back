@@ -2,6 +2,7 @@ package com.tickerBell.domain.event.controller;
 
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
+import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.specialseat.service.SpecialSeatService;
@@ -62,9 +63,9 @@ public class EventApiController {
     }
 
 
-    @PostMapping("api/event/{categoryName}")
-    public ResponseEntity<Response> getEventByCategory(@PathVariable("categoryName") String categoryName) {
-        List<EventListResponse> eventListResponseList = eventService.getEventByCategory(categoryName);
+    @PostMapping("api/event/{category}")
+    public ResponseEntity<Response> getEventByCategory(@PathVariable("category") Category category) {
+        List<EventListResponse> eventListResponseList = eventService.getEventByCategory(category);
         return ResponseEntity.ok(new Response(eventListResponseList, "카테고리에 해당하는 event 목록 반환 완료"));
     }
 }
