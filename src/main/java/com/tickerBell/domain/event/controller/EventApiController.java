@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -63,7 +60,7 @@ public class EventApiController {
     }
 
 
-    @PostMapping("api/event/{category}")
+    @GetMapping("api/event/{category}")
     public ResponseEntity<Response> getEventByCategory(@PathVariable("category") Category category) {
         List<EventListResponse> eventListResponseList = eventService.getEventByCategory(category);
         return ResponseEntity.ok(new Response(eventListResponseList, "카테고리에 해당하는 event 목록 반환 완료"));
