@@ -1,5 +1,6 @@
 package com.tickerBell.domain.event.service;
 
+import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
@@ -16,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -92,5 +95,24 @@ public class EventServiceTest {
             assertThat(ex.getStatus()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getStatus().toString());
             assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
         });
+    }
+
+    @Test
+    @DisplayName("카테고리를 이용한 이벤트 조회 테스트")
+    void getEventByCategoryTest() {
+        // given
+        Category category = Category.SPORTS;
+        List<Event> events = new ArrayList<>();
+        events.add(Event.builder().build());
+
+        // stub
+        when(eventRepository.findByCategory(category)).thenReturn(events);
+
+        // when
+        List<EventListResponse> eventsResponse = eventService.getEventByCategory(category);
+
+        // then
+        assertThat(eventsResponse).isNotEmpty();
+        verify(eventRepository, times(1)).findByCategory(category);
     }
 }
