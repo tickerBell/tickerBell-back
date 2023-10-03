@@ -22,19 +22,14 @@ public class SpecialSeatServiceImpl implements SpecialSeatService {
 
     @Override
     @Transactional
-    public Long saveSpecialSeat(Long eventId, Boolean isSpecialSeatA, Boolean isSpecialSeatB, Boolean isSpecialSeatC) {
-        Event findEvent = eventRepository.findById(eventId).orElseThrow(
-                () -> new CustomException(ErrorCode.EVENT_NOT_FOUND)
-        );
-
+    public SpecialSeat saveSpecialSeat(Boolean isSpecialSeatA, Boolean isSpecialSeatB, Boolean isSpecialSeatC) {
         SpecialSeat specialSeat = SpecialSeat.builder()
                 .isSpecialSeatA(isSpecialSeatA)
                 .isSpecialSeatB(isSpecialSeatB)
                 .isSpecialSeatC(isSpecialSeatC)
-                .event(findEvent)
                 .build();
         SpecialSeat savedSpecialSeat = specialSeatRepository.save(specialSeat);
 
-        return savedSpecialSeat.getId();
+        return savedSpecialSeat;
     }
 }

@@ -2,6 +2,7 @@ package com.tickerBell.domain.event.entity;
 
 import com.tickerBell.domain.common.BaseEntity;
 import com.tickerBell.domain.member.entity.Member;
+import com.tickerBell.domain.specialseat.entity.SpecialSeat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,11 +36,15 @@ public class Event extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Category category; // 카테고리
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "장member_id")
+    @JoinColumn(name = "member_id")
     private Member member; // 이벤트, 회원 N : 1 다대일 단방향 맵핑
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "special_seat_id")
+    private SpecialSeat specialSeat;
+
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place, Integer age, Category category, Member member) {
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place, Integer age, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -54,5 +59,6 @@ public class Event extends BaseEntity {
         this.age = age;
         this.category = category;
         this.member = member;
+        this.specialSeat = specialSeat;
     }
 }

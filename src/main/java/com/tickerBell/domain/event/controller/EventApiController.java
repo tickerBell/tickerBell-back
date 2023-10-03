@@ -48,7 +48,7 @@ public class EventApiController {
                 request.getCategory());
 
         // 특수석 저장
-        specialSeatService.saveSpecialSeat(savedEventId, request.getIsSpecialA(), request.getIsSpecialB(), request.getIsSpecialC());
+        specialSeatService.saveSpecialSeat(request.getIsSpecialA(), request.getIsSpecialB(), request.getIsSpecialC());
 
         // 태그 저장
         List<String> tags = request.getTags();
@@ -56,6 +56,19 @@ public class EventApiController {
             tagService.saveTag(tag, savedEventId, loginMember.getId());
         }
 
+        return ResponseEntity.ok(new Response("이벤트 등록에 성공하였습니다."));
+    }
+
+    /**
+     * event 저장 코드 [dgjinsu]
+     */
+    @PostMapping("/api/event2")
+    public ResponseEntity<Response> saveEvent2(@RequestBody SaveEventRequest request,
+                                              @AuthenticationPrincipal MemberContext memberContext) {
+        // 로그인한 회원 객체 조회
+        Member loginMember = memberContext.getMember();
+        // 이벤트, 특수석, 태그 저장
+        eventService.saveEvent2(loginMember.getId(), request);
         return ResponseEntity.ok(new Response("이벤트 등록에 성공하였습니다."));
     }
 

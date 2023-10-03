@@ -28,13 +28,10 @@ class SpecialSeatRepositoryTest {
         // given
         Member member = Member.builder().build();
         Member savedMember = memberRepository.save(member);
-        Event event = Event.builder().member(savedMember).build();
-        Event savedEvent = eventRepository.save(event);
         SpecialSeat specialSeat = SpecialSeat.builder()
                 .isSpecialSeatA(true)
                 .isSpecialSeatB(true)
                 .isSpecialSeatC(true)
-                .event(event)
                 .build();
 
         // when
@@ -46,6 +43,5 @@ class SpecialSeatRepositoryTest {
         assertThat(savedSpecialSeat.getIsSpecialSeatA()).isEqualTo(specialSeat.getIsSpecialSeatA());
         assertThat(savedSpecialSeat.getIsSpecialSeatB()).isEqualTo(specialSeat.getIsSpecialSeatB());
         assertThat(savedSpecialSeat.getIsSpecialSeatC()).isEqualTo(specialSeat.getIsSpecialSeatC());
-        assertThat(savedSpecialSeat.getEvent()).isEqualTo(specialSeat.getEvent());
     }
 }

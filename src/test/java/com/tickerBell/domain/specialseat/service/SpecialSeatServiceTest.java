@@ -41,11 +41,10 @@ public class SpecialSeatServiceTest {
         Boolean isSpecialSeatC = true;
 
         // stub
-        when(eventRepository.findById(eventId)).thenReturn(Optional.of(Event.builder().build()));
         when(specialSeatRepository.save(any(SpecialSeat.class))).thenReturn(SpecialSeat.builder().build());
 
         // when
-        specialSeatService.saveSpecialSeat(eventId, isSpecialSeatA, isSpecialSeatB, isSpecialSeatC);
+        specialSeatService.saveSpecialSeat(isSpecialSeatA, isSpecialSeatB, isSpecialSeatC);
 
         // then
         verify(eventRepository, times(1)).findById(eventId);
@@ -53,29 +52,30 @@ public class SpecialSeatServiceTest {
     }
 
 
-    @Test
-    @DisplayName("특수석 저장 이벤트 조회 실패 테스트")
-    void saveSpecialSeatEventFailTest() {
-        // given
-        Long eventId = 1L;
-        Boolean isSpecialSeatA = true;
-        Boolean isSpecialSeatB = true;
-        Boolean isSpecialSeatC = true;
-
-        // stub
-        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
-
-        // when
-        AbstractObjectAssert<?, CustomException> extracting =
-                assertThatThrownBy(() -> specialSeatService.saveSpecialSeat(eventId, isSpecialSeatA, isSpecialSeatB, isSpecialSeatC))
-                        .isInstanceOf(CustomException.class)
-                        .extracting(ex -> (CustomException) ex);
-
-        // then
-        extracting.satisfies(ex -> {
-            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.EVENT_NOT_FOUND);
-            assertThat(ex.getStatus()).isEqualTo(ErrorCode.EVENT_NOT_FOUND.getStatus().toString());
-            assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.EVENT_NOT_FOUND.getErrorMessage());
-        });
-    }
+    // 이벤트 -> 특수성 단방향으로 변경
+//    @Test
+//    @DisplayName("특수석 저장 이벤트 조회 실패 테스트")
+//    void saveSpecialSeatEventFailTest() {
+//        // given
+//        Long eventId = 1L;
+//        Boolean isSpecialSeatA = true;
+//        Boolean isSpecialSeatB = true;
+//        Boolean isSpecialSeatC = true;
+//
+//        // stub
+//        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+//
+//        // when
+//        AbstractObjectAssert<?, CustomException> extracting =
+//                assertThatThrownBy(() -> specialSeatService.saveSpecialSeat(eventId, isSpecialSeatA, isSpecialSeatB, isSpecialSeatC))
+//                        .isInstanceOf(CustomException.class)
+//                        .extracting(ex -> (CustomException) ex);
+//
+//        // then
+//        extracting.satisfies(ex -> {
+//            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.EVENT_NOT_FOUND);
+//            assertThat(ex.getStatus()).isEqualTo(ErrorCode.EVENT_NOT_FOUND.getStatus().toString());
+//            assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.EVENT_NOT_FOUND.getErrorMessage());
+//        });
+//    }
 }

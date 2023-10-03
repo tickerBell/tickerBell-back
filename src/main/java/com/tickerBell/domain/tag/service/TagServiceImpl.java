@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -41,5 +43,10 @@ public class TagServiceImpl implements TagService {
         Tag savedTag = tagRepository.save(tag);
 
         return savedTag.getId();
+    }
+
+    @Override
+    public Integer saveTagList(List<Tag> tagList) {
+        return tagRepository.saveAll(tagList).size();
     }
 }

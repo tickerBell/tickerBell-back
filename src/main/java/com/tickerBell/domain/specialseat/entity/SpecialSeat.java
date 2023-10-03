@@ -21,15 +21,11 @@ public class SpecialSeat {
     private Boolean isSpecialSeatB; // B 좌석이 특수석인가
     private Boolean isSpecialSeatC; // C 좌석이 특수석인가
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
-    private Event event; // 이벤트, 특수석 N : 1 다대일 단방향 맵핑
 
     @Builder
-    public SpecialSeat(Boolean isSpecialSeatA, Boolean isSpecialSeatB, Boolean isSpecialSeatC, Event event) {
+    public SpecialSeat(Boolean isSpecialSeatA, Boolean isSpecialSeatB, Boolean isSpecialSeatC) {
         this.isSpecialSeatA = isSpecialSeatA;
         this.isSpecialSeatB = isSpecialSeatB;
         this.isSpecialSeatC = isSpecialSeatC;
-        this.event = event;
     }
 }
