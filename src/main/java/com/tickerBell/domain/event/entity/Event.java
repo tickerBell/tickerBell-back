@@ -21,7 +21,7 @@ public class Event extends BaseEntity {
 
     private String name; // 이벤트 이름
     private LocalDateTime startEvent; // 이벤트 시작 시간
-    private LocalDateTime endEvent; // 이벤트 시작 시간
+    private LocalDateTime endEvent; // 이벤트 종료 시간
     private Integer normalPrice; // 일반 좌석 가격
     private Integer premiumPrice; // 앞열 좌석 가격
     private Float saleDegree; // 1.0 이상: n 원 할인  |  1.0 미만: n 퍼센트 할인
