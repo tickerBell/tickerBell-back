@@ -16,6 +16,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByCategory(@Param("category") Category category);
 
     @Query("select e from Event e where e.startEvent >= :tomorrowStart and e.startEvent <= :tomorrowEnd")
-    List<Event> findEventsTomorrow(@Param("tomorrowStart") LocalDateTime tomorrowStart, @Param("tomorrowEnd") LocalDateTime tomorrowEnd
-    );
+    List<Event> findEventsTomorrow(@Param("tomorrowStart") LocalDateTime tomorrowStart, @Param("tomorrowEnd") LocalDateTime tomorrowEnd);
+
+    @Query("select e from Event e join fetch e.specialSeat s where e.id = :eventId")
+    List<Event> findByIdWithSpecialSeat(@Param("eventId") Long eventId);
 }

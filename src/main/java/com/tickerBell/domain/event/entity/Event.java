@@ -25,7 +25,7 @@ public class Event extends BaseEntity {
     private LocalDateTime endEvent; // 이벤트 종료 시간
     private Integer normalPrice; // 일반 좌석 가격
     private Integer premiumPrice; // 앞열 좌석 가격
-    private Float saleDegree; // 1.0 이상: n 원 할인  |  1.0 미만: n 퍼센트 할인
+    private Float saleDegree; // 1.0 이상: n 원 할인  |  1.0 미만: n 퍼센트 할인 | 0: 세일 x
     @Column(columnDefinition = "TEXT")
     private String casting; // 출연진 정보 (, 로 구분해서 저장)
     private Integer totalSeat; // 전체 좌석 수
