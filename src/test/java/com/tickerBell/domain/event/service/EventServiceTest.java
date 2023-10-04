@@ -1,6 +1,7 @@
 package com.tickerBell.domain.event.service;
 
 import com.tickerBell.domain.event.dtos.EventListResponse;
+import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
@@ -51,13 +52,13 @@ public class EventServiceTest {
         String place = "mockPlace";
         Integer age = 18;
         Category category = Category.PLAY;
-
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
         when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
 
         // when
-        Long savedEventId = eventService.saveEvent(memberId, name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, category);
+        Long savedEventId = eventService.saveEvent(memberId, saveEventRequest);
 
         // then
         verify(eventRepository, times(1)).save(any(Event.class));
@@ -79,13 +80,15 @@ public class EventServiceTest {
         String place = "mockPlace";
         Integer age = 18;
         Category category = Category.SPORTS;
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
+
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
         // when
         AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(
-                () -> eventService.saveEvent(memberId, name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, category))
+                () -> eventService.saveEvent(memberId, saveEventRequest))
                 .isInstanceOf(CustomException.class)
                 .extracting(ex -> (CustomException) ex);
 

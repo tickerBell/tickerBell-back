@@ -37,36 +37,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public Long saveEvent(Long memberId, String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, String host, String place, Integer age, Category category) {
-
-        Member findMember = memberRepository.findById(memberId).orElseThrow(
-                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
-        );
-
-
-        Event event = Event.builder()
-                .name(name)
-                .startEvent(startEvent)
-                .endEvent(endEvent)
-                .normalPrice(normalPrice)
-                .premiumPrice(premiumPrice)
-                .saleDegree(saleDegree)
-                .casting(casting)
-                .totalSeat(TOTALSEAT)
-                .remainSeat(TOTALSEAT) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
-                .host(host)
-                .place(place)
-                .member(findMember)
-                .category(category) // [category] 추가
-                .build();
-
-        Event savedEvent = eventRepository.save(event);
-        return savedEvent.getId();
-    }
-
-    @Override
-    @Transactional
-    public Long saveEvent2(Long memberId, SaveEventRequest request) {
+    public Long saveEvent(Long memberId, SaveEventRequest request) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 

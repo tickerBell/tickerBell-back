@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
-    Long saveEvent(Long memberId, String name, LocalDateTime startEvent, LocalDateTime endEvent, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, String host, String place, Integer age, Category category);
-    Long saveEvent2(Long memberId, SaveEventRequest request);
+    Long saveEvent(Long memberId, SaveEventRequest request);
     List<EventListResponse> getEventByCategory(Category category);
 }
