@@ -78,8 +78,10 @@ public class OauthServiceImpl implements OauthService{
         if ("true".equals(kakaoAccountMap.get("has_birthday").toString())) {
             responseMap.put("birthday", kakaoAccountMap.get("birthday").toString());
         }
+        // 비 회원 정보 담기
+        responseMap.put("isMember", "false");
 
-        // todo: 현재 email 이 필수항목은 아니지만 필수항목이라 가정
+        // 현재 email 이 필수항목은 아니지만 필수항목이라 가정
         Optional<Member> findMember = memberRepository.findByUsername(responseMap.get("email"));
 
         if (findMember.isPresent()) {
@@ -91,6 +93,7 @@ public class OauthServiceImpl implements OauthService{
             LoginResponse loginResponse = LoginResponse.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
+                    .isMember(true)
                     .build();
             // 로그인 완료 시 토큰과 함께 반환
             return ResponseEntity.ok(new Response(loginResponse, "카카오 로그인 성공"));
@@ -104,9 +107,10 @@ public class OauthServiceImpl implements OauthService{
 
 
     public TokenResponse getToken(TokenRequest tokenRequest) {
+        log.info("카카오 서버에 토큰 요청 보냄");
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", GRANT_TYPE);
-        formData.add("redirect_uri", REDIRECT_URI);
+        formData.add("redirect_uri", REDIRECT_URI); // redirect_uri 와 일치해야 합니다
         formData.add("client_id", CLIENT_ID);
         formData.add("code", tokenRequest.getCode());
 
@@ -123,9 +127,8 @@ public class OauthServiceImpl implements OauthService{
     }
 
     public Map<String, Object> getUserInfo(String accessToken) {
-        /**
-         * accessToken으로 로그인 사용자가 동의한 정보 확인하기
-         */
+        log.info("카카오 서버에서 User 정보 조회");
+        // accessToken으로 로그인 사용자가 동의한 정보 확인하기
         // webClient 설정
         WebClient kakaoApiWebClient =
                 WebClient.builder()

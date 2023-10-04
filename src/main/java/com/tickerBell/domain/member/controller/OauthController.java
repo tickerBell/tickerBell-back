@@ -23,6 +23,8 @@ public class OauthController {
             @PathVariable("registrationId") String registrationId
             , @RequestParam("code") String code
             , @RequestParam(required = false ,value = "state") String state) {
+
+        log.info("registrationId 응답 완료: " + registrationId);
         log.info("auth code 응답 완료: " + code);
         log.info("state 응답 완료: " + state);
         return

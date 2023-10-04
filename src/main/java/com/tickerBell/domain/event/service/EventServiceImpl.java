@@ -55,6 +55,7 @@ public class EventServiceImpl implements EventService {
                 .casting(request.getCasting())
                 .totalSeat(TOTALSEAT)
                 .remainSeat(TOTALSEAT) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
+                .age(request.getAge())
                 .host(request.getHost())
                 .place(request.getPlace())
                 .category(request.getCategory())
