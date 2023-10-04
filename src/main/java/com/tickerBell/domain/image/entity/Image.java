@@ -20,7 +20,7 @@ public class Image extends BaseEntity {
     private String storeImgName; // 저장된 사진 명
     private String s3Url; // s3 url 주소
     private Boolean isThumbnail; // 썸네일 여부
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
 

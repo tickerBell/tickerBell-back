@@ -18,12 +18,14 @@ public class Ticketing extends BaseEntity {
     @Column(name = "ticketing_id")
     private Long id;
 
-    private String name; // 태그 명
-    @ManyToOne
+    private String seatInfo; // 선택 좌석
+    private Integer payment; // 지불 금액
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 }

@@ -17,11 +17,11 @@ public class Tag extends BaseEntity {
     private Long id;
 
     private String tagName; // 태그 명
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
