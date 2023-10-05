@@ -1,6 +1,7 @@
 package com.tickerBell.domain.event.service;
 
 import com.tickerBell.domain.event.dtos.EventListResponse;
+import com.tickerBell.domain.event.dtos.EventResponse;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
@@ -18,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -85,6 +85,13 @@ public class EventServiceImpl implements EventService {
         }
 
         return responses;
+    }
+
+    @Override
+    public EventResponse findByIdFetchAll(Long eventId) {
+        Event findEvent = eventRepository.findByIdFetchAll(eventId);
+        EventResponse response = EventResponse.from(findEvent);
+        return response;
     }
 }
 
