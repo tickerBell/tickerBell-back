@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface SelectedSeatService {
     Integer saveSelectedSeat(List<SelectedSeat> selectedSeatList);
-//    List<SelectedSeatResponse> findSelectedSeatByTicketing(Long ticketingId);
+    void validCheckSeatInfo(Long eventId, String seatInfo);
+
 }

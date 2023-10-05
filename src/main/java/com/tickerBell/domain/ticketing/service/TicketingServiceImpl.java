@@ -32,6 +32,8 @@ public class TicketingServiceImpl implements TicketingService {
     private final EventRepository eventRepository;
     private final SelectedSeatService selectedSeatService;
 
+    // todo: 이미 공연이 끝난 ticketing 에 대해서 spring batch 로 처리
+
     @Override
     @Transactional
     public void saveTicketing(Long memberId, TicketingRequest request) {
@@ -54,6 +56,9 @@ public class TicketingServiceImpl implements TicketingService {
 
         List<SelectedSeat> selectedSeatList = new ArrayList<>();
         for (String seatInfo : request.getSelectedSeat()) {
+            // 이미 선택된 좌석인지 check
+            // 선택 좌석 최대 개수가 2개이기 때문에 좌석 하나씩 체크
+            selectedSeatService.validCheckSeatInfo(event.getId(), seatInfo);
             String[] parts = seatInfo.split("-");
             float seatPrice;
             // A좌석 선택
@@ -106,6 +111,7 @@ public class TicketingServiceImpl implements TicketingService {
         return ticketingResponseList;
     }
 
+    // 할인된 가격 계산
     private float getSeatPrice(float saleDegree, int price) {
         float seatPrice = 0;
         if (saleDegree == 0) { // 할인 x

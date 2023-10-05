@@ -25,7 +25,8 @@ public class ScheduledJob {
     private final SmsService smsService;
     private final TicketingRepository ticketingRepository;
 
-    @Scheduled(cron = "0 0 20 * * *", zone = "Asia/Seoul") // 초 분 시 일 월 요일
+    // todo: 조회해서 문자 보내는 과정을 spring batch 로 변경
+//    @Scheduled(cron = "0 0 20 * * *", zone = "Asia/Seoul") // 초 분 시 일 월 요일
     public void sendReminderMessages() throws UnsupportedEncodingException, ParseException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
         log.info("스케줄러 실행");
         LocalDateTime tomorrow  = LocalDateTime.now().plusDays(1);
@@ -40,17 +41,16 @@ public class ScheduledJob {
 
         log.info(tomorrowMonth + "월 " + tomorrowDay + "일 에 해당하는 " + "예매 내역 조회 후 예매자에게 문자 발송");
 
+        // 다음 날 있는 예매 조회
         List<Ticketing> ticketingTomorrow = ticketingRepository.findTicketingTomorrow(tomorrowStart, tomorrowEnd);
-        List<Member> memberList = ticketingTomorrow.stream()
-                .map(Ticketing::getMember)
-                .collect(Collectors.toList());
 
+        // 문자 발송
         for (Ticketing ticketing : ticketingTomorrow) {
             smsService.sendSms(ticketing.getMember().getPhone(), makeContent(ticketing));
         }
-
     }
 
+    // sms content 생성
     private String makeContent(Ticketing ticketing) {
         String eventName = ticketing.getEvent().getName();
         LocalDateTime startEvent = ticketing.getEvent().getStartEvent();
