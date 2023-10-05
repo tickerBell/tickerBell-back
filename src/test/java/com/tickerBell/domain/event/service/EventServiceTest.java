@@ -157,6 +157,53 @@ public class EventServiceTest {
         assertThat(eventResponse.getIsSpecialSeatC()).isEqualTo(mockEvent.getSpecialSeat().getIsSpecialSeatC());
     }
 
+    @Test
+    @DisplayName("discount 메서드 분기 테스트")
+    void discountTest() {
+        // given
+        for (int i = 0; i < 3; i++) {
+
+            if (i == 0) {
+                Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), 1000F);
+                Long eventId = 1L;
+
+                // stub
+                when(eventRepository.findByIdFetchAll(eventId)).thenReturn(mockEvent);
+
+                // when
+                EventResponse eventResponse = eventService.findByIdFetchAll(eventId);
+
+                // then
+                assertThat(eventResponse.getDiscountNormalPrice()).isEqualTo(mockEvent.getNormalPrice() - mockEvent.getSaleDegree());
+            } else if (i == 1) {
+                Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), -1F);
+                Long eventId = 1L;
+
+                // stub
+                when(eventRepository.findByIdFetchAll(eventId)).thenReturn(mockEvent);
+
+                // when
+                EventResponse eventResponse = eventService.findByIdFetchAll(eventId);
+
+                // then
+                assertThat(eventResponse.getDiscountNormalPrice()).isEqualTo(mockEvent.getNormalPrice().floatValue());
+            } else {
+                Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), null);
+                Long eventId = 1L;
+
+                // stub
+                when(eventRepository.findByIdFetchAll(eventId)).thenReturn(mockEvent);
+
+                // when
+                EventResponse eventResponse = eventService.findByIdFetchAll(eventId);
+
+                // then
+                assertThat(eventResponse.getDiscountNormalPrice()).isEqualTo(mockEvent.getNormalPrice().floatValue());
+            }
+        }
+
+    }
+
     private Member createMockMember() {
         return Member.builder().build();
     }
