@@ -60,9 +60,13 @@ public class EventServiceTest {
         String place = "mockPlace";
         Integer age = 18;
         Category category = Category.PLAY;
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
+        List<String> tags = new ArrayList<>();
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
+        when(specialSeatService.saveSpecialSeat(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(SpecialSeat.builder().build());
+        when(tagService.saveTagList(any(List.class))).thenReturn(1);
         when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
 
         // when
