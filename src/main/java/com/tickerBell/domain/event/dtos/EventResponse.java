@@ -24,7 +24,7 @@ public class EventResponse {
     private Float discountPremiumPrice;
     private String host;
     private String place;
-    private Integer age;
+    private Boolean isAdult;
     private Category category;
     private Boolean isSpecialSeatA;
     private Boolean isSpecialSeatB;
@@ -41,7 +41,7 @@ public class EventResponse {
                 .discountPremiumPrice(discount(event.getPremiumPrice(), event.getSaleDegree()))
                 .host(event.getHost())
                 .place(event.getPlace())
-                .age(event.getAge())
+                .isAdult(event.getIsAdult())
                 .category(event.getCategory())
                 .isSpecialSeatA(event.getSpecialSeat().getIsSpecialSeatA())
                 .isSpecialSeatB(event.getSpecialSeat().getIsSpecialSeatB())

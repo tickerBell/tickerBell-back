@@ -59,7 +59,7 @@ public class InitDB {
                     .casting("출연자1")
                     .totalSeat(60)
                     .host("호스트1")
-                    .age(20)
+                    .isAdult(true)
                     .remainSeat(60)
                     .place("장소1")
                     .category(Category.CONCERT)

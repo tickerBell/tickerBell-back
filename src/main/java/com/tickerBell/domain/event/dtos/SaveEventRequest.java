@@ -32,8 +32,8 @@ public class SaveEventRequest {
     private String host;
     @Schema(description = "이벤트 장소", example = "서울특별시")
     private String place;
-    @Schema(description = "연령제한", example = "18")
-    private Integer age;
+    @Schema(description = "성인여부", example = "true")
+    private Boolean isAdult;
     @Schema(description = "A 좌석 특별석 여부", example = "true")
     private Boolean isSpecialA;
     @Schema(description = "B 좌석 특별석 여부", example = "true")
