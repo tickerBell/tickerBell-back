@@ -36,8 +36,7 @@ public class EventApiController {
         return ResponseEntity.ok(new Response("이벤트 등록에 성공하였습니다."));
     }
 
-
-    @GetMapping("api/event/{category}")
+    @GetMapping("api/events/{category}")
     public ResponseEntity<Response> getEventByCategory(@PathVariable("category") Category category) {
         List<EventListResponse> eventListResponseList = eventService.getEventByCategory(category);
         return ResponseEntity.ok(new Response(eventListResponseList, "카테고리에 해당하는 event 목록 반환 완료"));
