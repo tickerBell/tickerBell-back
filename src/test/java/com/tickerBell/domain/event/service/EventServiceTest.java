@@ -58,10 +58,10 @@ public class EventServiceTest {
         String casting = "mockCasting";
         String host = "mockHost";
         String place = "mockPlace";
-        Integer age = 18;
+        Boolean isAdult = true;
         Category category = Category.PLAY;
         List<String> tags = new ArrayList<>();
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -90,9 +90,9 @@ public class EventServiceTest {
         String casting = "mockCasting";
         String host = "mockHost";
         String place = "mockPlace";
-        Integer age = 18;
+        Boolean isAdult = true;
         Category category = Category.SPORTS;
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, age, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
 
 
         // stub
@@ -154,7 +154,7 @@ public class EventServiceTest {
         assertThat(eventResponse.getDiscountPremiumPrice()).isEqualTo(mockEvent.getPremiumPrice() - ((Float) (mockEvent.getPremiumPrice() * mockEvent.getSaleDegree())));
         assertThat(eventResponse.getHost()).isEqualTo(mockEvent.getHost());
         assertThat(eventResponse.getPlace()).isEqualTo(mockEvent.getPlace());
-        assertThat(eventResponse.getAge()).isEqualTo(mockEvent.getAge());
+        assertThat(eventResponse.getIsAdult()).isEqualTo(mockEvent.getIsAdult());
         assertThat(eventResponse.getCategory()).isEqualTo(mockEvent.getCategory());
         assertThat(eventResponse.getIsSpecialSeatA()).isEqualTo(mockEvent.getSpecialSeat().getIsSpecialSeatA());
         assertThat(eventResponse.getIsSpecialSeatB()).isEqualTo(mockEvent.getSpecialSeat().getIsSpecialSeatB());
@@ -233,7 +233,7 @@ public class EventServiceTest {
                 .remainSeat(60)
                 .host("host")
                 .place("place")
-                .age(18)
+                .isAdult(true)
                 .category(Category.CONCERT)
                 .member(member)
                 .specialSeat(specialSeat)

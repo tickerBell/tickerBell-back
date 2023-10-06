@@ -38,7 +38,7 @@ public class InitDB {
         private final BCryptPasswordEncoder encoder;
 
         public void initMember() {
-            Member member1 = Member.builder().username("abcdefg").password(encoder.encode("abcdefg1")).phone("01031725949").email("email@gmail.com")
+            Member member1 = Member.builder().username("abcdefg").password(encoder.encode("abcdefg1")).phone("01031725949").isAdult(true)
                     .role(Role.ROLE_REGISTRANT).authProvider(AuthProvider.KAKAO).build();
             em.persist(member1);
 
@@ -59,7 +59,7 @@ public class InitDB {
                     .casting("출연자1")
                     .totalSeat(60)
                     .host("호스트1")
-                    .age(20)
+                    .isAdult(true)
                     .remainSeat(60)
                     .place("장소1")
                     .category(Category.CONCERT)

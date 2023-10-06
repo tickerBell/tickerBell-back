@@ -3,6 +3,7 @@ package com.tickerBell.domain.event.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
+import com.tickerBell.domain.event.service.EventService;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import org.junit.jupiter.api.AfterEach;
@@ -24,6 +25,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -35,6 +37,8 @@ public class EventApiControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private EventService eventService;
     @Autowired
     private PlatformTransactionManager transactionManager;
     private TransactionStatus transactionStatus;
@@ -80,7 +84,7 @@ public class EventApiControllerTest {
         request.setCasting("mockCasting");
         request.setHost("mockHost");
         request.setPlace("mockPlace");
-        request.setAge(18);
+        request.setIsAdult(false);
         request.setIsSpecialA(true);
         request.setIsSpecialB(true);
         request.setIsSpecialC(true);
@@ -89,5 +93,43 @@ public class EventApiControllerTest {
         tags.add("tag1");
         request.setTags(tags);
         return request;
+    }
+
+    @Test
+    @DisplayName("카테고리를 통해 이벤트 조회 테스트")
+    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void getEventByCategoryTest() throws Exception {
+        // todo
+    }
+
+    @Test
+    @DisplayName("이벤트 PK를 통한 이벤트 조회 테스트")
+    void getEventById() throws Exception {
+        // given
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", "email@naver.com", Role.ROLE_REGISTRANT, null);
+        Long testEventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/event/{eventId}", testEventId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value("mockName"))
+                .andExpect(jsonPath("$.data.startEvent").isEmpty())
+                .andExpect(jsonPath("$.data.endEvent").isEmpty())
+                .andExpect(jsonPath("$.data.normalPrice").value(10000))
+                .andExpect(jsonPath("$.data.premiumPrice").value(15000))
+                .andExpect(jsonPath("$.data.discountNormalPrice").value(9000))
+                .andExpect(jsonPath("$.data.discountPremiumPrice").value(14000))
+                .andExpect(jsonPath("$.data.host").value("mockHost"))
+                .andExpect(jsonPath("$.data.place").value("mockPlace"))
+                .andExpect(jsonPath("$.data.isAdult").value(false))
+                .andExpect(jsonPath("$.data.category").value(Category.CONCERT.name()))
+                .andExpect(jsonPath("$.data.isSpecialSeatA").value(true))
+                .andExpect(jsonPath("$.data.isSpecialSeatB").value(true))
+                .andExpect(jsonPath("$.data.isSpecialSeatC").value(true))
+                .andExpect(jsonPath("$.message").value("이벤트 상세 데이터 반환 완료"));
     }
 }

@@ -45,7 +45,7 @@ class EventRepositoryTest {
         Integer remainSeat = 60 ;
         String host = "mockHost";
         String place = "mockPlace";
-        Integer age = 18;
+        Boolean isAdult = false;
         Category category = Category.MUSICAL;
         Event event = Event.builder()
                 .name(name)
@@ -59,7 +59,7 @@ class EventRepositoryTest {
                 .remainSeat(remainSeat)
                 .host(host)
                 .place(place)
-                .age(age)
+                .isAdult(isAdult)
                 .category(category)
                 .member(member)
                 .specialSeat(specialSeat)
@@ -82,7 +82,7 @@ class EventRepositoryTest {
         assertThat(savedEvent.getRemainSeat()).isEqualTo(event.getRemainSeat());
         assertThat(savedEvent.getHost()).isEqualTo(event.getHost());
         assertThat(savedEvent.getPlace()).isEqualTo(event.getPlace());
-        assertThat(savedEvent.getAge()).isEqualTo(event.getAge());
+        assertThat(savedEvent.getIsAdult()).isEqualTo(event.getIsAdult());
         assertThat(savedEvent.getCategory()).isEqualTo(event.getCategory());
         assertThat(savedEvent.getCategory().name()).isEqualTo(event.getCategory().name());
         assertThat(savedEvent.getCategory().getDescription()).isEqualTo(event.getCategory().getDescription());
@@ -110,7 +110,7 @@ class EventRepositoryTest {
         Integer remainSeat = 60 ;
         String host = "mockHost";
         String place = "mockPlace";
-        Integer age = 18;
+        Boolean isAdult = true;
         Category category = Category.MUSICAL;
         Event event = Event.builder()
                 .name(name)
@@ -124,7 +124,7 @@ class EventRepositoryTest {
                 .remainSeat(remainSeat)
                 .host(host)
                 .place(place)
-                .age(age)
+                .isAdult(isAdult)
                 .category(category)
                 .member(member)
                 .specialSeat(savedSpecialSeat)
