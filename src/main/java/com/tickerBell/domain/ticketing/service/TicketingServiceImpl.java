@@ -104,6 +104,9 @@ public class TicketingServiceImpl implements TicketingService {
         }
         Integer savedSelectedSeatCount = selectedSeatService.saveSelectedSeat(selectedSeatList);
         log.info("저장된 선택 좌석 수: " + savedSelectedSeatCount);
+
+        // event 남은 좌석 수 업데이트
+        event.setRemainSeat(event.getRemainSeat() - savedSelectedSeatCount);
     }
 
     @Override
@@ -181,6 +184,9 @@ public class TicketingServiceImpl implements TicketingService {
         }
         Integer savedSelectedSeatCount = selectedSeatService.saveSelectedSeat(selectedSeatList);
         log.info("저장된 선택 좌석 수: " + savedSelectedSeatCount);
+
+        // event 남은 좌석 수 업데이트
+        event.setRemainSeat(event.getRemainSeat() - savedSelectedSeatCount);
     }
 
     @Override
@@ -195,8 +201,8 @@ public class TicketingServiceImpl implements TicketingService {
     }
 
     @Override
-    public List<TicketingResponse> getTicketingHistoryNonMember(TicketingHistoryNonMemberRequest request) {
-         NonMember nonMember = nonMemberRepository.findByNameAndPhone(request.getName(), request.getPhone())
+    public List<TicketingResponse> getTicketingHistoryNonMember(String name, String phone) {
+         NonMember nonMember = nonMemberRepository.findByNameAndPhone(name, phone)
                 .orElseThrow(() -> new CustomException(ErrorCode.NON_MEMBER_NOT_FOUND));
 
          List<TicketingResponse> ticketingResponseList = ticketingRepository.findByNonMemberId(nonMember.getId()).stream()

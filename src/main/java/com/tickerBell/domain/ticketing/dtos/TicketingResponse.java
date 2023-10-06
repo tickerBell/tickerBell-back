@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class TicketingResponse {
 
     private Long ticketingId; // 예매 pk
-    private Integer payment; // 지불 금액
+    private Float payment; // 지불 금액
     private List<SelectedSeatResponse> selectedSeatResponseList; // 선택한 좌석 정보 (위치, 가격)
     private EventHistoryResponse eventHistoryResponse; // 예매한 공연 정보
     private Boolean isPast; // 현재 시점으로부터 지난 예매인지 여부
@@ -27,6 +27,10 @@ public class TicketingResponse {
         List<SelectedSeatResponse> selectedSeatResponseList = ticketing.getSelectedSeatList().stream()
                 .map(selectedSeat -> SelectedSeatResponse.from(selectedSeat))
                 .collect(Collectors.toList());
+        Float payment = 0F;
+        for (SelectedSeatResponse selectedSeatResponse : selectedSeatResponseList) {
+            payment += selectedSeatResponse.getSeatPrice();
+        }
         // event dto 변환
         EventHistoryResponse eventHistoryResponse = EventHistoryResponse.from(ticketing.getEvent());
 
@@ -37,6 +41,7 @@ public class TicketingResponse {
                 .ticketingId(ticketing.getId())
                 .selectedSeatResponseList(selectedSeatResponseList)
                 .eventHistoryResponse(eventHistoryResponse)
+                .payment(payment)
                 .isPast(isPast)
                 .build();
     }

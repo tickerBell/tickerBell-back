@@ -14,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -53,9 +50,10 @@ public class TicketingController {
         return ResponseEntity.ok(new Response(ticketingResponseList, "예매 정보 반환"));
     }
     @Operation(summary = "이벤트 비회원 조회", description = "비회원일 때 이벤트 조회")
-    @GetMapping("/ticketing")
-    public ResponseEntity<Response> ticketingHistoryNonMember(@RequestBody TicketingHistoryNonMemberRequest request) {
-        List<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistoryNonMember(request);
+    @GetMapping("/ticketing-nonMember")
+    public ResponseEntity<Response> ticketingHistoryNonMember(@RequestParam("name") String name,
+                                                              @RequestParam("phone") String phone) {
+        List<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistoryNonMember(name, phone);
         return ResponseEntity.ok(new Response(ticketingResponseList, "예매 정보 반환"));
     }
 }
