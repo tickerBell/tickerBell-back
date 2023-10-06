@@ -17,4 +17,7 @@ public interface TicketingRepository extends JpaRepository<Ticketing, Long> {
 
     @Query("select t from Ticketing t join fetch t.event e where t.member.id = :memberId")
     List<Ticketing> findByMemberId(@Param("memberId") Long memberId);
+
+    @Query("select t from Ticketing t join fetch t.event e where t.nonMember.id = :nonMemberId")
+    List<Ticketing> findByNonMemberId(@Param("nonMemberId") Long nonMemberId);
 }
