@@ -38,7 +38,7 @@ public class InitDB {
         private final BCryptPasswordEncoder encoder;
 
         public void initMember() {
-            Member member1 = Member.builder().username("abcdefg").password(encoder.encode("abcdefg1")).phone("01031725949").email("email@gmail.com")
+            Member member1 = Member.builder().username("abcdefg").password(encoder.encode("abcdefg1")).phone("01031725949").isAdult(true)
                     .role(Role.ROLE_REGISTRANT).authProvider(AuthProvider.KAKAO).build();
             em.persist(member1);
 
