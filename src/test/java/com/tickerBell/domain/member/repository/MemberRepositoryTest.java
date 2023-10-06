@@ -39,7 +39,7 @@ class MemberRepositoryTest {
                 .username("username")
                 .password("password")
                 .phone("phone")
-                .email("email")
+                .isAdult(true)
                 .role(Role.ROLE_USER)
                 .authProvider(AuthProvider.KAKAO)
                 .build();
@@ -52,7 +52,7 @@ class MemberRepositoryTest {
         assertThat(savedMember.getUsername()).isEqualTo(member.getUsername());
         assertThat(savedMember.getPassword()).isEqualTo(member.getPassword());
         assertThat(savedMember.getPhone()).isEqualTo(member.getPhone());
-        assertThat(savedMember.getEmail()).isEqualTo(member.getEmail());
+        assertThat(savedMember.getIsAdult()).isEqualTo(member.getIsAdult());
         assertThat(savedMember.getRole()).isEqualTo(member.getRole());
         assertThat(savedMember.getRole().getDescription()).isEqualTo(member.getRole().getDescription());
         assertThat(savedMember.getAuthProvider()).isEqualTo(member.getAuthProvider());

@@ -39,7 +39,7 @@ public class MemberServiceImpl implements MemberService{
                 .username(username)
                 .password(passwordEncoder.encode(password))
                 .phone(phone)
-                .email(email)
+                .isAdult(true)
                 .role(role)
                 .authProvider(authProvider)
                 .build();
