@@ -17,7 +17,7 @@ public class CustomException extends RuntimeException {
     }
     // errorMessage 생성자
     public CustomException(String errorMessage) {
-        super(message);
+        super(errorMessage);
         this.errorMessage = errorMessage;
     }
 }
