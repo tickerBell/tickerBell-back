@@ -16,3 +16,9 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+  batch:
+    jdbc:
+      initialize-schema: always # batch repo 테이블 자동 생성
+    job:
+      enabled: false # 시작과 동시에 실행되는 것 방지

@@ -5,7 +5,9 @@ import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
+import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
+import com.tickerBell.domain.ticketing.entity.Ticketing;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +54,7 @@ public class InitDB {
             Event event = Event.builder()
                     .name("이벤트1")
                     .startEvent(LocalDateTime.now().plusDays(1))
-                    .endEvent(LocalDateTime.now().plusDays(2))
+                    .endEvent(LocalDateTime.now().plusDays(1).plusHours(1))
                     .normalPrice(10000)
                     .premiumPrice(150000)
                     .saleDegree(2000F)
@@ -66,8 +68,21 @@ public class InitDB {
                     .member(member1)
                     .specialSeat(specialSeat)
                     .build();
-
             em.persist(event);
+
+
+            Ticketing ticketing = Ticketing.builder()
+                    .event(event)
+                    .member(member1)
+                    .build();
+            em.persist(ticketing);
+            SelectedSeat selectedSeat = SelectedSeat.builder()
+                    .seatInfo("A-1")
+                    .seatPrice(15000)
+                    .ticketing(ticketing)
+                    .build();
+
+            em.persist(selectedSeat);
         }
     }
 }
