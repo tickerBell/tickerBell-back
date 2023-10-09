@@ -1,10 +1,14 @@
 package com.tickerBell.domain.member.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.tickerBell.domain.member.dtos.JoinSmsValidationRequest;
+import com.tickerBell.domain.member.dtos.JoinSmsValidationResponse;
 import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.domain.sms.service.SmsService;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.domain.member.dtos.LoginResponse;
@@ -16,6 +20,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.util.Random;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,6 +37,7 @@ public class MemberServiceImpl implements MemberService{
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
+    private final SmsService smsService;
 
     @Override
     @Transactional
@@ -106,4 +118,17 @@ public class MemberServiceImpl implements MemberService{
                 .build();
     }
 
+    @Override
+    public JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request) {
+        Random random = new Random();
+        // 1000부터 9999 랜덤 생성
+        int randomNumber = random.nextInt(9000) + 1000;
+        String content = "[tickerBell] 본인확인 인증번호 [" + randomNumber + "] 입니다.";
+        try {
+            smsService.sendSms(request.getPhone(), content);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.SMS_SEND_FAIL);
+        }
+        return new JoinSmsValidationResponse(randomNumber);
+    }
 }

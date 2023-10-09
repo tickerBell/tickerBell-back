@@ -1,13 +1,10 @@
 package com.tickerBell.domain.member.controller;
 
-import com.tickerBell.domain.member.dtos.JoinMemberRequest;
-import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
+import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.global.dto.Response;
-import com.tickerBell.domain.member.dtos.LoginRequest;
-import com.tickerBell.domain.member.dtos.LoginResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +53,13 @@ public class MemberApiController {
         LoginResponse loginResponse = memberService.login(loginRequest.getUsername(), loginRequest.getPassword());
 
         return ResponseEntity.ok(new Response(loginResponse, "로그인이 완료되었습니다."));
+    }
+
+    @Operation(summary = "문자인증 회원가입")
+    @PostMapping("/api/join/sms-validation")
+    public ResponseEntity<Response> joinSmsValidation(@RequestBody JoinSmsValidationRequest request) {
+        JoinSmsValidationResponse joinSmsValidationResponse = memberService.joinSmsValidation(request);
+        return ResponseEntity.ok(new Response(joinSmsValidationResponse, "발송한 랜덤 코드 4자리 반환"));
     }
 
     private Role checkRole(Boolean isRegistration) {

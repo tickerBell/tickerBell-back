@@ -25,7 +25,8 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "등록되지 않은 Category 입니다."),
     SEAT_INFO_NOT_VALID_FORMAT(HttpStatus.BAD_REQUEST, "선택 좌석의 형식이 올바르지 않습니다. A-1, B-1 형식으로 보내주세요"),
     SALE_DEGREE_NOT_VALID_FORMAT(HttpStatus.BAD_REQUEST, "세일 degree 형식이 올바르지 않습니다."),
-    ALREADY_SELECTED_SEAT(HttpStatus.BAD_REQUEST, "이미 선택된 좌석입니다. 다른 좌석을 선택해주세요");
+    ALREADY_SELECTED_SEAT(HttpStatus.BAD_REQUEST, "이미 선택된 좌석입니다. 다른 좌석을 선택해주세요"),
+    SMS_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "sms 문자 전송 중 에러가 발생했습니다.");
 
     private final HttpStatus status;
     private final String errorMessage;
