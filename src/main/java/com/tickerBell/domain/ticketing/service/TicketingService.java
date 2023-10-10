@@ -12,4 +12,5 @@ public interface TicketingService {
     void saveTicketingNonMember(TicketingNonMemberRequest request);
     List<TicketingResponse> getTicketingHistory(Long memberId);
     List<TicketingResponse> getTicketingHistoryNonMember(String name, String phone);
+    void cancelTicketing(Long memberId, Long ticketingId);
 }

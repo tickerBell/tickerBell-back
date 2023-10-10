@@ -211,6 +211,26 @@ public class TicketingServiceImpl implements TicketingService {
         return ticketingResponseList;
     }
 
+    @Override
+    @Transactional
+    public void cancelTicketing(Long memberId, Long ticketingId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Ticketing ticketing = ticketingRepository.findByIdWithEvent(ticketingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKETING_NOT_FOUND));
+
+        // remain seat 수 업데이트
+        Event event = ticketing.getEvent();
+        event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
+
+        try {
+            ticketingRepository.deleteByMemberAndTicketing(member.getId(), ticketing.getId());
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
+        }
+    }
+
     // 할인된 가격 계산
     private float getSeatPrice(float saleDegree, int price) {
         float seatPrice = 0;

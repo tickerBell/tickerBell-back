@@ -31,7 +31,7 @@ public class Ticketing extends BaseEntity {
     private Member member;
 
     // 양방향 매핑
-    @OneToMany(mappedBy = "ticketing")
+    @OneToMany(mappedBy = "ticketing", cascade = CascadeType.REMOVE)
     private List<SelectedSeat> selectedSeatList;
 
     @ManyToOne(fetch = FetchType.LAZY)
