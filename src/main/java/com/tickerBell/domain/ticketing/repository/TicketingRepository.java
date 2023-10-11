@@ -23,7 +23,7 @@ public interface TicketingRepository extends JpaRepository<Ticketing, Long> {
     @Query("select t from Ticketing t join fetch t.event e where t.nonMember.id = :nonMemberId")
     List<Ticketing> findByNonMemberId(@Param("nonMemberId") Long nonMemberId);
 
-    @Modifying
+    @Modifying(clearAutomatically = true)
     @Query("delete from Ticketing t where t.member.id = :memberId and t.id = :ticketingId")
     void deleteByMemberAndTicketing(@Param("memberId") Long memberId, @Param("ticketingId") Long ticketingId);
 

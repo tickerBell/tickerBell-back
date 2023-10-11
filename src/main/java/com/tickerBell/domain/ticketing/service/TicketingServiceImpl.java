@@ -211,7 +211,6 @@ public class TicketingServiceImpl implements TicketingService {
     public void cancelTicketing(Long memberId, Long ticketingId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
         Ticketing ticketing = ticketingRepository.findByIdWithEvent(ticketingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKETING_NOT_FOUND));
 
@@ -219,12 +218,11 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
 
-        selectedSeatService.deleteBySelectedSeatList(ticketing.getSelectedSeatList());
-
-//         연관관계를 끊어주지 않으면 selectedSeat 에 대한 delete 쿼리 나가지 않음
-        ticketing.setSelectedSeatList(null);
-
-        ticketingRepository.deleteByMemberAndTicketing(member.getId(), ticketing.getId());
+        try {
+            ticketingRepository.delete(ticketing);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
+        }
     }
 
     @Override
@@ -236,8 +234,9 @@ public class TicketingServiceImpl implements TicketingService {
         // remain seat 수 업데이트
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
+        
         try {
-            ticketingRepository.deleteById(ticketing.getId());
+            ticketingRepository.delete(ticketing);
         } catch (Exception e) {
             throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
         }
