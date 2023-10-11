@@ -6,6 +6,7 @@ import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.NonMember;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.repository.NonMemberRepository;
+import com.tickerBell.domain.selectedSeat.repository.SelectedSeatRepository;
 import com.tickerBell.domain.selectedSeat.service.SelectedSeatService;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
 import com.tickerBell.domain.ticketing.dtos.TicketingHistoryNonMemberRequest;
@@ -37,6 +38,7 @@ public class TicketingServiceImpl implements TicketingService {
     private final EventRepository eventRepository;
     private final SelectedSeatService selectedSeatService;
     private final NonMemberRepository nonMemberRepository;
+    private final SelectedSeatRepository selectedSeatRepository;
 
     // todo: 이미 공연이 끝난 ticketing 에 대해서 spring batch 로 처리
 
@@ -71,8 +73,7 @@ public class TicketingServiceImpl implements TicketingService {
             if (parts[0].equals("A")) {
                 if (specialSeat.getIsSpecialSeatA()) {
                     seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
-                }
-                else {
+                } else {
                     seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
                 }
             }
@@ -80,8 +81,7 @@ public class TicketingServiceImpl implements TicketingService {
             else if (parts[0].equals("B")) {
                 if (specialSeat.getIsSpecialSeatB()) {
                     seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
-                }
-                else {
+                } else {
                     seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
                 }
             }
@@ -89,12 +89,10 @@ public class TicketingServiceImpl implements TicketingService {
             else if (parts[0].equals("C")) {
                 if (specialSeat.getIsSpecialSeatC()) {
                     seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
-                }
-                else {
+                } else {
                     seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
                 }
-            }
-            else {
+            } else {
                 // A, B, C 로 구분할 수 없다면 예외
                 throw new CustomException(ErrorCode.SEAT_INFO_NOT_VALID_FORMAT);
             }
@@ -151,8 +149,7 @@ public class TicketingServiceImpl implements TicketingService {
             if (parts[0].equals("A")) {
                 if (specialSeat.getIsSpecialSeatA()) {
                     seatPrice = event.getPremiumPrice();
-                }
-                else {
+                } else {
                     seatPrice = event.getNormalPrice();
                 }
             }
@@ -160,8 +157,7 @@ public class TicketingServiceImpl implements TicketingService {
             else if (parts[0].equals("B")) {
                 if (specialSeat.getIsSpecialSeatB()) {
                     seatPrice = event.getPremiumPrice();
-                }
-                else {
+                } else {
                     seatPrice = event.getNormalPrice();
                 }
             }
@@ -169,12 +165,10 @@ public class TicketingServiceImpl implements TicketingService {
             else if (parts[0].equals("C")) {
                 if (specialSeat.getIsSpecialSeatC()) {
                     seatPrice = event.getPremiumPrice();
-                }
-                else {
+                } else {
                     seatPrice = event.getNormalPrice();
                 }
-            }
-            else {
+            } else {
                 // A, B, C 로 구분할 수 없다면 예외
                 throw new CustomException(ErrorCode.SEAT_INFO_NOT_VALID_FORMAT);
             }
@@ -202,15 +196,16 @@ public class TicketingServiceImpl implements TicketingService {
 
     @Override
     public List<TicketingResponse> getTicketingHistoryNonMember(String name, String phone) {
-         NonMember nonMember = nonMemberRepository.findByNameAndPhone(name, phone)
+        NonMember nonMember = nonMemberRepository.findByNameAndPhone(name, phone)
                 .orElseThrow(() -> new CustomException(ErrorCode.NON_MEMBER_NOT_FOUND));
 
-         List<TicketingResponse> ticketingResponseList = ticketingRepository.findByNonMemberId(nonMember.getId()).stream()
-                 .map(ticketing -> TicketingResponse.from(ticketing))
-                 .collect(Collectors.toList());
+        List<TicketingResponse> ticketingResponseList = ticketingRepository.findByNonMemberId(nonMember.getId()).stream()
+                .map(ticketing -> TicketingResponse.from(ticketing))
+                .collect(Collectors.toList());
         return ticketingResponseList;
     }
 
+    // todo: cancelTicketing, cancelTicketingNonMember 오류남. 수정 필요
     @Override
     @Transactional
     public void cancelTicketing(Long memberId, Long ticketingId) {
@@ -224,8 +219,25 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
 
+        selectedSeatService.deleteBySelectedSeatList(ticketing.getSelectedSeatList());
+
+//         연관관계를 끊어주지 않으면 selectedSeat 에 대한 delete 쿼리 나가지 않음
+        ticketing.setSelectedSeatList(null);
+
+        ticketingRepository.deleteByMemberAndTicketing(member.getId(), ticketing.getId());
+    }
+
+    @Override
+    @Transactional
+    public void cancelTicketingNonMember(Long ticketingId) {
+        Ticketing ticketing = ticketingRepository.findByIdWithEvent(ticketingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.TICKETING_NOT_FOUND));
+
+        // remain seat 수 업데이트
+        Event event = ticketing.getEvent();
+        event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
         try {
-            ticketingRepository.deleteByMemberAndTicketing(member.getId(), ticketing.getId());
+            ticketingRepository.deleteById(ticketing.getId());
         } catch (Exception e) {
             throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
         }
@@ -236,14 +248,11 @@ public class TicketingServiceImpl implements TicketingService {
         float seatPrice = 0;
         if (saleDegree == 0) { // 할인 x
             seatPrice = price;
-        }
-        else if (saleDegree >= 1.0) { // 상수값 할인
+        } else if (saleDegree >= 1.0) { // 상수값 할인
             seatPrice = price - saleDegree;
-        }
-        else if (saleDegree < 1.0 && saleDegree > 0) { // 퍼센트 할인
+        } else if (saleDegree < 1.0 && saleDegree > 0) { // 퍼센트 할인
             seatPrice = price - (price * saleDegree);
-        }
-        else {
+        } else {
             // saleDegree 가 위 3개에 해당하지 않을 때
             throw new CustomException(ErrorCode.SALE_DEGREE_NOT_VALID_FORMAT);
         }

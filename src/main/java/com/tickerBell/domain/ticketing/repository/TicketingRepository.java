@@ -29,4 +29,6 @@ public interface TicketingRepository extends JpaRepository<Ticketing, Long> {
 
     @Query("select t from Ticketing t join fetch t.event e where t.id = :ticketingId")
     Optional<Ticketing> findByIdWithEvent(@Param("ticketingId") Long ticketingId);
+    @Query("delete from Ticketing t where t.nonMember.id = :nonMemberId")
+    void deleteByNonMember(@Param("nonMemberId") Long nonMemberId);
 }

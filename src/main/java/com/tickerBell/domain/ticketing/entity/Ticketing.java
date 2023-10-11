@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Setter
 @Builder
 public class Ticketing extends BaseEntity {
     @Id

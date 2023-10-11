@@ -65,4 +65,10 @@ public class TicketingController {
         return ResponseEntity.ok(new Response("예매 내역 취소 완료"));
     }
 
+    @Operation(summary = "비회원 예매 취소", description = "비회원일 때 예매 취소")
+    @DeleteMapping("/ticketing-nonMember/{ticketingId}")
+    public ResponseEntity<Response> ticketingCancelNonMember(@PathVariable("ticketingId") Long ticketingId) {
+        ticketingService.cancelTicketingNonMember(ticketingId);
+        return ResponseEntity.ok(new Response("예매 내역 취소 완료"));
+    }
 }

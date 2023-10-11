@@ -13,4 +13,5 @@ public interface TicketingService {
     List<TicketingResponse> getTicketingHistory(Long memberId);
     List<TicketingResponse> getTicketingHistoryNonMember(String name, String phone);
     void cancelTicketing(Long memberId, Long ticketingId);
+    void cancelTicketingNonMember(Long ticketingId);
 }

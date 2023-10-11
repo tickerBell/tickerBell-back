@@ -8,5 +8,5 @@ import java.util.List;
 public interface SelectedSeatService {
     Integer saveSelectedSeat(List<SelectedSeat> selectedSeatList);
     void validCheckSeatInfo(Long eventId, String seatInfo);
-
+    void deleteBySelectedSeatList(List<SelectedSeat> selectedSeatList);
 }

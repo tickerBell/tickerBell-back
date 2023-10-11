@@ -40,4 +40,10 @@ public class SelectedSeatServiceImpl implements SelectedSeatService{
         }
     }
 
+    @Override
+    @Transactional
+    public void deleteBySelectedSeatList(List<SelectedSeat> selectedSeatList) {
+        selectedSeatRepository.deleteAll(selectedSeatList);
+    }
+
 }
