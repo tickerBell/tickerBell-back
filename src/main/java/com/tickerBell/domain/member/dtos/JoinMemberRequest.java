@@ -22,8 +22,6 @@ public class JoinMemberRequest {
     private String password;
     @Schema(description = "핸드폰 번호", example = "01012345678")
     private String phone;
-    @Schema(description = "이메일", example = "email@gmail.com")
-    private String email;
     @Schema(description = "이벤트 등록자: true | 예매자: false", example = "true")
     private Boolean isRegistration;
     @Schema(description = "Oauth 회원가입: true | 일반 회원가입: false", example = "true")

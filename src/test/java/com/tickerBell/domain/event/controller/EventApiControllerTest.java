@@ -47,7 +47,7 @@ public class EventApiControllerTest {
     @BeforeEach
     public void setup() {
         transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
-        memberService.join("username", "testPass1!", "010-1234-5679", "email@naver.com", Role.ROLE_REGISTRANT, null);
+        memberService.join("username", "testPass1!", "010-1234-5679", Role.ROLE_REGISTRANT, null);
     }
 
     @AfterEach
@@ -106,7 +106,7 @@ public class EventApiControllerTest {
     @DisplayName("이벤트 PK를 통한 이벤트 조회 테스트")
     void getEventById() throws Exception {
         // given
-        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", "email@naver.com", Role.ROLE_REGISTRANT, null);
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", Role.ROLE_REGISTRANT, null);
         Long testEventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // when

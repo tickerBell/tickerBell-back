@@ -9,7 +9,7 @@ import com.tickerBell.domain.member.dtos.LoginResponse;
 
 public interface MemberService {
 
-    Long join(String username, String password, String phone, String email, Role role, AuthProvider authProvider);
+    Long join(String username, String password, String phone, Role role, AuthProvider authProvider);
     LoginResponse regenerateToken(RefreshTokenRequest refreshTokenRequest);
     LoginResponse login(String username, String password);
     JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request);

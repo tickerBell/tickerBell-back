@@ -44,7 +44,7 @@ class MemberApiControllerTest {
     public void setup() {
         transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
-        memberService.join("testUsername", "testPassword1!", "testPhone", "testEmail", Role.ROLE_USER, null);
+        memberService.join("testUsername", "testPassword1!", "testPhone", Role.ROLE_USER, null);
     }
 
     @AfterEach
@@ -60,7 +60,6 @@ class MemberApiControllerTest {
         joinMemberRequest.setUsername("username");
         joinMemberRequest.setPassword("pass123");
         joinMemberRequest.setPhone("phone");
-        joinMemberRequest.setEmail("email");
         joinMemberRequest.setIsRegistration(false);
         joinMemberRequest.setIsKakaoJoin(false);
 

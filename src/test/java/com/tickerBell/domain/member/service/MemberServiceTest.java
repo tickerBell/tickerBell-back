@@ -52,7 +52,6 @@ class MemberServiceTest {
         String username = "username";
         String password = "password";
         String phone = "phone";
-        String email = "email";
         Role role = Role.ROLE_USER;
 
         // stub
@@ -61,7 +60,7 @@ class MemberServiceTest {
         when(memberRepository.save(any(Member.class))).thenReturn(Member.builder().build());
 
         // when
-        memberService.join(username, password, phone, email, role, null);
+        memberService.join(username, password, phone, role, null);
 
         // then
         verify(memberRepository, times(1)).findByUsername(username);
@@ -76,14 +75,13 @@ class MemberServiceTest {
         String username = "username";
         String password = "password";
         String phone = "phone";
-        String email = "email";
         Role role = Role.ROLE_USER;
 
         // stub
         when(memberRepository.findByUsername(username)).thenReturn(Optional.of(Member.builder().build()));
 
         // when
-        assertThatThrownBy(() -> memberService.join(username, password, phone, email, role, AuthProvider.NORMAL))
+        assertThatThrownBy(() -> memberService.join(username, password, phone, role, AuthProvider.NORMAL))
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining("이미 존재하는 아이디입니다.");
 
