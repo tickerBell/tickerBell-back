@@ -39,7 +39,9 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<Image> uploadImage(MultipartFile thumbNailImage, List<MultipartFile> multipartFiles) throws IOException {
         List<Image> imageList = new ArrayList<>();
-        multipartFiles.add(thumbNailImage); // 일반 이미지 맨 뒤에 썸네일 이미지 추가
+        // 일반 이미지 맨 뒤에 썸네일 이미지 추가
+        // 썸네일 이미지는 필수 값으로 받아 옴
+        multipartFiles.add(thumbNailImage); 
 
 
         for (MultipartFile multipartFile : multipartFiles) {
@@ -83,11 +85,10 @@ public class ImageServiceImpl implements ImageService {
 
             imageList.add(image);
         }
-        // 맨 뒤 이미지 썸네일 처리
+        // 맨 뒤에 세팅해둔 썸네일 이미지 처리
         imageList.get(imageList.size() - 1).setThumbnail(true);
 
-        // todo: 임시로 저장. 나중에 event 와 연관관계 맺어야 함
-        imageRepository.saveAll(imageList);
+        // todo: 이미지 entity list 반환. 나중에 event 와 연관관계 맺어야 함
         return imageList;
     }
 

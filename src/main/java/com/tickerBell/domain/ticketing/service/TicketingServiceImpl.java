@@ -9,7 +9,6 @@ import com.tickerBell.domain.member.repository.NonMemberRepository;
 import com.tickerBell.domain.selectedSeat.repository.SelectedSeatRepository;
 import com.tickerBell.domain.selectedSeat.service.SelectedSeatService;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
-import com.tickerBell.domain.ticketing.dtos.TicketingHistoryNonMemberRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
@@ -205,12 +204,12 @@ public class TicketingServiceImpl implements TicketingService {
         return ticketingResponseList;
     }
 
-    // todo: cancelTicketing, cancelTicketingNonMember 오류남. 수정 필요
     @Override
     @Transactional
     public void cancelTicketing(Long memberId, Long ticketingId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        // todo: memberId 와 ticketingId 를 조합해 ticketing 조회로 변경
         Ticketing ticketing = ticketingRepository.findByIdWithEvent(ticketingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKETING_NOT_FOUND));
 
