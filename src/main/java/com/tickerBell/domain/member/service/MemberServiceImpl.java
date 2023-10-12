@@ -1,6 +1,5 @@
 package com.tickerBell.domain.member.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tickerBell.domain.member.dtos.JoinSmsValidationRequest;
 import com.tickerBell.domain.member.dtos.JoinSmsValidationResponse;
 import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
@@ -20,11 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.util.Random;
 
 @Slf4j
@@ -41,7 +35,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public Long join(String username, String password, String phone, String email, Role role, AuthProvider authProvider) {
+    public Long join(String username, String password, String phone, Role role, AuthProvider authProvider) {
         // validation 체크
         if(memberRepository.findByUsername(username).isPresent()) {
             throw new CustomException(ErrorCode.MEMBER_ALREADY_EXIST);
