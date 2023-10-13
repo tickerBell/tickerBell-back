@@ -52,6 +52,7 @@ public class EventServiceTest {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime = LocalDateTime.now();
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
@@ -61,7 +62,9 @@ public class EventServiceTest {
         Boolean isAdult = true;
         Category category = Category.PLAY;
         List<String> tags = new ArrayList<>();
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+        tags.add("tag1");
+        tags.add("tag2");
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -84,6 +87,7 @@ public class EventServiceTest {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime = LocalDateTime.now();
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
@@ -92,8 +96,7 @@ public class EventServiceTest {
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.SPORTS;
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
-
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
@@ -110,6 +113,38 @@ public class EventServiceTest {
             assertThat(ex.getStatus()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getStatus().toString());
             assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
         });
+    }
+
+    @Test
+    @DisplayName("구매 가능 시간이 null 일 경우 테스트")
+    void saveEventPurchaseTimeNullTest() {
+        Long memberId = 1L;
+        String name = "mockName";
+        LocalDateTime startEvent = LocalDateTime.now();
+        LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime =  null;
+        Integer normalPrice = 100;
+        Integer premiumPrice = 1000;
+        Float saleDegree = 0.0F;
+        String casting = "mockCasting";
+        String host = "mockHost";
+        String place = "mockPlace";
+        Boolean isAdult = true;
+        Category category = Category.PLAY;
+        List<String> tags = new ArrayList<>();
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
+        when(specialSeatService.saveSpecialSeat(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(SpecialSeat.builder().build());
+        when(tagService.saveTagList(any(List.class))).thenReturn(1);
+        when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
+
+        // when
+        Long savedEventId = eventService.saveEvent(memberId, saveEventRequest);
+
+        // then
+        verify(eventRepository, times(1)).save(any(Event.class));
     }
 
     @Test

@@ -37,6 +37,7 @@ class EventRepositoryTest {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime = LocalDateTime.now();
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
@@ -51,6 +52,7 @@ class EventRepositoryTest {
                 .name(name)
                 .startEvent(startEvent)
                 .endEvent(endEvent)
+                .availablePurchaseTime(availablePurchaseTime)
                 .normalPrice(normalPrice)
                 .premiumPrice(premiumPrice)
                 .saleDegree(saleDegree)
