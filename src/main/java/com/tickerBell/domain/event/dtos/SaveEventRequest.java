@@ -34,8 +34,8 @@ public class SaveEventRequest {
     @Schema(description = "자체할인", example = "1000")
     private Float saleDegree;
     @NotBlank
-    @Schema(description = "배우", example = "출연자1, 출연자2")
-    private String casting;
+    @Schema(description = "배우", example = "[\"출연자1\", \"출연자2\"]")
+    private List<String> castings;
     @NotBlank
     @Schema(description = "주최자", example = "[\"host1\", \"host2\"]")
     private List<String> hosts;

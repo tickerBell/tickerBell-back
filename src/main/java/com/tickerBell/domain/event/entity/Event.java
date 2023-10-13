@@ -26,8 +26,6 @@ public class Event extends BaseEntity {
     private Integer normalPrice; // 일반 좌석 가격
     private Integer premiumPrice; // 앞열 좌석 가격
     private Float saleDegree; // 1.0 이상: n 원 할인  |  1.0 미만: n 퍼센트 할인 | 0: 세일 x
-    @Column(columnDefinition = "TEXT")
-    private String casting; // 출연진 정보 (, 로 구분해서 저장)
     private Integer totalSeat; // 전체 좌석 수
     private Integer remainSeat; // 남은 좌석 수
     private String place; // 주소
@@ -42,7 +40,8 @@ public class Event extends BaseEntity {
     private SpecialSeat specialSeat;
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
+
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -50,7 +49,6 @@ public class Event extends BaseEntity {
         this.normalPrice = normalPrice;
         this.premiumPrice = premiumPrice;
         this.saleDegree = saleDegree;
-        this.casting = casting;
         this.totalSeat = totalSeat;
         this.remainSeat = remainSeat;
         this.place = place;

@@ -69,7 +69,10 @@ public class EventServiceTest {
         List<String> hosts = new ArrayList<>();
         tags.add("host1");
         tags.add("host2");
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, casting, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+        List<String> castings = new ArrayList<>();
+        tags.add("casting1");
+        tags.add("casting2");
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -96,14 +99,16 @@ public class EventServiceTest {
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
+        List<String> castings = new ArrayList<>();
+        castings.add("casting1");
+        castings.add("casting2");
         List<String> hosts = new ArrayList<>();
         hosts.add("host1");
         hosts.add("host2");
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.SPORTS;
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, casting, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
@@ -133,7 +138,9 @@ public class EventServiceTest {
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
+        List<String> castings = new ArrayList<>();
+        castings.add("casting1");
+        castings.add("casting2");
         List<String> hosts = new ArrayList<>();
         hosts.add("host1");
         hosts.add("host2");
@@ -141,7 +148,7 @@ public class EventServiceTest {
         Boolean isAdult = true;
         Category category = Category.PLAY;
         List<String> tags = new ArrayList<>();
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, casting, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -271,7 +278,6 @@ public class EventServiceTest {
                 .normalPrice(10000)
                 .premiumPrice(15000)
                 .saleDegree(saleDegree)
-                .casting("casting")
                 .totalSeat(60)
                 .remainSeat(60)
                 .place("place")

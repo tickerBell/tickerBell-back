@@ -41,10 +41,8 @@ class EventRepositoryTest {
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
         Integer totalSeat = 60;
         Integer remainSeat = 60 ;
-        String host = "mockHost";
         String place = "mockPlace";
         Boolean isAdult = false;
         Category category = Category.MUSICAL;
@@ -56,7 +54,6 @@ class EventRepositoryTest {
                 .normalPrice(normalPrice)
                 .premiumPrice(premiumPrice)
                 .saleDegree(saleDegree)
-                .casting(casting)
                 .totalSeat(totalSeat)
                 .remainSeat(remainSeat)
                 .place(place)
@@ -78,7 +75,6 @@ class EventRepositoryTest {
         assertThat(savedEvent.getNormalPrice()).isEqualTo(event.getNormalPrice());
         assertThat(savedEvent.getPremiumPrice()).isEqualTo(event.getPremiumPrice());
         assertThat(savedEvent.getSaleDegree()).isEqualTo(event.getSaleDegree());
-        assertThat(savedEvent.getCasting()).isEqualTo(event.getCasting());
         assertThat(savedEvent.getTotalSeat()).isEqualTo(event.getTotalSeat());
         assertThat(savedEvent.getRemainSeat()).isEqualTo(event.getRemainSeat());
         assertThat(savedEvent.getPlace()).isEqualTo(event.getPlace());
@@ -105,10 +101,8 @@ class EventRepositoryTest {
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
         Integer totalSeat = 60;
         Integer remainSeat = 60 ;
-        String host = "mockHost";
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.MUSICAL;
@@ -119,7 +113,6 @@ class EventRepositoryTest {
                 .normalPrice(normalPrice)
                 .premiumPrice(premiumPrice)
                 .saleDegree(saleDegree)
-                .casting(casting)
                 .totalSeat(totalSeat)
                 .remainSeat(remainSeat)
                 .place(place)

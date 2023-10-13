@@ -1,5 +1,7 @@
 package com.tickerBell.domain.event.service;
 
+import com.tickerBell.domain.casting.entity.Casting;
+import com.tickerBell.domain.casting.repository.CastingRepository;
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.EventResponse;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
@@ -39,6 +41,7 @@ public class EventServiceImpl implements EventService {
     private final SpecialSeatService specialSeatService;
     private final TagService tagService;
     private final HostRepository hostRepository;
+    private final CastingRepository castingRepository;
 
     @Override
     @Transactional
@@ -60,7 +63,6 @@ public class EventServiceImpl implements EventService {
                 .normalPrice(request.getNormalPrice())
                 .premiumPrice(request.getPremiumPrice())
                 .saleDegree(request.getSaleDegree())
-                .casting(request.getCasting())
                 .totalSeat(TOTALSEAT)
                 .remainSeat(TOTALSEAT) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
                 .isAdult(request.getIsAdult())
@@ -79,9 +81,16 @@ public class EventServiceImpl implements EventService {
         Integer savedTagSize = tagService.saveTagList(tagList);
         log.info("저장된 태그 수: " + savedTagSize);
 
+        // 주최자 저장
         List<String> hosts = request.getHosts();
         for (String host : hosts) {
             hostRepository.save(Host.builder().hostName(host).event(event).build());
+        }
+
+        // 출연자 저장
+        List<String> castings = request.getCastings();
+        for (String casting : castings) {
+            castingRepository.save(Casting.builder().castingName(casting).event(event).build());
         }
 
         return eventRepository.save(event).getId();
