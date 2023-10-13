@@ -81,8 +81,12 @@ public class EventApiControllerTest {
         request.setNormalPrice(10000);
         request.setPremiumPrice(15000);
         request.setSaleDegree(1000F);
-        request.setCasting("mockCasting");
-        request.setHost("mockHost");
+        List<String> castings = new ArrayList<>();
+        castings.add("casting1");
+        request.setCastings(castings);
+        List<String> hosts = new ArrayList<>();
+        hosts.add("host1");
+        request.setHosts(hosts);
         request.setPlace("mockPlace");
         request.setIsAdult(false);
         request.setIsSpecialA(true);

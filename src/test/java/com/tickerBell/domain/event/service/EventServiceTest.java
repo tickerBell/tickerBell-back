@@ -6,6 +6,7 @@ import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
+import com.tickerBell.domain.host.repository.HostRepository;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
@@ -43,6 +44,8 @@ public class EventServiceTest {
     private SpecialSeatService specialSeatService;
     @Mock
     private TagService tagService;
+    @Mock
+    private HostRepository hostRepository;
 
     @Test
     @DisplayName("이벤트 저장 테스트")
@@ -52,16 +55,24 @@ public class EventServiceTest {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime = LocalDateTime.now();
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
         String casting = "mockCasting";
-        String host = "mockHost";
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.PLAY;
         List<String> tags = new ArrayList<>();
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+        tags.add("tag1");
+        tags.add("tag2");
+        List<String> hosts = new ArrayList<>();
+        tags.add("host1");
+        tags.add("host2");
+        List<String> castings = new ArrayList<>();
+        tags.add("casting1");
+        tags.add("casting2");
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -84,16 +95,20 @@ public class EventServiceTest {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime = LocalDateTime.now();
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
-        String host = "mockHost";
+        List<String> castings = new ArrayList<>();
+        castings.add("casting1");
+        castings.add("casting2");
+        List<String> hosts = new ArrayList<>();
+        hosts.add("host1");
+        hosts.add("host2");
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.SPORTS;
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, normalPrice, premiumPrice, saleDegree, casting, host, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
-
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
@@ -110,6 +125,42 @@ public class EventServiceTest {
             assertThat(ex.getStatus()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getStatus().toString());
             assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
         });
+    }
+
+    @Test
+    @DisplayName("구매 가능 시간이 null 일 경우 테스트")
+    void saveEventPurchaseTimeNullTest() {
+        Long memberId = 1L;
+        String name = "mockName";
+        LocalDateTime startEvent = LocalDateTime.now();
+        LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime =  null;
+        Integer normalPrice = 100;
+        Integer premiumPrice = 1000;
+        Float saleDegree = 0.0F;
+        List<String> castings = new ArrayList<>();
+        castings.add("casting1");
+        castings.add("casting2");
+        List<String> hosts = new ArrayList<>();
+        hosts.add("host1");
+        hosts.add("host2");
+        String place = "mockPlace";
+        Boolean isAdult = true;
+        Category category = Category.PLAY;
+        List<String> tags = new ArrayList<>();
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
+        when(specialSeatService.saveSpecialSeat(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(SpecialSeat.builder().build());
+        when(tagService.saveTagList(any(List.class))).thenReturn(1);
+        when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
+
+        // when
+        Long savedEventId = eventService.saveEvent(memberId, saveEventRequest);
+
+        // then
+        verify(eventRepository, times(1)).save(any(Event.class));
     }
 
     @Test
@@ -152,7 +203,6 @@ public class EventServiceTest {
         assertThat(eventResponse.getPremiumPrice()).isEqualTo(mockEvent.getPremiumPrice());
         assertThat(eventResponse.getDiscountNormalPrice()).isEqualTo(mockEvent.getNormalPrice() - ((Float) (mockEvent.getNormalPrice() * mockEvent.getSaleDegree())));
         assertThat(eventResponse.getDiscountPremiumPrice()).isEqualTo(mockEvent.getPremiumPrice() - ((Float) (mockEvent.getPremiumPrice() * mockEvent.getSaleDegree())));
-        assertThat(eventResponse.getHost()).isEqualTo(mockEvent.getHost());
         assertThat(eventResponse.getPlace()).isEqualTo(mockEvent.getPlace());
         assertThat(eventResponse.getIsAdult()).isEqualTo(mockEvent.getIsAdult());
         assertThat(eventResponse.getCategory()).isEqualTo(mockEvent.getCategory());
@@ -228,10 +278,8 @@ public class EventServiceTest {
                 .normalPrice(10000)
                 .premiumPrice(15000)
                 .saleDegree(saleDegree)
-                .casting("casting")
                 .totalSeat(60)
                 .remainSeat(60)
-                .host("host")
                 .place("place")
                 .isAdult(true)
                 .category(Category.CONCERT)

@@ -37,13 +37,12 @@ class EventRepositoryTest {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
+        LocalDateTime availablePurchaseTime = LocalDateTime.now();
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
         Integer totalSeat = 60;
         Integer remainSeat = 60 ;
-        String host = "mockHost";
         String place = "mockPlace";
         Boolean isAdult = false;
         Category category = Category.MUSICAL;
@@ -51,13 +50,12 @@ class EventRepositoryTest {
                 .name(name)
                 .startEvent(startEvent)
                 .endEvent(endEvent)
+                .availablePurchaseTime(availablePurchaseTime)
                 .normalPrice(normalPrice)
                 .premiumPrice(premiumPrice)
                 .saleDegree(saleDegree)
-                .casting(casting)
                 .totalSeat(totalSeat)
                 .remainSeat(remainSeat)
-                .host(host)
                 .place(place)
                 .isAdult(isAdult)
                 .category(category)
@@ -77,10 +75,8 @@ class EventRepositoryTest {
         assertThat(savedEvent.getNormalPrice()).isEqualTo(event.getNormalPrice());
         assertThat(savedEvent.getPremiumPrice()).isEqualTo(event.getPremiumPrice());
         assertThat(savedEvent.getSaleDegree()).isEqualTo(event.getSaleDegree());
-        assertThat(savedEvent.getCasting()).isEqualTo(event.getCasting());
         assertThat(savedEvent.getTotalSeat()).isEqualTo(event.getTotalSeat());
         assertThat(savedEvent.getRemainSeat()).isEqualTo(event.getRemainSeat());
-        assertThat(savedEvent.getHost()).isEqualTo(event.getHost());
         assertThat(savedEvent.getPlace()).isEqualTo(event.getPlace());
         assertThat(savedEvent.getIsAdult()).isEqualTo(event.getIsAdult());
         assertThat(savedEvent.getCategory()).isEqualTo(event.getCategory());
@@ -105,10 +101,8 @@ class EventRepositoryTest {
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
         Integer totalSeat = 60;
         Integer remainSeat = 60 ;
-        String host = "mockHost";
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.MUSICAL;
@@ -119,10 +113,8 @@ class EventRepositoryTest {
                 .normalPrice(normalPrice)
                 .premiumPrice(premiumPrice)
                 .saleDegree(saleDegree)
-                .casting(casting)
                 .totalSeat(totalSeat)
                 .remainSeat(remainSeat)
-                .host(host)
                 .place(place)
                 .isAdult(isAdult)
                 .category(category)
