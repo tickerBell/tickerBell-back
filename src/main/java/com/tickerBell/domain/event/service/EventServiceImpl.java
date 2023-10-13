@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,11 +46,14 @@ public class EventServiceImpl implements EventService {
         // 특수석 정보 저장
         SpecialSeat specialSeat = specialSeatService.saveSpecialSeat(request.getIsSpecialA(), request.getIsSpecialB(), request.getIsSpecialC());
 
+        LocalDateTime availablePurchaseTime = checkAvailablePurchaseTime(request.getAvailablePurchaseTime(), request.getStartEvent());
+
         // event 저장
         Event event = Event.builder()
                 .name(request.getName())
                 .startEvent(request.getStartEvent())
                 .endEvent(request.getEndEvent())
+                .availablePurchaseTime(availablePurchaseTime)
                 .normalPrice(request.getNormalPrice())
                 .premiumPrice(request.getPremiumPrice())
                 .saleDegree(request.getSaleDegree())
@@ -73,6 +78,14 @@ public class EventServiceImpl implements EventService {
         log.info("저장된 태그 수: " + savedTagSize);
 
         return eventRepository.save(event).getId();
+    }
+
+    private LocalDateTime checkAvailablePurchaseTime(LocalDateTime availablePurchaseTime, LocalDateTime startTime) {
+        if (availablePurchaseTime == null) {
+            return startTime.minus(Period.ofWeeks(2)); // 구매 가능 시간이 없으면 시작 시간에서 2주 전 시간 반환
+        } else {
+            return availablePurchaseTime; // 구매 가능 시간이 존재하면 바로 리턴
+        }
     }
 
     @Override
