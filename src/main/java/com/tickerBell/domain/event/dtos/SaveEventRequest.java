@@ -2,6 +2,7 @@ package com.tickerBell.domain.event.dtos;
 
 import com.tickerBell.domain.event.entity.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,24 +15,34 @@ import java.util.List;
 @AllArgsConstructor
 public class SaveEventRequest {
 
+    @NotBlank
     @Schema(description = "이벤트 이름", example = "eventName")
     private String name;
+    @NotBlank
     @Schema(description = "이벤트 시작 시간", example = "2023-09-29T14:30:00")
     private LocalDateTime startEvent;
+    @NotBlank
     @Schema(description = "이벤트 시작 시간", example = "2023-09-30T14:30:00")
     private LocalDateTime endEvent;
+    @Schema(description = "구매 가능 시간", example = "2023-09-30T14:30:00")
+    private LocalDateTime availablePurchaseTime;
+    @NotBlank
     @Schema(description = "일반석 가격", example = "10000")
     private Integer normalPrice;
     @Schema(description = "특수석 가격", example = "15000")
     private Integer premiumPrice;
     @Schema(description = "자체할인", example = "1000")
     private Float saleDegree;
+    @NotBlank
     @Schema(description = "배우", example = "출연자1, 출연자2")
     private String casting;
+    @NotBlank
     @Schema(description = "주최자", example = "host")
     private String host;
+    @NotBlank
     @Schema(description = "이벤트 장소", example = "서울특별시")
     private String place;
+    @NotBlank
     @Schema(description = "성인여부", example = "true")
     private Boolean isAdult;
     @Schema(description = "A 좌석 특별석 여부", example = "true")
@@ -40,6 +51,7 @@ public class SaveEventRequest {
     private Boolean isSpecialB;
     @Schema(description = "C 좌석 특별석 여부", example = "true")
     private Boolean isSpecialC;
+    @NotBlank
     @Schema(description = "카테고리", example = "[MUSICAL, CONCERT, PLAY, CLASSIC, SPORTS] 중 하나만 STRING 으로 요청")
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
