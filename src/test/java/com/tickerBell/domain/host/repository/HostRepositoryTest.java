@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
@@ -33,5 +35,23 @@ class HostRepositoryTest {
         assertThat(savedHost.getId()).isEqualTo(host.getId());
         assertThat(savedHost.getHostName()).isEqualTo(host.getHostName());
         assertThat(savedHost.getEvent()).isEqualTo(host.getEvent());
+    }
+
+    @Test
+    void findByEventIdTest() {
+        // given
+        Event event = Event.builder().build();
+        Event savedEvent = eventRepository.save(event);
+        String hostName = "mockHost";
+        Host host = Host.builder().hostName(hostName).event(savedEvent).build();
+        hostRepository.save(host);
+        Host host2 = Host.builder().hostName(hostName).event(savedEvent).build();
+        hostRepository.save(host2);
+
+        // when
+        List<Host> findHosts = hostRepository.findByEventId(savedEvent.getId());
+
+        // then
+        assertThat(findHosts.size()).isEqualTo(2);
     }
 }
