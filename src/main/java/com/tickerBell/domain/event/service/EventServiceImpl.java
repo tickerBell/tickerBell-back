@@ -6,6 +6,8 @@ import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
+import com.tickerBell.domain.host.entity.Host;
+import com.tickerBell.domain.host.repository.HostRepository;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
@@ -36,6 +38,7 @@ public class EventServiceImpl implements EventService {
     private final MemberRepository memberRepository;
     private final SpecialSeatService specialSeatService;
     private final TagService tagService;
+    private final HostRepository hostRepository;
 
     @Override
     @Transactional
@@ -61,7 +64,6 @@ public class EventServiceImpl implements EventService {
                 .totalSeat(TOTALSEAT)
                 .remainSeat(TOTALSEAT) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
                 .isAdult(request.getIsAdult())
-                .host(request.getHost())
                 .place(request.getPlace())
                 .category(request.getCategory())
                 .member(findMember) // member 연관관계
@@ -76,6 +78,11 @@ public class EventServiceImpl implements EventService {
 
         Integer savedTagSize = tagService.saveTagList(tagList);
         log.info("저장된 태그 수: " + savedTagSize);
+
+        List<String> hosts = request.getHosts();
+        for (String host : hosts) {
+            hostRepository.save(Host.builder().hostName(host).event(event).build());
+        }
 
         return eventRepository.save(event).getId();
     }

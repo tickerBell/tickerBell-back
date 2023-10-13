@@ -59,7 +59,6 @@ class EventRepositoryTest {
                 .casting(casting)
                 .totalSeat(totalSeat)
                 .remainSeat(remainSeat)
-                .host(host)
                 .place(place)
                 .isAdult(isAdult)
                 .category(category)
@@ -82,7 +81,6 @@ class EventRepositoryTest {
         assertThat(savedEvent.getCasting()).isEqualTo(event.getCasting());
         assertThat(savedEvent.getTotalSeat()).isEqualTo(event.getTotalSeat());
         assertThat(savedEvent.getRemainSeat()).isEqualTo(event.getRemainSeat());
-        assertThat(savedEvent.getHost()).isEqualTo(event.getHost());
         assertThat(savedEvent.getPlace()).isEqualTo(event.getPlace());
         assertThat(savedEvent.getIsAdult()).isEqualTo(event.getIsAdult());
         assertThat(savedEvent.getCategory()).isEqualTo(event.getCategory());
@@ -124,7 +122,6 @@ class EventRepositoryTest {
                 .casting(casting)
                 .totalSeat(totalSeat)
                 .remainSeat(remainSeat)
-                .host(host)
                 .place(place)
                 .isAdult(isAdult)
                 .category(category)

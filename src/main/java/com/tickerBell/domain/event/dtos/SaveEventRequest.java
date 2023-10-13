@@ -37,8 +37,8 @@ public class SaveEventRequest {
     @Schema(description = "배우", example = "출연자1, 출연자2")
     private String casting;
     @NotBlank
-    @Schema(description = "주최자", example = "host")
-    private String host;
+    @Schema(description = "주최자", example = "[\"host1\", \"host2\"]")
+    private List<String> hosts;
     @NotBlank
     @Schema(description = "이벤트 장소", example = "서울특별시")
     private String place;

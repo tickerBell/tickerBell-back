@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -22,7 +23,7 @@ public class EventResponse {
     private Integer premiumPrice;
     private Float discountNormalPrice;
     private Float discountPremiumPrice;
-    private String host;
+    private List<String> hosts;
     private String place;
     private Boolean isAdult;
     private Category category;
@@ -30,6 +31,7 @@ public class EventResponse {
     private Boolean isSpecialSeatB;
     private Boolean isSpecialSeatC;
 
+    // todo 주최자 별도 처리
     public static EventResponse from(Event event) {
         return EventResponse.builder()
                 .name(event.getName())
@@ -39,7 +41,6 @@ public class EventResponse {
                 .premiumPrice(event.getPremiumPrice())
                 .discountNormalPrice(discount(event.getNormalPrice(), event.getSaleDegree()))
                 .discountPremiumPrice(discount(event.getPremiumPrice(), event.getSaleDegree()))
-                .host(event.getHost())
                 .place(event.getPlace())
                 .isAdult(event.getIsAdult())
                 .category(event.getCategory())

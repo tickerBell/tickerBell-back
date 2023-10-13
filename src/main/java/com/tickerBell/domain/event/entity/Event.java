@@ -9,10 +9,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class Event extends BaseEntity {
 
     @Id
@@ -31,7 +30,6 @@ public class Event extends BaseEntity {
     private String casting; // 출연진 정보 (, 로 구분해서 저장)
     private Integer totalSeat; // 전체 좌석 수
     private Integer remainSeat; // 남은 좌석 수
-    private String host; // 주최자, 스폰서 (, 로 구분해서 저장)
     private String place; // 주소
     private Boolean isAdult; // 제한연령
     @Enumerated(EnumType.STRING)
@@ -39,13 +37,12 @@ public class Event extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // 이벤트, 회원 N : 1 다대일 단방향 맵핑
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "special_seat_id")
     private SpecialSeat specialSeat;
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String host, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, String casting, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -56,7 +53,6 @@ public class Event extends BaseEntity {
         this.casting = casting;
         this.totalSeat = totalSeat;
         this.remainSeat = remainSeat;
-        this.host = host;
         this.place = place;
         this.isAdult = isAdult;
         this.category = category;
