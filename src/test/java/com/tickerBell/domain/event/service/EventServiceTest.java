@@ -21,6 +21,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -59,7 +61,6 @@ public class EventServiceTest {
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
-        String casting = "mockCasting";
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.PLAY;
@@ -72,7 +73,11 @@ public class EventServiceTest {
         List<String> castings = new ArrayList<>();
         tags.add("casting1");
         tags.add("casting2");
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        List<MultipartFile> eventImages = new ArrayList<>();
+        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
+        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, thumbNailImage, eventImages);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -108,7 +113,11 @@ public class EventServiceTest {
         String place = "mockPlace";
         Boolean isAdult = true;
         Category category = Category.SPORTS;
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
+        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        List<MultipartFile> eventImages = new ArrayList<>();
+        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
+        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null, thumbNailImage, eventImages);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
@@ -148,7 +157,11 @@ public class EventServiceTest {
         Boolean isAdult = true;
         Category category = Category.PLAY;
         List<String> tags = new ArrayList<>();
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
+        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        List<MultipartFile> eventImages = new ArrayList<>();
+        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
+        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, thumbNailImage, eventImages);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));

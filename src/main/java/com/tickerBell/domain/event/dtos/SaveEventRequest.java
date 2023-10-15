@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,4 +57,8 @@ public class SaveEventRequest {
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags;
+    @Schema(description = "썸네일")
+    private MultipartFile thumbNailImage;
+    @Schema(description = "이미지")
+    private List<MultipartFile> eventImages;
 }

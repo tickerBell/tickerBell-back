@@ -21,6 +21,7 @@ public enum ErrorCode {
     REQUEST_INVALID(HttpStatus.BAD_REQUEST, "valid 옵션에 맞지 않는 형식입니다."),
     IMAGE_NOT_SUPPORTED_EXTENSION(HttpStatus.BAD_REQUEST, "지원하지 않는 이미지 형식 입니다. jpg, png 형식으로 보내주세요."),
     IMAGE_NOT_FOUND_EXTENSION(HttpStatus.BAD_REQUEST, "확장자를 찾을 수 없습니다."),
+    IMAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "이미지 처리 중 에러 발생"),
     EVENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "등록되지 않은 Event 입니다."),
     CATEGORY_NOT_FOUND(HttpStatus.BAD_REQUEST, "등록되지 않은 Category 입니다."),
     SEAT_INFO_NOT_VALID_FORMAT(HttpStatus.BAD_REQUEST, "선택 좌석의 형식이 올바르지 않습니다. A-1, B-1 형식으로 보내주세요"),
