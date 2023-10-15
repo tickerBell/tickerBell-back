@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.tickerBell.domain.image.dtos.ImageRequest;
 import com.tickerBell.domain.image.dtos.ImageResponse;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,7 +35,7 @@ public class ImageServiceImpl implements ImageService {
     private String bucket;
 
     @Override
-    public List<Image> uploadImage(MultipartFile thumbNailImage, List<MultipartFile> multipartFiles) throws IOException {
+    public List<Image> uploadImage(MultipartFile thumbNailImage, List<MultipartFile> multipartFiles) {
         List<Image> imageList = new ArrayList<>();
         // 일반 이미지 맨 뒤에 썸네일 이미지 추가
         // 썸네일 이미지는 필수 값으로 받아 옴
@@ -62,7 +60,12 @@ public class ImageServiceImpl implements ImageService {
             // unique 이름 생성
             String storeImageName = createStoreImageName(extension);
 
-            InputStream inputStream = multipartFile.getInputStream();
+            InputStream inputStream = null;
+            try {
+                inputStream = multipartFile.getInputStream();
+            } catch (IOException e) {
+                throw new CustomException(ErrorCode.IMAGE_EXCEPTION);
+            }
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(multipartFile.getSize());
             metadata.setContentType(multipartFile.getContentType());
