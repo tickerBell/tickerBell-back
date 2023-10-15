@@ -6,12 +6,11 @@ import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
 import com.tickerBell.domain.member.entity.Member;
-import com.tickerBell.domain.specialseat.service.SpecialSeatService;
-import com.tickerBell.domain.tag.service.TagService;
 import com.tickerBell.global.dto.Response;
 import com.tickerBell.global.security.context.MemberContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +23,9 @@ import java.util.List;
 public class EventApiController {
 
     private final EventService eventService;
-    private final SpecialSeatService specialSeatService;
-    private final TagService tagService;
 
-    @PostMapping("/api/event")
-    public ResponseEntity<Response> saveEvent(@RequestBody SaveEventRequest request,
+    @PostMapping(value = "/api/event", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Response> saveEvent(@ModelAttribute SaveEventRequest request,
                                               @AuthenticationPrincipal MemberContext memberContext) {
         // 로그인한 회원 객체 조회
         Member loginMember = memberContext.getMember();
