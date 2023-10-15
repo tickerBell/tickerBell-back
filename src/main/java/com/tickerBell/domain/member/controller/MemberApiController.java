@@ -31,6 +31,7 @@ public class MemberApiController {
                 request.getUsername(),
                 request.getPassword(),
                 request.getPhone(),
+                request.getIsAdult(),
                 role,
                 request.getIsKakaoJoin() ? AuthProvider.KAKAO : AuthProvider.NORMAL
         );

@@ -60,7 +60,7 @@ class MemberServiceTest {
         when(memberRepository.save(any(Member.class))).thenReturn(Member.builder().build());
 
         // when
-        memberService.join(username, password, phone, role, null);
+        memberService.join(username, password, phone, true, role, null);
 
         // then
         verify(memberRepository, times(1)).findByUsername(username);
@@ -81,7 +81,7 @@ class MemberServiceTest {
         when(memberRepository.findByUsername(username)).thenReturn(Optional.of(Member.builder().build()));
 
         // when
-        assertThatThrownBy(() -> memberService.join(username, password, phone, role, AuthProvider.NORMAL))
+        assertThatThrownBy(() -> memberService.join(username, password, phone, true, role, AuthProvider.NORMAL))
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining("이미 존재하는 아이디입니다.");
 

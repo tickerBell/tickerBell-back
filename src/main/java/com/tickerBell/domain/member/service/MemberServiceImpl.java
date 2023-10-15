@@ -35,7 +35,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     @Transactional
-    public Long join(String username, String password, String phone, Role role, AuthProvider authProvider) {
+    public Long join(String username, String password, String phone, Boolean isAdult, Role role, AuthProvider authProvider) {
         // validation 체크
         if(memberRepository.findByUsername(username).isPresent()) {
             throw new CustomException(ErrorCode.MEMBER_ALREADY_EXIST);
@@ -45,7 +45,7 @@ public class MemberServiceImpl implements MemberService{
                 .username(username)
                 .password(passwordEncoder.encode(password))
                 .phone(phone)
-                .isAdult(true)
+                .isAdult(isAdult)
                 .role(role)
                 .authProvider(authProvider)
                 .build();

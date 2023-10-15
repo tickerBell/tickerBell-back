@@ -44,7 +44,7 @@ class MemberApiControllerTest {
     public void setup() {
         transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
-        memberService.join("testUsername", "testPassword1!", "testPhone", Role.ROLE_USER, null);
+        memberService.join("testUsername", "testPassword1!", "testPhone", true, Role.ROLE_USER, null);
     }
 
     @AfterEach
