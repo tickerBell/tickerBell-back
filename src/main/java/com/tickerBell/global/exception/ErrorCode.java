@@ -29,7 +29,8 @@ public enum ErrorCode {
     ALREADY_SELECTED_SEAT(HttpStatus.BAD_REQUEST, "이미 선택된 좌석입니다. 다른 좌석을 선택해주세요"),
     SMS_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "sms 문자 전송 중 에러가 발생했습니다."),
     TICKETING_NOT_FOUND(HttpStatus.BAD_REQUEST, "예매내역이 존재하지 않습니다."),
-    TICKETING_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "티켓 삭제 중 에러가 발생했습니다.");
+    TICKETING_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "티켓 삭제 중 에러가 발생했습니다."),
+    MAP_API_CALL_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "naver map api 호출 중 에러가 발생했습니다.");
 
     private final HttpStatus status;
     private final String errorMessage;
