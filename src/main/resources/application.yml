@@ -22,3 +22,7 @@ naver-cloud-sms:
   secretKey: ${SMS_SECRET_KEY}
   serviceId: ${SMS_SERVICE_ID}
   senderPhone: ${SMS_SENDER_PHONE}
+
+naver-cloud-map:
+  api-key-id: ${MAP-API-KEY-ID}
+  api-key: ${MAP-API-KEY}
