@@ -2,15 +2,12 @@ package com.tickerBell.domain.event.dtos;
 
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,12 +21,15 @@ public class EventResponse {
     private Float discountNormalPrice;
     private Float discountPremiumPrice;
     private List<String> hosts;
+    private List<String> castings;
     private String place;
     private Boolean isAdult;
     private Category category;
     private Boolean isSpecialSeatA;
     private Boolean isSpecialSeatB;
     private Boolean isSpecialSeatC;
+    private String thumbNailUrl;
+    private List<String> imageUrls;
 
     // todo 주최자 별도 처리
     public static EventResponse from(Event event) {

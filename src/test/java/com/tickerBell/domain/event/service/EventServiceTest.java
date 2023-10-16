@@ -1,12 +1,17 @@
 package com.tickerBell.domain.event.service;
 
+import com.tickerBell.domain.casting.entity.Casting;
+import com.tickerBell.domain.casting.repository.CastingRepository;
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.EventResponse;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
+import com.tickerBell.domain.host.entity.Host;
 import com.tickerBell.domain.host.repository.HostRepository;
+import com.tickerBell.domain.image.entity.Image;
+import com.tickerBell.domain.image.service.ImageService;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
@@ -48,6 +53,10 @@ public class EventServiceTest {
     private TagService tagService;
     @Mock
     private HostRepository hostRepository;
+    @Mock
+    private CastingRepository castingRepository;
+    @Mock
+    private ImageService imageService;
 
     @Test
     @DisplayName("이벤트 저장 테스트")
@@ -68,11 +77,11 @@ public class EventServiceTest {
         tags.add("tag1");
         tags.add("tag2");
         List<String> hosts = new ArrayList<>();
-        tags.add("host1");
-        tags.add("host2");
+        hosts.add("host1");
+        hosts.add("host2");
         List<String> castings = new ArrayList<>();
-        tags.add("casting1");
-        tags.add("casting2");
+        castings.add("casting1");
+        castings.add("casting2");
         MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
@@ -83,12 +92,23 @@ public class EventServiceTest {
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
         when(specialSeatService.saveSpecialSeat(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(SpecialSeat.builder().build());
         when(tagService.saveTagList(any(List.class))).thenReturn(1);
+        when(hostRepository.save(any(Host.class))).thenReturn(Host.builder().build());
+        when(castingRepository.save(any(Casting.class))).thenReturn(Casting.builder().build());
+        when(imageService.uploadImage(thumbNailImage, eventImages)).thenReturn(new ArrayList<>());
+
         when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
+
 
         // when
         Long savedEventId = eventService.saveEvent(memberId, saveEventRequest);
 
         // then
+        verify(eventRepository, times(1)).save(any(Event.class));
+        verify(specialSeatService, times(1)).saveSpecialSeat(anyBoolean(), anyBoolean(), anyBoolean());
+        verify(tagService, times(1)).saveTagList(any(List.class));
+        verify(hostRepository, times(2)).save(any(Host.class));
+        verify(castingRepository, times(2)).save(any(Casting.class));
+        verify(imageService, times(1)).uploadImage(thumbNailImage, eventImages);
         verify(eventRepository, times(1)).save(any(Event.class));
     }
 
@@ -201,9 +221,22 @@ public class EventServiceTest {
         // given
         Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), 0.1F);
         Long eventId = 1L;
+        List<Host> hosts = new ArrayList<>();
+        List<Casting> castings = new ArrayList<>();
+        List<Image> images = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            hosts.add(Host.builder().hostName("host").build());
+            castings.add(Casting.builder().castingName("casting").build());
+        }
+        images.add(Image.builder().isThumbnail(true).s3Url("url").build());
+        images.add(Image.builder().isThumbnail(false).s3Url("url").build());
+
 
         // stub
         when(eventRepository.findByIdFetchAll(eventId)).thenReturn(mockEvent);
+        when(hostRepository.findByEventId(null)).thenReturn(hosts);
+        when(castingRepository.findByEventId(null)).thenReturn(castings);
+        when(imageService.findByEventId(null)).thenReturn(images);
 
         // when
         EventResponse eventResponse = eventService.findByIdFetchAll(eventId);
@@ -222,6 +255,10 @@ public class EventServiceTest {
         assertThat(eventResponse.getIsSpecialSeatA()).isEqualTo(mockEvent.getSpecialSeat().getIsSpecialSeatA());
         assertThat(eventResponse.getIsSpecialSeatB()).isEqualTo(mockEvent.getSpecialSeat().getIsSpecialSeatB());
         assertThat(eventResponse.getIsSpecialSeatC()).isEqualTo(mockEvent.getSpecialSeat().getIsSpecialSeatC());
+        assertThat(eventResponse.getHosts().size()).isEqualTo(2);
+        assertThat(eventResponse.getCastings().size()).isEqualTo(2);
+        assertThat(eventResponse.getThumbNailUrl()).isEqualTo("url");
+        assertThat(eventResponse.getImageUrls().size()).isEqualTo(1);
     }
 
     @Test
