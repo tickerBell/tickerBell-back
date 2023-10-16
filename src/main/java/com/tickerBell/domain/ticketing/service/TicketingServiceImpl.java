@@ -61,50 +61,15 @@ public class TicketingServiceImpl implements TicketingService {
         SpecialSeat specialSeat = event.getSpecialSeat(); // event 프리미엄 여부 확인
         Float saleDegree = event.getSaleDegree();
 
-        List<SelectedSeat> selectedSeatList = new ArrayList<>();
-        for (String seatInfo : request.getSelectedSeat()) {
-            // 이미 선택된 좌석인지 check
-            // 선택 좌석 최대 개수가 2개이기 때문에 좌석 하나씩 체크
-            selectedSeatService.validCheckSeatInfo(event.getId(), seatInfo);
-            String[] parts = seatInfo.split("-");
-            float seatPrice;
-            // A좌석 선택
-            if (parts[0].equals("A")) {
-                if (specialSeat.getIsSpecialSeatA()) {
-                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
-                } else {
-                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
-                }
-            }
-            // B좌석 선택
-            else if (parts[0].equals("B")) {
-                if (specialSeat.getIsSpecialSeatB()) {
-                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
-                } else {
-                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
-                }
-            }
-            // C좌석 선택
-            else if (parts[0].equals("C")) {
-                if (specialSeat.getIsSpecialSeatC()) {
-                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
-                } else {
-                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
-                }
-            } else {
-                // A, B, C 로 구분할 수 없다면 예외
-                throw new CustomException(ErrorCode.SEAT_INFO_NOT_VALID_FORMAT);
-            }
-
-            SelectedSeat selectedSeat = SelectedSeat.builder().seatInfo(seatInfo).seatPrice(seatPrice).ticketing(ticketing).build();
-            selectedSeatList.add(selectedSeat);
-        }
+        List<SelectedSeat> selectedSeatList = createSelectedSeatList(request.getSelectedSeat(), event, ticketing, specialSeat, saleDegree);
         Integer savedSelectedSeatCount = selectedSeatService.saveSelectedSeat(selectedSeatList);
         log.info("저장된 선택 좌석 수: " + savedSelectedSeatCount);
 
         // event 남은 좌석 수 업데이트
         event.setRemainSeat(event.getRemainSeat() - savedSelectedSeatCount);
     }
+
+
 
     @Override
     @Transactional
@@ -137,44 +102,10 @@ public class TicketingServiceImpl implements TicketingService {
 
         SpecialSeat specialSeat = event.getSpecialSeat();
 
-        List<SelectedSeat> selectedSeatList = new ArrayList<>();
-        for (String seatInfo : request.getSelectedSeat()) {
-            // 이미 선택된 좌석인지 check
-            // 선택 좌석 최대 개수가 2개이기 때문에 좌석 하나씩 체크
-            selectedSeatService.validCheckSeatInfo(event.getId(), seatInfo);
-            String[] parts = seatInfo.split("-");
-            float seatPrice;
-            // A좌석 선택
-            if (parts[0].equals("A")) {
-                if (specialSeat.getIsSpecialSeatA()) {
-                    seatPrice = event.getPremiumPrice();
-                } else {
-                    seatPrice = event.getNormalPrice();
-                }
-            }
-            // B좌석 선택
-            else if (parts[0].equals("B")) {
-                if (specialSeat.getIsSpecialSeatB()) {
-                    seatPrice = event.getPremiumPrice();
-                } else {
-                    seatPrice = event.getNormalPrice();
-                }
-            }
-            // C좌석 선택
-            else if (parts[0].equals("C")) {
-                if (specialSeat.getIsSpecialSeatC()) {
-                    seatPrice = event.getPremiumPrice();
-                } else {
-                    seatPrice = event.getNormalPrice();
-                }
-            } else {
-                // A, B, C 로 구분할 수 없다면 예외
-                throw new CustomException(ErrorCode.SEAT_INFO_NOT_VALID_FORMAT);
-            }
+        // 비회원일 경우 sale 없음
+        List<SelectedSeat> selectedSeatList = createSelectedSeatList(
+                request.getSelectedSeat(), event, ticketing, specialSeat, 0F);
 
-            SelectedSeat selectedSeat = SelectedSeat.builder().seatInfo(seatInfo).seatPrice(seatPrice).ticketing(ticketing).build();
-            selectedSeatList.add(selectedSeat);
-        }
         Integer savedSelectedSeatCount = selectedSeatService.saveSelectedSeat(selectedSeatList);
         log.info("저장된 선택 좌석 수: " + savedSelectedSeatCount);
 
@@ -239,6 +170,49 @@ public class TicketingServiceImpl implements TicketingService {
         } catch (Exception e) {
             throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
         }
+    }
+
+    private List<SelectedSeat> createSelectedSeatList(List<String> selectedSeatRequest, Event event, Ticketing ticketing, SpecialSeat specialSeat, Float saleDegree) {
+        List<SelectedSeat> selectedSeatList = new ArrayList<>();
+
+        for (String seatInfo : selectedSeatRequest) {
+            // 이미 선택된 좌석인지 check
+            // 선택 좌석 최대 개수가 2개이기 때문에 좌석 하나씩 체크
+            selectedSeatService.validCheckSeatInfo(event.getId(), seatInfo);
+            String[] parts = seatInfo.split("-");
+            float seatPrice;
+            // A좌석 선택
+            if (parts[0].equals("A")) {
+                if (specialSeat.getIsSpecialSeatA()) {
+                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
+                } else {
+                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
+                }
+            }
+            // B좌석 선택
+            else if (parts[0].equals("B")) {
+                if (specialSeat.getIsSpecialSeatB()) {
+                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
+                } else {
+                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
+                }
+            }
+            // C좌석 선택
+            else if (parts[0].equals("C")) {
+                if (specialSeat.getIsSpecialSeatC()) {
+                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
+                } else {
+                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
+                }
+            } else {
+                // A, B, C 로 구분할 수 없다면 예외
+                throw new CustomException(ErrorCode.SEAT_INFO_NOT_VALID_FORMAT);
+            }
+
+            SelectedSeat selectedSeat = SelectedSeat.builder().seatInfo(seatInfo).seatPrice(seatPrice).ticketing(ticketing).build();
+            selectedSeatList.add(selectedSeat);
+        }
+        return selectedSeatList;
     }
 
     // 할인된 가격 계산
