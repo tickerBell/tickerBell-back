@@ -116,6 +116,11 @@ public class ImageServiceImpl implements ImageService {
         log.info("DB 이미지 데이터 삭제 완료");
     }
 
+    @Override
+    public List<Image> findByEventId(Long eventId) {
+        return imageRepository.findImageByEventId(eventId);
+    }
+
     private String createStoreImageName(String extension) {
         String uuid = UUID.randomUUID().toString();
         String storeFileName = uuid + extension;
