@@ -11,5 +11,6 @@ public interface ImageService {
 
     List<ImageResponse> findAllImage();
     void deleteImage(List<Image> imageList);
+    List<Image> findByEventId(Long eventId);
 
 }

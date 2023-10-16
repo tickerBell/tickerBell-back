@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -116,5 +117,24 @@ class ImageServiceTest {
 
         // then
         verifyNoInteractions(amazonS3Client);
+    }
+
+    @Test
+    @DisplayName("이벤트 PK로 조회 테스트")
+    void findByEventIdTest() {
+        // given
+        Long eventId = 1L;
+        List<Image> imageList = new ArrayList<>();
+        imageList.add(Image.builder().build());
+
+        // stub
+        when(imageRepository.findImageByEventId(eventId)).thenReturn(imageList);
+
+        // when
+        List<Image> findImages = imageService.findByEventId(eventId);
+
+        // then
+        assertThat(findImages).isNotNull();
+        assertThat(findImages.size()).isEqualTo(1);
     }
 }
