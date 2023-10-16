@@ -1,7 +1,9 @@
 //package com.tickerBell.global;
 //
+//import com.tickerBell.domain.casting.entity.Casting;
 //import com.tickerBell.domain.event.entity.Category;
 //import com.tickerBell.domain.event.entity.Event;
+//import com.tickerBell.domain.host.entity.Host;
 //import com.tickerBell.domain.member.entity.AuthProvider;
 //import com.tickerBell.domain.member.entity.Member;
 //import com.tickerBell.domain.member.entity.Role;
@@ -51,6 +53,7 @@
 //                    .build();
 //            em.persist(specialSeat);
 //
+//
 //            Event event = Event.builder()
 //                    .name("이벤트1")
 //                    .startEvent(LocalDateTime.now().plusDays(1))
@@ -58,9 +61,7 @@
 //                    .normalPrice(10000)
 //                    .premiumPrice(150000)
 //                    .saleDegree(2000F)
-//                    .casting("출연자1")
 //                    .totalSeat(60)
-//                    .host("호스트1")
 //                    .isAdult(true)
 //                    .remainSeat(60)
 //                    .place("장소1")
@@ -70,19 +71,24 @@
 //                    .build();
 //            em.persist(event);
 //
+//            Casting casting = Casting.builder().event(event).castingName("공유").build();
+//            em.persist(casting);
 //
-//            Ticketing ticketing = Ticketing.builder()
-//                    .event(event)
-//                    .member(member1)
-//                    .build();
-//            em.persist(ticketing);
-//            SelectedSeat selectedSeat = SelectedSeat.builder()
-//                    .seatInfo("A-1")
-//                    .seatPrice(15000)
-//                    .ticketing(ticketing)
-//                    .build();
+//            Host host = Host.builder().hostName("공유").event(event).build();
+//            em.persist(host);
 //
-//            em.persist(selectedSeat);
+////            Ticketing ticketing = Ticketing.builder()
+////                    .event(event)
+////                    .member(member1)
+////                    .build();
+////            em.persist(ticketing);
+////            SelectedSeat selectedSeat = SelectedSeat.builder()
+////                    .seatInfo("A-1")
+////                    .seatPrice(15000)
+////                    .ticketing(ticketing)
+////                    .build();
+////
+////            em.persist(selectedSeat);
 //        }
 //    }
 //}
