@@ -35,6 +35,7 @@ class CastingRepositoryTest {
         assertThat(savedCasting.getId()).isEqualTo(casting.getId());
         assertThat(savedCasting.getCastingName()).isEqualTo(casting.getCastingName());
         assertThat(savedCasting.getEvent()).isEqualTo(casting.getEvent());
+        assertThat(savedCasting.getEvent().getCastings().get(0)).isEqualTo(casting);
     }
 
     @Test
