@@ -26,6 +26,12 @@ public class Casting {
     @Builder
     public Casting(String castingName, Event event) {
         this.castingName = castingName;
+        addEvent(event);
+    }
+
+    // == 연관관계 메서드 == //
+    public void addEvent(Event event) {
         this.event = event;
+        event.getCastings().add(this);
     }
 }

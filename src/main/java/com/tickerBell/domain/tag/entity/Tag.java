@@ -1,6 +1,5 @@
 package com.tickerBell.domain.tag.entity;
 
-
 import com.tickerBell.domain.common.BaseEntity;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.member.entity.Member;
@@ -28,7 +27,13 @@ public class Tag extends BaseEntity {
     @Builder
     public Tag(String tagName, Event event, Member member) {
         this.tagName = tagName;
-        this.event = event;
         this.member = member;
+        addEvent(event);
+    }
+
+    // == 연관관계 메서드 == //
+    public void addEvent(Event event) {
+        this.event = event;
+        event.getTags().add(this);
     }
 }
