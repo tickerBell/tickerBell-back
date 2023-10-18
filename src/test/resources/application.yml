@@ -55,3 +55,7 @@ naver-cloud-sms:
   secretKey: "mockSecretKey"
   serviceId: "mockServiceId"
   senderPhone: "mockSenderPhone"
+
+naver-cloud-map:
+  api-key-id: "map_key_id"
+  api-key: "map_key"

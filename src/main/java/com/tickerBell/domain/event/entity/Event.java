@@ -1,12 +1,18 @@
 package com.tickerBell.domain.event.entity;
 
+import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.common.BaseEntity;
+import com.tickerBell.domain.host.entity.Host;
+import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
+import com.tickerBell.domain.tag.entity.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,8 +45,20 @@ public class Event extends BaseEntity {
     @JoinColumn(name = "special_seat_id")
     private SpecialSeat specialSeat;
 
-    @Builder
+    // == 양방향 연관관계 설정 == //
+    @OneToMany(mappedBy = "event")
+    List<Casting> castings = new ArrayList<Casting>();
 
+    @OneToMany(mappedBy = "event")
+    List<Host> hosts = new ArrayList<Host>();
+
+    @OneToMany(mappedBy = "event")
+    List<Image> images = new ArrayList<Image>();
+
+    @OneToMany(mappedBy = "event")
+    List<Tag> tags = new ArrayList<Tag>();
+
+    @Builder
     public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;

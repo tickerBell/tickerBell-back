@@ -42,5 +42,6 @@ class TagRepositoryTest {
         assertThat(savedTag.getTagName()).isEqualTo(tag.getTagName()).isEqualTo(tagName);
         assertThat(savedTag.getMember()).isEqualTo(tag.getMember());
         assertThat(savedTag.getEvent()).isEqualTo(tag.getEvent());
+        assertThat(savedTag.getEvent().getTags().get(0)).isEqualTo(tag);
     }
 }
