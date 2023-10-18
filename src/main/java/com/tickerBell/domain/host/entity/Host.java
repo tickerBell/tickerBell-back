@@ -22,12 +22,6 @@ public class Host {
     @Builder
     public Host(String hostName, Event event) {
         this.hostName = hostName;
-        addEvent(event);
-    }
-
-    // == 연관관계 메서드 == //
-    public void addEvent(Event event) {
         this.event = event;
-        event.getHosts().add(this);
     }
 }
