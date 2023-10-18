@@ -84,6 +84,9 @@ dependencies {
 	// LocalDateTime 역직렬화
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+	// S3 Mock
+	testImplementation 'io.findify:s3mock_2.12:0.2.4'
 }
 
 tasks.named('test') {
