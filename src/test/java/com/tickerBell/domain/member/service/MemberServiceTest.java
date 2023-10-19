@@ -1,11 +1,18 @@
 package com.tickerBell.domain.member.service;
 
+import com.tickerBell.domain.casting.entity.Casting;
+import com.tickerBell.domain.casting.repository.CastingRepository;
+import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.member.dtos.LoginResponse;
+import com.tickerBell.domain.member.dtos.MyPageResponse;
 import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.domain.ticketing.entity.Ticketing;
+import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.global.security.token.JwtTokenProvider;
@@ -22,6 +29,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -44,6 +54,12 @@ class MemberServiceTest {
     private RedisTemplate<String, String> redisTemplate;
     @Mock
     private ValueOperations valueOperations;
+    @Mock
+    private TicketingRepository ticketingRepository;
+    @Mock
+    private CastingRepository castingRepository;
+    @Mock
+    private EventRepository eventRepository;
 
     @Test
     @DisplayName("회원가입 테스트")
@@ -204,5 +220,38 @@ class MemberServiceTest {
             assertThat(ex.getStatus()).isEqualTo(ErrorCode.INVALID_PASSWORD.getStatus().toString());
             assertThat(ex.getErrorMessage()).isEqualTo(ErrorCode.INVALID_PASSWORD.getErrorMessage());
         });
+    }
+
+    @Test
+    @DisplayName("일반 회원 마이페이지 조회 테스트")
+    void getMyPageTest() {
+        // given
+        Long memberId = 1L;
+        Member generalMember = Member.builder().role(Role.ROLE_USER).build();
+        Event event = Event.builder().name("name").startEvent(LocalDateTime.now()).endEvent(LocalDateTime.now()).member(Member.builder().build()).build();
+        Ticketing ticketing = Ticketing.builder().member(generalMember).event(event).build();
+        List<Ticketing> ticketings = new ArrayList<>();
+        ticketings.add(ticketing);
+        Casting casting = Casting.builder().event(event).castingName("name").build();
+        List<Casting> castings = new ArrayList<>();
+        castings.add(casting);
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(generalMember));
+        when(ticketingRepository.findByMemberId(memberId)).thenReturn(ticketings);
+        when(castingRepository.findByEventId(null)).thenReturn(castings);
+
+        // when
+        MyPageResponse myPage = memberService.getMyPage(memberId);
+
+        // then
+        assertThat(myPage.getStartEvent()).isNotEmpty();
+        assertThat(myPage.getEndEvent()).isNotEmpty();
+        assertThat(myPage.getIsRegistrant()).isFalse();
+        assertThat(myPage.getTicketHolderCounts()).isNull();
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(ticketingRepository, times(1)).findByMemberId(memberId);
+        verify(castingRepository, times(1)).findByEventId(null);
+        verifyNoMoreInteractions(ticketingRepository);
     }
 }
