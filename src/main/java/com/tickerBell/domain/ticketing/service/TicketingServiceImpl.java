@@ -140,7 +140,6 @@ public class TicketingServiceImpl implements TicketingService {
     public void cancelTicketing(Long memberId, Long ticketingId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        // todo: memberId 와 ticketingId 를 조합해 ticketing 조회로 변경
         Ticketing ticketing = ticketingRepository.findByIdWithEvent(ticketingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKETING_NOT_FOUND));
 
@@ -148,11 +147,7 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
 
-        try {
-            ticketingRepository.delete(ticketing);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
-        }
+        ticketingRepository.delete(ticketing);
     }
 
     @Override
@@ -165,11 +160,7 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
         
-        try {
-            ticketingRepository.delete(ticketing);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
-        }
+        ticketingRepository.delete(ticketing);
     }
 
     private List<SelectedSeat> createSelectedSeatList(List<String> selectedSeatRequest, Event event, Ticketing ticketing, SpecialSeat specialSeat, Float saleDegree) {
