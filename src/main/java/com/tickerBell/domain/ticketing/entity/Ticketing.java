@@ -9,13 +9,12 @@ import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter @Setter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Ticketing extends BaseEntity {
     @Id
     @GeneratedValue
@@ -32,9 +31,16 @@ public class Ticketing extends BaseEntity {
 
     // 양방향 매핑
     @OneToMany(mappedBy = "ticketing", cascade = CascadeType.REMOVE)
-    private List<SelectedSeat> selectedSeatList;
+    private List<SelectedSeat> selectedSeatList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "non_member_id")
     private NonMember nonMember;
+
+    @Builder
+    public Ticketing(Event event, Member member, NonMember nonMember) {
+        this.event = event;
+        this.member = member;
+        this.nonMember = nonMember;
+    }
 }
