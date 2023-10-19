@@ -254,4 +254,38 @@ class MemberServiceTest {
         verify(castingRepository, times(1)).findByEventId(null);
         verifyNoMoreInteractions(ticketingRepository);
     }
+
+    @Test
+    @DisplayName("등록자 회원 마이페이지 조회 테스트")
+    void getRegistrantMyPageTest() {
+        // given
+        Long memberId = 1L;
+        Member generalMember = Member.builder().role(Role.ROLE_REGISTRANT).build();
+        Event event = Event.builder().name("name").startEvent(LocalDateTime.now()).endEvent(LocalDateTime.now()).member(Member.builder().build()).build();
+        List<Event> events = new ArrayList<>();
+        events.add(event);
+        Ticketing ticketing = Ticketing.builder().member(generalMember).event(event).build();
+        List<Ticketing> ticketings = new ArrayList<>();
+        ticketings.add(ticketing);
+        Casting casting = Casting.builder().event(event).castingName("name").build();
+        List<Casting> castings = new ArrayList<>();
+        castings.add(casting);
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(generalMember));
+        when(eventRepository.findByMemberIdFetchAll(null)).thenReturn(events);
+        when(castingRepository.findByEventId(null)).thenReturn(castings);
+        when(ticketingRepository.findByEventId(null)).thenReturn(ticketings);
+
+        // when
+        MyPageResponse myPage = memberService.getMyPage(memberId);
+
+        // then
+        assertThat(myPage.getStartEvent()).isNotEmpty();
+        assertThat(myPage.getEndEvent()).isNotEmpty();
+        assertThat(myPage.getIsRegistrant()).isTrue();
+        assertThat(myPage.getTicketHolderCounts().size()).isEqualTo(1);
+        assertThat(myPage.getTicketHolderCounts().get(0)).isEqualTo(1);
+        verify(memberRepository, times(1)).findById(memberId);
+    }
 }
