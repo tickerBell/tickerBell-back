@@ -218,7 +218,7 @@ class TicketingServiceImplTest {
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
                 .name("비회원 이름")
                 .phone("01012345678")
-                .selectedSeat(List.of("C-2", "C-3"))
+                .selectedSeat(List.of("B-2", "C-3"))
                 .eventId(1L)
                 .build();
         NonMember nonMember = NonMember.builder().build();
@@ -308,7 +308,51 @@ class TicketingServiceImplTest {
         assertThat(ticketingResponseList.size()).isEqualTo(ticketingList.size());
     }
 
+    @Test
+    @DisplayName("회원일 때 예매 내역 취소")
+    public void cancelTicketing() {
+        // given
+        Long memberId = 1L;
+        Long ticketingId = 1L;
+        Member member = Member.builder().build();
+        Event event = Event.builder()
+                .remainSeat(30)
+                .build();
+        Ticketing ticketing = createTicketing(member, event);
 
+        // stub
+        when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
+        when(ticketingRepository.findByIdWithEvent(any(Long.class))).thenReturn(Optional.of(ticketing));
+        doNothing().when(ticketingRepository).delete(any(Ticketing.class));
+
+        // when
+        ticketingService.cancelTicketing(memberId, ticketingId);
+
+        // then
+        verify(memberRepository, times(1)).findById(any(Long.class));
+        verify(ticketingRepository, times(1)).findByIdWithEvent(any(Long.class));
+    }
+
+    @Test
+    @DisplayName("비회원일 때 예매 내역 취소")
+    public void cancelTicketingNonMember() {
+        // given
+        Long ticketingId = 1L;
+        Event event = Event.builder()
+                .remainSeat(30)
+                .build();
+        Ticketing ticketing = createTicketing(null, event);
+
+        // stub
+        when(ticketingRepository.findByIdWithEvent(any(Long.class))).thenReturn(Optional.of(ticketing));
+        doNothing().when(ticketingRepository).delete(any(Ticketing.class));
+
+        // when
+        ticketingService.cancelTicketingNonMember(ticketingId);
+
+        // then
+        verify(ticketingRepository, times(1)).findByIdWithEvent(any(Long.class));
+    }
 
 
     private static Event createEvent(Integer remainSeat, float saleDegree, SpecialSeat specialSeat) {
