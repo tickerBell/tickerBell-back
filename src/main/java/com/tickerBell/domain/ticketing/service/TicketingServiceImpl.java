@@ -48,7 +48,7 @@ public class TicketingServiceImpl implements TicketingService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         Event event = eventRepository.findById(request.getEventId())
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
         // 예매 내역 저장
         Ticketing ticketing = Ticketing.builder()
@@ -61,7 +61,8 @@ public class TicketingServiceImpl implements TicketingService {
         SpecialSeat specialSeat = event.getSpecialSeat(); // event 프리미엄 여부 확인
         Float saleDegree = event.getSaleDegree();
 
-        List<SelectedSeat> selectedSeatList = createSelectedSeatList(request.getSelectedSeat(), event, ticketing, specialSeat, saleDegree);
+        List<SelectedSeat> selectedSeatList = createSelectedSeatList(
+                request.getSelectedSeat(), event, ticketing, specialSeat, saleDegree);
         Integer savedSelectedSeatCount = selectedSeatService.saveSelectedSeat(selectedSeatList);
         log.info("저장된 선택 좌석 수: " + savedSelectedSeatCount);
 
@@ -91,7 +92,7 @@ public class TicketingServiceImpl implements TicketingService {
         }
 
         Event event = eventRepository.findById(request.getEventId())
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
         // 예매 내역 저장
         Ticketing ticketing = Ticketing.builder()
@@ -117,7 +118,6 @@ public class TicketingServiceImpl implements TicketingService {
     public List<TicketingResponse> getTicketingHistory(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-
         List<TicketingResponse> ticketingResponseList = ticketingRepository.findByMemberId(member.getId()).stream()
                 .map(ticketing -> TicketingResponse.from(ticketing))
                 .collect(Collectors.toList());
@@ -140,7 +140,6 @@ public class TicketingServiceImpl implements TicketingService {
     public void cancelTicketing(Long memberId, Long ticketingId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        // todo: memberId 와 ticketingId 를 조합해 ticketing 조회로 변경
         Ticketing ticketing = ticketingRepository.findByIdWithEvent(ticketingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKETING_NOT_FOUND));
 
@@ -148,11 +147,7 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
 
-        try {
-            ticketingRepository.delete(ticketing);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
-        }
+        ticketingRepository.delete(ticketing);
     }
 
     @Override
@@ -165,11 +160,7 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
         
-        try {
-            ticketingRepository.delete(ticketing);
-        } catch (Exception e) {
-            throw new CustomException(ErrorCode.TICKETING_DELETE_FAIL);
-        }
+        ticketingRepository.delete(ticketing);
     }
 
     private List<SelectedSeat> createSelectedSeatList(List<String> selectedSeatRequest, Event event, Ticketing ticketing, SpecialSeat specialSeat, Float saleDegree) {

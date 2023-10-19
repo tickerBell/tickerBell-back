@@ -19,7 +19,7 @@ public class SelectedSeat {
     private Long id;
 
     private String seatInfo; // 선택 좌석
-    private float seatPrice; // 할인을 적용한 선택 좌석 가격
+    private Float seatPrice; // 할인을 적용한 선택 좌석 가격
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticketing_id")
     private Ticketing ticketing;
