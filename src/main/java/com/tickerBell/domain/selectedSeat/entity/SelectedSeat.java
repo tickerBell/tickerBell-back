@@ -20,7 +20,7 @@ public class SelectedSeat {
     private Ticketing ticketing;
 
     @Builder
-    public SelectedSeat(String seatInfo, float seatPrice, Ticketing ticketing) {
+    public SelectedSeat(String seatInfo, Float seatPrice, Ticketing ticketing) {
         this.seatInfo = seatInfo;
         this.seatPrice = seatPrice;
         addTicketing(ticketing);
