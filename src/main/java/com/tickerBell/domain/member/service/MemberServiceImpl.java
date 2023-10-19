@@ -1,16 +1,19 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.member.dtos.JoinSmsValidationRequest;
-import com.tickerBell.domain.member.dtos.JoinSmsValidationResponse;
-import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
+import com.tickerBell.domain.casting.entity.Casting;
+import com.tickerBell.domain.casting.repository.CastingRepository;
+import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.event.repository.EventRepository;
+import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.sms.service.SmsService;
+import com.tickerBell.domain.ticketing.entity.Ticketing;
+import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
-import com.tickerBell.domain.member.dtos.LoginResponse;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -32,6 +38,9 @@ public class MemberServiceImpl implements MemberService{
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisTemplate<String, String> redisTemplate;
     private final SmsService smsService;
+    private final TicketingRepository ticketingRepository;
+    private final CastingRepository castingRepository;
+    private final EventRepository eventRepository;
 
     @Override
     @Transactional
@@ -124,5 +133,77 @@ public class MemberServiceImpl implements MemberService{
             throw new CustomException(ErrorCode.SMS_SEND_FAIL);
         }
         return new JoinSmsValidationResponse(randomNumber);
+    }
+
+    @Override
+    public MyPageResponse getMyPage(Long memberId) {
+
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        List<String> eventName = new ArrayList<>();
+        List<List<String>> casting = new ArrayList<>();
+        List<LocalDateTime> startEvent = new ArrayList<>();
+        List<LocalDateTime> endEvent = new ArrayList<>();
+        List<String> castings = new ArrayList<>();
+
+        MyPageResponse myPageResponse = new MyPageResponse();
+        myPageResponse.setUsername(findMember.getUsername());
+        myPageResponse.setPhone(findMember.getPhone());
+
+        if (findMember.getRole().equals(Role.ROLE_USER)) {
+
+            myPageResponse.setIsRegistrant(false);
+
+            List<Ticketing> findTicketings = ticketingRepository.findByMemberId(memberId);
+            for (Ticketing findTicketing : findTicketings) {
+                Event findEvent = findTicketing.getEvent();
+                List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
+
+                for (Casting findCasting : findCastings) {
+                    castings.add(findCasting.getCastingName());
+                }
+                eventName.add(findEvent.getName());
+                casting.add(castings);
+                startEvent.add(findEvent.getStartEvent());
+                endEvent.add(findEvent.getEndEvent());
+            }
+
+            myPageResponse.setEventName(eventName);
+            myPageResponse.setCasting(casting);
+            myPageResponse.setStartEvent(startEvent);
+            myPageResponse.setEndEvent(endEvent);
+
+        } else {
+            myPageResponse.setIsRegistrant(true);
+
+            List<Event> findEvents = eventRepository.findByMemberIdFetchAll(findMember.getId());
+
+            List<Integer> ticketHolderCounts = new ArrayList<>();
+            for (Event findEvent : findEvents) {
+                eventName.add(findEvent.getName());
+
+                List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
+
+                for (Casting findCasting : findCastings) {
+                    castings.add(findCasting.getCastingName());
+                }
+                casting.add(castings);
+                startEvent.add(findEvent.getStartEvent());
+                endEvent.add(findEvent.getEndEvent());
+
+                List<Ticketing> findTicketings = ticketingRepository.findByEventId(findEvent.getId());
+                ticketHolderCounts.add(findTicketings.size());
+            }
+
+            myPageResponse.setEventName(eventName);
+            myPageResponse.setCasting(casting);
+            myPageResponse.setStartEvent(startEvent);
+            myPageResponse.setEndEvent(endEvent);
+            myPageResponse.setTicketHolderCounts(ticketHolderCounts);
+        }
+
+        return myPageResponse;
     }
 }
