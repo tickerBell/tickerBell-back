@@ -7,8 +7,6 @@ import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.NonMember;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.repository.NonMemberRepository;
-import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
-import com.tickerBell.domain.selectedSeat.service.SelectedSeatService;
 import com.tickerBell.domain.selectedSeat.service.SelectedSeatServiceImpl;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberRequest;
@@ -18,13 +16,11 @@ import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -374,21 +370,17 @@ class TicketingServiceImplTest {
     }
 
     private Ticketing createTicketing(Member member, Event event) {
-        SelectedSeat selectedSeat = SelectedSeat.builder().seatInfo("A-1").seatPrice(1000F).build();
         Ticketing ticketing = Ticketing.builder()
                 .event(event)
                 .member(member)
-                .selectedSeatList(List.of(selectedSeat))
                 .build();
         return ticketing;
     }
 
     private Ticketing createTicketingNonMember(NonMember nonMember, Event event) {
-        SelectedSeat selectedSeat = SelectedSeat.builder().seatInfo("A-1").seatPrice(1000F).build();
         Ticketing ticketing = Ticketing.builder()
                 .event(event)
                 .nonMember(nonMember)
-                .selectedSeatList(List.of(selectedSeat))
                 .build();
         return ticketing;
     }

@@ -2,14 +2,18 @@ package com.tickerBell.domain.member.controller;
 
 import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.AuthProvider;
+import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.global.dto.Response;
+import com.tickerBell.global.security.context.MemberContext;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,5 +72,13 @@ public class MemberApiController {
         } else {
             return Role.ROLE_USER;
         }
+    }
+
+    @GetMapping("/api/member")
+    public ResponseEntity<Response> myPage(@AuthenticationPrincipal MemberContext memberContext) {
+        Member loginMember = memberContext.getMember();
+        MyPageResponse myPageResponse = memberService.getMyPage(loginMember.getId());
+
+        return ResponseEntity.ok(new Response(myPageResponse, "마이페이지 조회 성공"));
     }
 }

@@ -2,16 +2,11 @@ package com.tickerBell.domain.selectedSeat.entity;
 
 import com.tickerBell.domain.ticketing.entity.Ticketing;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SelectedSeat {
     @Id
     @GeneratedValue
@@ -23,4 +18,17 @@ public class SelectedSeat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ticketing_id")
     private Ticketing ticketing;
+
+    @Builder
+    public SelectedSeat(String seatInfo, Float seatPrice, Ticketing ticketing) {
+        this.seatInfo = seatInfo;
+        this.seatPrice = seatPrice;
+        addTicketing(ticketing);
+    }
+
+    //== 연관관계 편의 메서드 ==//
+    public void addTicketing(Ticketing ticketing) {
+        this.ticketing = ticketing;
+        ticketing.getSelectedSeatList().add(this);
+    }
 }

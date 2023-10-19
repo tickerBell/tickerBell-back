@@ -1,11 +1,8 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.member.dtos.JoinSmsValidationRequest;
-import com.tickerBell.domain.member.dtos.JoinSmsValidationResponse;
-import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
+import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Role;
-import com.tickerBell.domain.member.dtos.LoginResponse;
 
 public interface MemberService {
 
@@ -13,4 +10,5 @@ public interface MemberService {
     LoginResponse regenerateToken(RefreshTokenRequest refreshTokenRequest);
     LoginResponse login(String username, String password);
     JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request);
+    MyPageResponse getMyPage(Long memberId);
 }

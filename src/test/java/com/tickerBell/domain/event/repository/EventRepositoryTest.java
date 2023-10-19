@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -24,7 +25,6 @@ class EventRepositoryTest {
     private MemberRepository memberRepository;
     @Autowired
     private SpecialSeatRepository specialSeatRepository;
-
     @Test
     @DisplayName("이벤트 저장 테스트")
     void saveTest() {
@@ -95,6 +95,37 @@ class EventRepositoryTest {
         SpecialSeat specialSeat = SpecialSeat.builder().isSpecialSeatC(true).isSpecialSeatB(true).isSpecialSeatC(true).build();
         SpecialSeat savedSpecialSeat = specialSeatRepository.save(specialSeat);
 
+        Event event = createMockEvent(savedMember, savedSpecialSeat);
+
+        Event savedEvent = eventRepository.save(event);
+
+        // when
+        Event findEvents = eventRepository.findByIdFetchAll(savedEvent.getId());
+
+        // then
+        assertThat(findEvents).isEqualTo(savedEvent);
+    }
+
+    @Test
+    @DisplayName("연관관계를 모두 조인한 회원 PK를 이용한 이벤트 조회 테스트")
+    void findByMemberIdFetchAllTest() {
+        // given
+        Member member = Member.builder().build();
+        Member savedMember = memberRepository.save(member);
+        SpecialSeat specialSeat = SpecialSeat.builder().isSpecialSeatC(true).isSpecialSeatB(true).isSpecialSeatC(true).build();
+        SpecialSeat savedSpecialSeat = specialSeatRepository.save(specialSeat);
+        Event event = createMockEvent(savedMember, savedSpecialSeat);
+        Event savedEvent = eventRepository.save(event);
+
+        // when
+        List<Event> findEvents = eventRepository.findByMemberIdFetchAll(savedMember.getId());
+
+        // then
+        assertThat(findEvents.size()).isEqualTo(1);
+        assertThat(findEvents.get(0)).isEqualTo(savedEvent);
+    }
+
+    Event createMockEvent(Member member, SpecialSeat specialSeat) {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
@@ -119,14 +150,9 @@ class EventRepositoryTest {
                 .isAdult(isAdult)
                 .category(category)
                 .member(member)
-                .specialSeat(savedSpecialSeat)
+                .specialSeat(specialSeat)
                 .build();
-        Event savedEvent = eventRepository.save(event);
 
-        // when
-        Event findEvents = eventRepository.findByIdFetchAll(savedEvent.getId());
-
-        // then
-        assertThat(findEvents).isEqualTo(savedEvent);
+        return event;
     }
 }
