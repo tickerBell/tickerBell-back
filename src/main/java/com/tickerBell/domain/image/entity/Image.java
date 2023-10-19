@@ -7,8 +7,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class Image extends BaseEntity {
     @Id
     @GeneratedValue
@@ -24,20 +26,5 @@ public class Image extends BaseEntity {
 
     public void setThumbnail(Boolean thumbnail) {
         isThumbnail = thumbnail;
-    }
-
-    @Builder
-    public Image(String originImgName, String storeImgName, String s3Url, Boolean isThumbnail, Event event) {
-        this.originImgName = originImgName;
-        this.storeImgName = storeImgName;
-        this.s3Url = s3Url;
-        this.isThumbnail = isThumbnail;
-        addEvent(event);
-    }
-
-    // == 연관관계 메서드 == //
-    public void addEvent(Event event) {
-        this.event = event;
-        event.getImages().add(this);
     }
 }

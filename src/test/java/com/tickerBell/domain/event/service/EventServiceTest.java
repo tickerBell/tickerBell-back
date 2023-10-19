@@ -225,14 +225,18 @@ public class EventServiceTest {
         List<Casting> castings = new ArrayList<>();
         List<Image> images = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            hosts.add(Host.builder().hostName("host").event(mockEvent).build());
-            castings.add(Casting.builder().castingName("casting").event(mockEvent).build());
+            hosts.add(Host.builder().hostName("host").build());
+            castings.add(Casting.builder().castingName("casting").build());
         }
-        images.add(Image.builder().isThumbnail(true).s3Url("url").event(mockEvent).build());
-        images.add(Image.builder().isThumbnail(false).s3Url("url").event(mockEvent).build());
+        images.add(Image.builder().isThumbnail(true).s3Url("url").build());
+        images.add(Image.builder().isThumbnail(false).s3Url("url").build());
+
 
         // stub
         when(eventRepository.findByIdFetchAll(eventId)).thenReturn(mockEvent);
+        when(hostRepository.findByEventId(null)).thenReturn(hosts);
+        when(castingRepository.findByEventId(null)).thenReturn(castings);
+        when(imageService.findByEventId(null)).thenReturn(images);
 
         // when
         EventResponse eventResponse = eventService.findByIdFetchAll(eventId);

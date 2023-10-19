@@ -35,7 +35,6 @@ class HostRepositoryTest {
         assertThat(savedHost.getId()).isEqualTo(host.getId());
         assertThat(savedHost.getHostName()).isEqualTo(host.getHostName());
         assertThat(savedHost.getEvent()).isEqualTo(host.getEvent());
-        assertThat(savedHost.getEvent().getHosts().get(0)).isEqualTo(host);
     }
 
     @Test

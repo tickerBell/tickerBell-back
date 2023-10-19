@@ -31,4 +31,11 @@ public interface TicketingRepository extends JpaRepository<Ticketing, Long> {
     Optional<Ticketing> findByIdWithEvent(@Param("ticketingId") Long ticketingId);
     @Query("delete from Ticketing t where t.nonMember.id = :nonMemberId")
     void deleteByNonMember(@Param("nonMemberId") Long nonMemberId);
+
+    @Query("select t from Ticketing t" +
+            " join fetch t.event" +
+            " join fetch t.member" +
+            " join fetch t.selectedSeatList ts" +
+            " where t.event.id = :eventId")
+    List<Ticketing> findByEventId(@Param("eventId") Long eventId);
 }
