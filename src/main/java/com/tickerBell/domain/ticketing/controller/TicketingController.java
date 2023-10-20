@@ -27,7 +27,7 @@ public class TicketingController {
 
     @Operation(summary = "이벤트 회원 예매", description = "회원일 때 이벤트 예매")
     @PostMapping("/ticketing")
-    public ResponseEntity<Response> ticketingEvent(@AuthenticationPrincipal MemberContext memberContext,
+        public ResponseEntity<Response> ticketingEvent(@AuthenticationPrincipal MemberContext memberContext,
                                                    @RequestBody @Valid TicketingRequest request) {
         // 로그인한 회원 객체 조회
         Member loginMember = memberContext.getMember();
