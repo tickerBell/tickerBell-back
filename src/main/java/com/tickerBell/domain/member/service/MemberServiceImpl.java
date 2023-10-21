@@ -206,4 +206,20 @@ public class MemberServiceImpl implements MemberService{
 
         return myPageResponse;
     }
+
+    @Override
+    public MemberResponse getMember(Long memberId) {
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        MemberResponse memberResponse = new MemberResponse();
+        memberResponse.setMemberId(findMember.getId());
+        memberResponse.setUsername(findMember.getUsername());
+        memberResponse.setPhone(findMember.getPhone());
+        memberResponse.setRole(findMember.getRole());
+        memberResponse.setIsAdult(findMember.getIsAdult());
+
+        return memberResponse;
+    }
 }

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,6 +24,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -165,5 +168,24 @@ class MemberApiControllerTest {
 
         // then
         perform.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("회원 정보 조회 테스트")
+    @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void getMemberTest() throws Exception {
+        // given
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/member")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.username").value("testUsername"))
+                .andExpect(jsonPath("$.data.phone").value("testPhone"))
+                .andExpect(jsonPath("$.data.isAdult").value("true"))
+                .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()))
+                .andExpect(jsonPath("$.message").value("회원 정보 조회 성공"));
     }
 }
