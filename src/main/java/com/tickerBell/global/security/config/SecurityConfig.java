@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .and()
 
                 .authorizeHttpRequests()
+                .requestMatchers("/api/member").hasAnyRole("USER", "REGISTRANT")
                 .requestMatchers("/api/event").hasRole("REGISTRANT") // 등록자 권한 설정
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .requestMatchers("/**").permitAll()

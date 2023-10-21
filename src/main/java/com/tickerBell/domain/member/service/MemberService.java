@@ -11,4 +11,5 @@ public interface MemberService {
     LoginResponse login(String username, String password);
     JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request);
     MyPageResponse getMyPage(Long memberId);
+    MemberResponse getMember(Long memberId);
 }
