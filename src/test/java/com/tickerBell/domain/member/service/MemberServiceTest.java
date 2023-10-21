@@ -5,6 +5,7 @@ import com.tickerBell.domain.casting.repository.CastingRepository;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.member.dtos.LoginResponse;
+import com.tickerBell.domain.member.dtos.MemberResponse;
 import com.tickerBell.domain.member.dtos.MyPageResponse;
 import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
 import com.tickerBell.domain.member.entity.AuthProvider;
@@ -29,6 +30,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -287,5 +289,39 @@ class MemberServiceTest {
         assertThat(myPage.getTicketHolderCounts().size()).isEqualTo(1);
         assertThat(myPage.getTicketHolderCounts().get(0)).isEqualTo(1);
         verify(memberRepository, times(1)).findById(memberId);
+    }
+
+    @Test
+    @DisplayName("회원 조회 로직 테스트")
+    void getMemberTest() {
+        // given
+        Long memberId = 1L;
+        Member mockMember = Member.builder()
+                .username("username")
+                .phone("1234")
+                .role(Role.ROLE_REGISTRANT)
+                .isAdult(true)
+                .build();
+
+        // stub
+        when(memberRepository.findById(memberId)).thenAnswer(invocation -> {
+            setPrivateField(mockMember, "id", 1L);
+            return Optional.of(mockMember);
+        });
+
+        // when
+        MemberResponse memberResponse = memberService.getMember(memberId);
+
+        // then
+        assertThat(memberResponse.getMemberId()).isEqualTo(memberId);
+        assertThat(memberResponse.getUsername()).isEqualTo("username");
+        assertThat(memberResponse.getRole()).isEqualTo(Role.ROLE_REGISTRANT);
+        assertThat(memberResponse.getIsAdult()).isTrue();
+    }
+
+    private void setPrivateField(Object object, String fieldName, Object value) throws Exception {
+        Field field = object.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(object, value);
     }
 }
