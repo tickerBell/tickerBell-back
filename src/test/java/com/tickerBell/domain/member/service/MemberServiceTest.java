@@ -324,4 +324,30 @@ class MemberServiceTest {
         field.setAccessible(true);
         field.set(object, value);
     }
+
+    @Test
+    @DisplayName("회원 조회 실패 테스트")
+    void getMemberFailTest() {
+        // given
+        Long memberId = 1L;
+        Member mockMember = Member.builder()
+                .username("username")
+                .phone("1234")
+                .role(Role.ROLE_REGISTRANT)
+                .isAdult(true)
+                .build();
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.getMember(memberId))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+        });
+    }
 }
