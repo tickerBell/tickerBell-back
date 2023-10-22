@@ -2,6 +2,7 @@ package com.tickerBell.domain.event.controller;
 
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.EventResponse;
+import com.tickerBell.domain.event.dtos.MainPageDto;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
@@ -44,5 +45,11 @@ public class EventApiController {
     public ResponseEntity<Response> getEventById(@PathVariable("eventId") Long eventId) {
         EventResponse eventResponse = eventService.findByIdFetchAll(eventId);
         return ResponseEntity.ok(new Response(eventResponse, "이벤트 상세 데이터 반환 완료"));
+    }
+
+    @GetMapping("/api/main")
+    public ResponseEntity<Response> getMainPage() {
+        MainPageDto mainPage = eventService.getMainPage();
+        return ResponseEntity.ok(new Response(mainPage, "메인 페이지 데이터 반환 완료"));
     }
 }
