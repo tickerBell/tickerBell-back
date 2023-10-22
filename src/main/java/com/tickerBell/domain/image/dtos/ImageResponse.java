@@ -1,5 +1,6 @@
 package com.tickerBell.domain.image.dtos;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.tickerBell.domain.image.entity.Image;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +10,6 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class ImageResponse {
     private Long imageId;
     private String s3Url; // s3 url 주소
@@ -24,5 +24,13 @@ public class ImageResponse {
         image.getOriginImgName(),
         image.getIsThumbnail()
         );
+    }
+
+    @QueryProjection
+    public ImageResponse(Long imageId, String s3Url, String originImgName, Boolean isThumbnail) {
+        this.imageId = imageId;
+        this.s3Url = s3Url;
+        this.originImgName = originImgName;
+        this.isThumbnail = isThumbnail;
     }
 }
