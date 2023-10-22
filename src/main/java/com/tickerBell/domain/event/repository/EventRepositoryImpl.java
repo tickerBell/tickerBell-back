@@ -26,7 +26,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event.id,
                         event.name,
                         event.startEvent,
-                        image.s3Url
+                        image.s3Url,
+                        event.category
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -44,7 +45,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event.id,
                         event.name,
                         event.startEvent,
-                        image.s3Url
+                        image.s3Url,
+                        event.category
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -62,7 +64,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event.id,
                         event.name,
                         event.startEvent,
-                        image.s3Url
+                        image.s3Url,
+                        event.category
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -80,7 +83,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event.id,
                         event.name,
                         event.startEvent,
-                        image.s3Url
+                        image.s3Url,
+                        event.category
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -98,7 +102,8 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event.id,
                         event.name,
                         event.startEvent,
-                        image.s3Url
+                        image.s3Url,
+                        event.category
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))

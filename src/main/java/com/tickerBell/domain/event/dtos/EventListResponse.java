@@ -37,12 +37,4 @@ public class EventListResponse {
         this.thumbNailImage = thumbNailImage;
         this.category = category;
     }
-
-    @QueryProjection
-    public EventListResponse(Long eventId, String eventName, LocalDateTime startEvent, String thumbNailImage) {
-        this.eventId = eventId;
-        this.eventName = eventName;
-        this.startEvent = startEvent;
-        this.thumbNailImage = thumbNailImage;
-    }
 }
