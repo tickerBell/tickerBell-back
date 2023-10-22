@@ -4,6 +4,7 @@ import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.EventResponse;
+import com.tickerBell.domain.event.dtos.MainPageDto;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
@@ -152,6 +153,12 @@ public class EventServiceImpl implements EventService {
         response.setImageUrls(imageUrls);
 
         return response;
+    }
+
+    @Override
+    public MainPageDto getMainPage() {
+        MainPageDto mainPage = eventRepository.getMainPage();
+        return mainPage;
     }
 }
 
