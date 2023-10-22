@@ -71,6 +71,7 @@ public class EventServiceImpl implements EventService {
                 .remainSeat(TOTALSEAT) // remainSeat 는 등록 시 totalSeat 와 같다고 구현
                 .isAdult(request.getIsAdult())
                 .place(request.getPlace())
+                .viewCount(0)
                 .category(request.getCategory())
                 .member(findMember) // member 연관관계
                 .specialSeat(specialSeat) // special seat 연관관계
@@ -123,6 +124,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventResponse findByIdFetchAll(Long eventId) {
         Event findEvent = eventRepository.findByIdFetchAll(eventId);
         EventResponse response = EventResponse.from(findEvent);
@@ -152,6 +154,8 @@ public class EventServiceImpl implements EventService {
         }
         response.setImageUrls(imageUrls);
 
+        // 조회수 증가
+        findEvent.updateViewCount();
         return response;
     }
 

@@ -30,6 +30,7 @@ public class Event extends BaseEntity {
     private Integer remainSeat; // 남은 좌석 수
     private String place; // 주소
     private Boolean isAdult; // 제한연령
+    private Integer viewCount = 0; // 조회수
     @Enumerated(EnumType.STRING)
     private Category category; // 카테고리
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,7 +41,7 @@ public class Event extends BaseEntity {
     private SpecialSeat specialSeat;
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat, Integer viewCount) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -55,5 +56,10 @@ public class Event extends BaseEntity {
         this.category = category;
         this.member = member;
         this.specialSeat = specialSeat;
+        this.viewCount = viewCount;
+    }
+
+    public void updateViewCount() {
+        this.viewCount += 1;
     }
 }
