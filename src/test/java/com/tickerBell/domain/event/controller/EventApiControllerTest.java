@@ -1,6 +1,8 @@
 package com.tickerBell.domain.event.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
@@ -24,12 +26,12 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
@@ -51,6 +53,8 @@ public class EventApiControllerTest {
     public void setup() {
         transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
         memberService.join("username", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @AfterEach
@@ -65,10 +69,20 @@ public class EventApiControllerTest {
         // given
         SaveEventRequest mockRequest = createMockSaveEventRequest();
 
+        MockMultipartFile thumbNailImage = new MockMultipartFile("thumbNailImage", "image1.jpg", "image/jpeg", new byte[0]);
+        MockMultipartFile eventImage1 = new MockMultipartFile("eventImages", "image1.jpg", "image/jpeg", new byte[0]);
+        MockMultipartFile eventImage2 = new MockMultipartFile("eventImages", "image2.png", "image/png", new byte[0]);
+        String requestJson = objectMapper.writeValueAsString(mockRequest);
+        MockMultipartFile request = new MockMultipartFile("request", "request", "application/json", requestJson.getBytes(StandardCharsets.UTF_8));
+
         // when
-        ResultActions perform = mockMvc.perform(post("/api/event")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(mockRequest)));
+        ResultActions perform = mockMvc.perform(multipart("/api/event")
+                        .file(thumbNailImage)
+                        .file(eventImage1)
+                        .file(eventImage2)
+                        .file(request)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .accept(MediaType.APPLICATION_JSON));
         // then
         perform
                 .andExpect(status().isOk())
