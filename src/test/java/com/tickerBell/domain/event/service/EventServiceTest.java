@@ -86,7 +86,7 @@ public class EventServiceTest {
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, thumbNailImage, eventImages);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -100,7 +100,7 @@ public class EventServiceTest {
 
 
         // when
-        Long savedEventId = eventService.saveEvent(memberId, saveEventRequest);
+        Long savedEventId = eventService.saveEvent(memberId, saveEventRequest, thumbNailImage, eventImages);
 
         // then
         verify(eventRepository, times(1)).save(any(Event.class));
@@ -137,14 +137,14 @@ public class EventServiceTest {
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null, thumbNailImage, eventImages);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
         // when
         AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(
-                () -> eventService.saveEvent(memberId, saveEventRequest))
+                () -> eventService.saveEvent(memberId, saveEventRequest, thumbNailImage, eventImages))
                 .isInstanceOf(CustomException.class)
                 .extracting(ex -> (CustomException) ex);
 
@@ -181,7 +181,7 @@ public class EventServiceTest {
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, thumbNailImage, eventImages);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
@@ -190,7 +190,7 @@ public class EventServiceTest {
         when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
 
         // when
-        Long savedEventId = eventService.saveEvent(memberId, saveEventRequest);
+        Long savedEventId = eventService.saveEvent(memberId, saveEventRequest, thumbNailImage, eventImages);
 
         // then
         verify(eventRepository, times(1)).save(any(Event.class));
