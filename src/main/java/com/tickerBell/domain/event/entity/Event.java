@@ -41,7 +41,7 @@ public class Event extends BaseEntity {
     private SpecialSeat specialSeat;
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat, Integer viewCount) {
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -56,7 +56,7 @@ public class Event extends BaseEntity {
         this.category = category;
         this.member = member;
         this.specialSeat = specialSeat;
-        this.viewCount = viewCount;
+        this.viewCount = 0;
     }
 
     public void updateViewCount() {
