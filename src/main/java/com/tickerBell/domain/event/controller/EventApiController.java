@@ -9,12 +9,14 @@ import com.tickerBell.domain.event.service.EventService;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.global.dto.Response;
 import com.tickerBell.global.security.context.MemberContext;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,12 +28,14 @@ public class EventApiController {
     private final EventService eventService;
 
     @PostMapping(value = "/api/event", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> saveEvent(@ModelAttribute SaveEventRequest request,
+    public ResponseEntity<Response> saveEvent(@RequestPart SaveEventRequest request,
+                                              @Parameter(description = "썸네일 이미지") @RequestPart MultipartFile thumbNailImage,
+                                              @Parameter(description = "이벤트 이미지") @RequestPart List<MultipartFile> eventImages,
                                               @AuthenticationPrincipal MemberContext memberContext) {
         // 로그인한 회원 객체 조회
         Member loginMember = memberContext.getMember();
         // 이벤트, 특수석, 태그 저장
-        eventService.saveEvent(loginMember.getId(), request);
+        eventService.saveEvent(loginMember.getId(), request, thumbNailImage, eventImages);
         return ResponseEntity.ok(new Response("이벤트 등록에 성공하였습니다."));
     }
 
