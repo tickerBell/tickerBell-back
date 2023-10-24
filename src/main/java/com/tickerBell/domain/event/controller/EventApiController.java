@@ -28,9 +28,9 @@ public class EventApiController {
     private final EventService eventService;
 
     @PostMapping(value = "/api/event", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> saveEvent(@RequestPart SaveEventRequest request,
-                                              @Parameter(description = "썸네일 이미지") @RequestPart MultipartFile thumbNailImage,
-                                              @Parameter(description = "이벤트 이미지") @RequestPart List<MultipartFile> eventImages,
+    public ResponseEntity<Response> saveEvent(@RequestPart(name = "request") SaveEventRequest request,
+                                              @Parameter(description = "썸네일 이미지") @RequestPart(name = "thumbNailImage") MultipartFile thumbNailImage,
+                                              @Parameter(description = "이벤트 이미지") @RequestPart(name = "eventImages") List<MultipartFile> eventImages,
                                               @AuthenticationPrincipal MemberContext memberContext) {
         // 로그인한 회원 객체 조회
         Member loginMember = memberContext.getMember();
