@@ -141,13 +141,12 @@ public class EventApiControllerTest {
         perform
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.name").value("mockName"))
-                .andExpect(jsonPath("$.data.startEvent").isEmpty())
-                .andExpect(jsonPath("$.data.endEvent").isEmpty())
+                .andExpect(jsonPath("$.data.startEvent").isNotEmpty())
+                .andExpect(jsonPath("$.data.endEvent").isNotEmpty())
                 .andExpect(jsonPath("$.data.normalPrice").value(10000))
                 .andExpect(jsonPath("$.data.premiumPrice").value(15000))
                 .andExpect(jsonPath("$.data.discountNormalPrice").value(9000))
                 .andExpect(jsonPath("$.data.discountPremiumPrice").value(14000))
-                .andExpect(jsonPath("$.data.host").value("mockHost"))
                 .andExpect(jsonPath("$.data.place").value("mockPlace"))
                 .andExpect(jsonPath("$.data.isAdult").value(false))
                 .andExpect(jsonPath("$.data.category").value(Category.CONCERT.name()))
@@ -155,5 +154,6 @@ public class EventApiControllerTest {
                 .andExpect(jsonPath("$.data.isSpecialSeatB").value(true))
                 .andExpect(jsonPath("$.data.isSpecialSeatC").value(true))
                 .andExpect(jsonPath("$.message").value("이벤트 상세 데이터 반환 완료"));
+        // todo 다대일 관계 andExpect 추가
     }
 }
