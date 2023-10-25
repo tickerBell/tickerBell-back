@@ -1,17 +1,20 @@
 package com.tickerBell.domain.casting.repository;
 
+import com.tickerBell.config.TestConfig;
 import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@Import(TestConfig.class)
 class CastingRepositoryTest {
 
     @Autowired
