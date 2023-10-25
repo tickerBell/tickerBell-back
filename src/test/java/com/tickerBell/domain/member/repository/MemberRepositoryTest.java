@@ -1,5 +1,6 @@
 package com.tickerBell.domain.member.repository;
 
+import com.tickerBell.config.TestConfig;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
@@ -10,10 +11,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import static org.assertj.core.api.Assertions.*;
 
 @DataJpaTest
+@Import(TestConfig.class)
 class MemberRepositoryTest {
 
     @Autowired
