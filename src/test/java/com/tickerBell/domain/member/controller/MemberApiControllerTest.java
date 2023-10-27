@@ -219,6 +219,28 @@ class MemberApiControllerTest {
                 .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
                 .andExpect(jsonPath("$.data.username").value("testUsername"))
                 .andExpect(jsonPath("$.data.isRegistrant").value("false"))
-                .andExpect(jsonPath("$.data.eventName").isNotEmpty());
+                .andExpect(jsonPath("$.data.eventName").isNotEmpty())
+                .andExpect(jsonPath("$.data.eventName[0]").isNotEmpty())
+                .andExpect(jsonPath("$.data.eventName[1]").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("등록자 회원 마이페이지 조회 테스트")
+    @WithUserDetails(value = "abcdefg", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void registrantMyPageTest() throws Exception {
+        // given
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/member/my")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
+                .andExpect(jsonPath("$.data.username").value("abcdefg"))
+                .andExpect(jsonPath("$.data.isRegistrant").value("true"))
+                .andExpect(jsonPath("$.data.eventName").isArray())
+                .andExpect(jsonPath("$.data.ticketHolderCounts").isArray())
+                .andExpect(jsonPath("$.data.ticketHolderCounts").isNotEmpty());
     }
 }
