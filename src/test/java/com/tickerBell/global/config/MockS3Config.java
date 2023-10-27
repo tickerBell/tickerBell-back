@@ -15,12 +15,11 @@ import static org.mockito.Mockito.when;
 
 @Profile("test")
 @Configuration
-public class MockS3Config extends S3Config {
+public class MockS3Config {
 
     @Bean
     @Primary
-    @Override
-    public AmazonS3Client amazonS3Client() throws MalformedURLException {
+    public AmazonS3Client amazonS3ClientMock() throws MalformedURLException {
         AmazonS3Client mock = Mockito.mock(AmazonS3Client.class);
 
         when(mock.getUrl(anyString(), anyString())).thenReturn(new URL("https://example.com/yourBucketName/yourFileName"));
