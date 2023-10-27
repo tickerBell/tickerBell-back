@@ -7,6 +7,7 @@ import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.domain.member.dtos.LoginRequest;
+import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.global.config.MockRedisConfig;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -190,5 +194,31 @@ class MemberApiControllerTest {
                 .andExpect(jsonPath("$.data.isAdult").value("true"))
                 .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()))
                 .andExpect(jsonPath("$.message").value("회원 정보 조회 성공"));
+    }
+
+    @Test
+    @DisplayName("일반회원 마이페이지 조회 테스트")
+    @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void generalMyPageTest() throws Exception {
+        // given
+
+        List<String> selectedSeats = new ArrayList<>();
+        selectedSeats.add("A1");
+        TicketingRequest ticketingRequest = TicketingRequest.builder().selectedSeat(selectedSeats).eventId(1L).build();
+        String request = objectMapper.writeValueAsString(ticketingRequest);
+        mockMvc.perform(post("/ticketing")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request));
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/member/my")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
+                .andExpect(jsonPath("$.data.username").value("testUsername"))
+                .andExpect(jsonPath("$.data.isRegistrant").value("false"))
+                .andExpect(jsonPath("$.data.eventName").isNotEmpty());
     }
 }
