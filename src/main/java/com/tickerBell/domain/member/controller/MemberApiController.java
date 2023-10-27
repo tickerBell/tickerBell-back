@@ -74,7 +74,7 @@ public class MemberApiController {
         }
     }
 
-    @Operation(summary = "회원 정보 조회")
+    @Operation(summary = "회원 정보 조회 *")
     @GetMapping("/api/member")
     public ResponseEntity<Response> getMember(@AuthenticationPrincipal MemberContext memberContext) {
         Member loginMember = memberContext.getMember();
@@ -84,7 +84,7 @@ public class MemberApiController {
         return ResponseEntity.ok(new Response(memberResponse, "회원 정보 조회 성공"));
     }
 
-    @Operation(summary = "마이 페이지 조회")
+    @Operation(summary = "마이 페이지 조회 *")
     @GetMapping("/api/member/my")
     public ResponseEntity<Response> myPage(@AuthenticationPrincipal MemberContext memberContext) {
         Member loginMember = memberContext.getMember();
