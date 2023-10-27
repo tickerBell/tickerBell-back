@@ -147,6 +147,7 @@ public class MemberServiceImpl implements MemberService{
         List<LocalDateTime> startEvent = new ArrayList<>();
         List<LocalDateTime> endEvent = new ArrayList<>();
         List<String> castings = new ArrayList<>();
+        List<Boolean> isCancelled = new ArrayList<>();
 
         MyPageResponse myPageResponse = new MyPageResponse();
         myPageResponse.setUsername(findMember.getUsername());
@@ -154,6 +155,7 @@ public class MemberServiceImpl implements MemberService{
 
         if (findMember.getRole().equals(Role.ROLE_USER)) {
 
+            // 일반 사용자 myPage
             myPageResponse.setIsRegistrant(false);
 
             List<Ticketing> findTicketings = ticketingRepository.findByMemberId(memberId);
@@ -176,6 +178,8 @@ public class MemberServiceImpl implements MemberService{
             myPageResponse.setEndEvent(endEvent);
 
         } else {
+
+            // 등록자 myPage
             myPageResponse.setIsRegistrant(true);
 
             List<Event> findEvents = eventRepository.findByMemberIdFetchAll(findMember.getId());
@@ -183,6 +187,7 @@ public class MemberServiceImpl implements MemberService{
             List<Integer> ticketHolderCounts = new ArrayList<>();
             for (Event findEvent : findEvents) {
                 eventName.add(findEvent.getName());
+                isCancelled.add(findEvent.getIsCancelled());
 
                 List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
 
@@ -202,6 +207,7 @@ public class MemberServiceImpl implements MemberService{
             myPageResponse.setStartEvent(startEvent);
             myPageResponse.setEndEvent(endEvent);
             myPageResponse.setTicketHolderCounts(ticketHolderCounts);
+            myPageResponse.setIsCancelled(isCancelled);
         }
 
         return myPageResponse;

@@ -88,6 +88,7 @@ class EventRepositoryTest {
         assertThat(savedEvent.getMember()).isEqualTo(savedMember);
         assertThat(savedEvent.getSpecialSeat()).isEqualTo(savedSpecialSeat);
         assertThat(savedEvent.getViewCount()).isEqualTo(0);
+        assertThat(savedEvent.getIsCancelled()).isFalse();
     }
 
     @Test
