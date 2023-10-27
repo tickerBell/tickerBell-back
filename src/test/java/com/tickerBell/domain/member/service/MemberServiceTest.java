@@ -288,6 +288,7 @@ class MemberServiceTest {
         assertThat(myPage.getIsRegistrant()).isTrue();
         assertThat(myPage.getTicketHolderCounts().size()).isEqualTo(1);
         assertThat(myPage.getTicketHolderCounts().get(0)).isEqualTo(1);
+        assertThat(myPage.getIsCancelled().get(0)).isFalse();
         verify(memberRepository, times(1)).findById(memberId);
     }
 
