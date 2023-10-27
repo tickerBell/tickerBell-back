@@ -30,7 +30,8 @@ public class Event extends BaseEntity {
     private Integer remainSeat; // 남은 좌석 수
     private String place; // 주소
     private Boolean isAdult; // 제한연령
-    private Integer viewCount = 0; // 조회수
+    private Integer viewCount; // 조회수
+    private Boolean isCancelled; // 취소 여부
     @Enumerated(EnumType.STRING)
     private Category category; // 카테고리
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,6 +58,7 @@ public class Event extends BaseEntity {
         this.member = member;
         this.specialSeat = specialSeat;
         this.viewCount = 0;
+        this.isCancelled = false;
     }
 
     public void updateViewCount() {
