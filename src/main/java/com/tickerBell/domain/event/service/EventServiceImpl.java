@@ -162,6 +162,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public MainPageDto getMainPage() {
         MainPageDto mainPage = eventRepository.getMainPage();
+
         return mainPage;
     }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 @Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class MainPageDto {
 
@@ -25,19 +26,4 @@ public class MainPageDto {
 
     // 추천 이벤트
     private List<EventListResponse> recommendEventList;
-
-    @QueryProjection
-    public MainPageDto(List<EventListResponse> rankingMusicalEventList, List<EventListResponse> rankingConcertEventList,
-                       List<EventListResponse> rankingPlayEventList, List<EventListResponse> rankingClassicEventList,
-                       List<EventListResponse> rankingSportsEventList, List<EventListResponse> saleEventList,
-                       List<EventListResponse> deadLineEventList, List<EventListResponse> recommendEventList) {
-        this.rankingMusicalEventList = rankingMusicalEventList;
-        this.rankingConcertEventList = rankingConcertEventList;
-        this.rankingPlayEventList = rankingPlayEventList;
-        this.rankingClassicEventList = rankingClassicEventList;
-        this.rankingSportsEventList = rankingSportsEventList;
-        this.saleEventList = saleEventList;
-        this.deadLineEventList = deadLineEventList;
-        this.recommendEventList = recommendEventList;
-    }
 }
