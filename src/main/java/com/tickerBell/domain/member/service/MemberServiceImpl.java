@@ -146,7 +146,6 @@ public class MemberServiceImpl implements MemberService{
         List<List<String>> casting = new ArrayList<>();
         List<LocalDateTime> startEvent = new ArrayList<>();
         List<LocalDateTime> endEvent = new ArrayList<>();
-        List<String> castings = new ArrayList<>();
         List<Boolean> isCancelled = new ArrayList<>();
 
         MyPageResponse myPageResponse = new MyPageResponse();
@@ -162,7 +161,7 @@ public class MemberServiceImpl implements MemberService{
             for (Ticketing findTicketing : findTicketings) {
                 Event findEvent = findTicketing.getEvent();
                 List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
-
+                List<String> castings = new ArrayList<>();
                 for (Casting findCasting : findCastings) {
                     castings.add(findCasting.getCastingName());
                 }
@@ -191,6 +190,7 @@ public class MemberServiceImpl implements MemberService{
 
                 List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
 
+                List<String> castings = new ArrayList<>();
                 for (Casting findCasting : findCastings) {
                     castings.add(findCasting.getCastingName());
                 }
@@ -219,13 +219,6 @@ public class MemberServiceImpl implements MemberService{
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
 
-        MemberResponse memberResponse = new MemberResponse();
-        memberResponse.setMemberId(findMember.getId());
-        memberResponse.setUsername(findMember.getUsername());
-        memberResponse.setPhone(findMember.getPhone());
-        memberResponse.setRole(findMember.getRole());
-        memberResponse.setIsAdult(findMember.getIsAdult());
-
-        return memberResponse;
+        return MemberResponse.from(findMember);
     }
 }

@@ -1,15 +1,12 @@
 package com.tickerBell.domain.member.dtos;
 
+import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class MemberResponse {
 
     private Long memberId;
@@ -17,4 +14,14 @@ public class MemberResponse {
     private String phone;
     private Role role;
     private Boolean isAdult;
+
+    public static MemberResponse from(Member member) {
+        return MemberResponse.builder()
+                .memberId(member.getId())
+                .username(member.getUsername())
+                .phone(member.getPhone())
+                .role(member.getRole())
+                .isAdult(member.getIsAdult())
+                .build();
+    }
 }
