@@ -258,14 +258,8 @@ class TicketingServiceImplTest {
 
         // stub
         Member spyMember = spy(member);
-//        SelectedSeat spySelectedSeat = spy(ticketing.getSelectedSeatList().get(0));
-//        Event spyEvent = spy(event);
-//        Ticketing spyTicketing = spy(ticketing);
 
         when(spyMember.getId()).thenReturn(1L);
-//        when(spySelectedSeat.getId()).thenReturn(1L);
-//        when(spyEvent.getId()).thenReturn(1L);
-//        when(spyTicketing.getId()).thenReturn(1L);
         when(memberRepository.findById(any())).thenReturn(Optional.of(spyMember));
         when(ticketingRepository.findByMemberId(any(Long.class))).thenReturn(ticketingList);
 

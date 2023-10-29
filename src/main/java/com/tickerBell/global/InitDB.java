@@ -100,11 +100,11 @@ public class InitDB {
                         .build();
                 em.persist(specialSeat);
                 Event event = Event.builder()
-                        .name("이벤트1")
+                        .name(category.getDescription() + " 이벤트" + i)
                         .startEvent(LocalDateTime.now().plusDays(1).plusHours(1))
                         .endEvent(LocalDateTime.now().plusDays(1).plusHours(3))
                         .availablePurchaseTime(LocalDateTime.now().plusDays(1))
-                        .normalPrice(10000 + (i * 1000))
+                        .normalPrice(10000 + (i * 5000))
                         .premiumPrice(15000 + + (i * 1000))
                         .saleDegree(2000F+ (i * 1000))
                         .totalSeat(60)
@@ -123,7 +123,7 @@ public class InitDB {
                 Host host = Host.builder().hostName("주최자" + i).event(event).build();
                 em.persist(host);
 
-                Image image = Image.builder().s3Url("s3url").storeImgName("storeImgName")
+                Image image = Image.builder().s3Url("https://tickerbell-image.s3.ap-northeast-2.amazonaws.com/0f05a295-26e7-4082-a39a-1ddd0d05080d.png").storeImgName("storeImgName")
                         .isThumbnail(true).originImgName("originalName").event(event).build();
                 em.persist(image);
             }
