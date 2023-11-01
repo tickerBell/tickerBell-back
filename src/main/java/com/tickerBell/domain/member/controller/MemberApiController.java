@@ -84,6 +84,7 @@ public class MemberApiController {
 
         MemberResponse memberResponse = memberService.getMember(loginMember.getId());
 
+
         return ResponseEntity.ok(new Response(memberResponse, "회원 정보 조회 성공"));
     }
 
