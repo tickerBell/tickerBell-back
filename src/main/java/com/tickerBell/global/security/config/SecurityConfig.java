@@ -77,9 +77,11 @@ public class SecurityConfig {
                     @Override
                     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
                         response.setCharacterEncoding("utf-8");
-                        response.setStatus(HttpStatus.BAD_REQUEST.value());
+                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
                         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                        response.getWriter().write(objectMapper.writeValueAsString(ResponseEntity.badRequest().body(new Response("Authentication 에러 발생"))));
+                        response.getWriter().write(objectMapper.writeValueAsString(
+                                new Response("Authentication 에러 발생"))
+                        );
                     }
                 });
 
