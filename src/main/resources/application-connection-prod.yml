@@ -14,7 +14,7 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
   data:
     redis:
-      host: # 여기 prod 환경에서의 redis 설정하면 될 것 같아요
+      host: redis
       port: 6379
 
   batch:
