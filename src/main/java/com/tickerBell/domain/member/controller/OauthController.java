@@ -3,6 +3,7 @@ package com.tickerBell.domain.member.controller;
 import com.tickerBell.domain.member.dtos.TokenRequest;
 import com.tickerBell.domain.member.service.OauthService;
 import com.tickerBell.global.dto.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,8 @@ public class OauthController {
     private final OauthService oauthService;
 
     // 플랫폼에서 응답 받음
+    @Operation(summary = "auth code 로 토큰 발급", description = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=8fd7a1f394d9bbd09fdfdd3827146d73&redirect_uri=\n" +
+            "  http://localhost:3000/oauth/kakao")
     @GetMapping("/login/oauth2/code/{registrationId}")
     public ResponseEntity<Response> redirect(
             @PathVariable("registrationId") String registrationId
