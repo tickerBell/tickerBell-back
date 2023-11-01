@@ -1,19 +1,31 @@
 package com.tickerBell.global.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tickerBell.global.dto.Response;
 import com.tickerBell.global.security.filter.JwtFilter;
 import com.tickerBell.global.security.service.CustomUserDetailsService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +34,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtFilter jwtFilter;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -58,6 +71,17 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.exceptionHandling()
+                .authenticationEntryPoint(new AuthenticationEntryPoint() {
+                    @Override
+                    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+                        response.setCharacterEncoding("utf-8");
+                        response.setStatus(HttpStatus.BAD_REQUEST.value());
+                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                        response.getWriter().write(objectMapper.writeValueAsString(ResponseEntity.badRequest().body(new Response("Authentication 에러 발생"))));
+                    }
+                });
 
         return http.build();
     }
