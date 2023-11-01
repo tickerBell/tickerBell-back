@@ -62,7 +62,7 @@ jobs:
 
       # 최신 이미지를 컨테이너화하여 실행시킵니다
       - name: docker run new container
-        run: sudo docker run --network tickerbell --name tickerbell --rm -d -e ACCESS_KEY=${{ secrets.ACCESS_KEY }} -e DB_ENDPOINT=${{ secrets.DB_ENDPOINT }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} -e KAKAO_REDIRECT=${{ secrets.KAKAO_REDIRECT }} -e SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }} -e SECRET_KEY=${{ secrets.SECRET_KEY }} -e SMS_ACCESS_KEY=${{ secrets.SMS_ACCESS_KEY }} -e SMS_SECRET_KEY=${{ secrets.SMS_SECRET_KEY }} -e SMS_SENDER_PHONE=${{ secrets.SMS_SENDER_PHONE }} -e SMS_SERVICE_ID=${{ secrets.SMS_SERVICE_ID }} -e MAP_API_KEY_ID=${{ secrets.MAP_API_KEY_ID }} -e MAP_API_KEY=${{ secrets.MAP_API_KEY }} -e USE_PROFILE=prod -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
+        run: sudo docker run --network tickerbell --name tickerbell --rm -d -e ACCESS_KEY=${{ secrets.ACCESS_KEY }} -e DB_ENDPOINT=${{ secrets.DB_ENDPOINT }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} -e KAKAO_REDIRECT=${{ secrets.KAKAO_REDIRECT }} -e SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }} -e SECRET_KEY=${{ secrets.SECRET_KEY }} -e SMS_ACCESS_KEY=${{ secrets.SMS_ACCESS_KEY }} -e SMS_SECRET_KEY=${{ secrets.SMS_SECRET_KEY }} -e SMS_SENDER_PHONE=${{ secrets.SMS_SENDER_PHONE }} -e SMS_SERVICE_ID=${{ secrets.SMS_SERVICE_ID }} -e MAP_API_KEY_ID=${{ secrets.MAP_API_KEY_ID }} -e MAP_API_KEY=${{ secrets.MAP_API_KEY }} -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
 
       # 미사용 이미지를 정리합니다
       - name: delete old docker image
