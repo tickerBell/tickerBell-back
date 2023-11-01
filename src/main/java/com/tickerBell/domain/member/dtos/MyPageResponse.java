@@ -28,4 +28,7 @@ public class MyPageResponse {
     // 예매 관련
     private List<Integer> ticketHolderCounts; // 예매자 수
     private List<Boolean> isCancelled;
+
+    // 페이징 총 개수
+    private Long totalCount;
 }
