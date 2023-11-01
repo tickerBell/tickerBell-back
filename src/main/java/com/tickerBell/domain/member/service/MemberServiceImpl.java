@@ -17,6 +17,8 @@ import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -136,7 +138,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MyPageResponse getMyPage(Long memberId) {
+    public MyPageResponse getMyPage(Long memberId, Pageable pageable) {
 
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
@@ -157,7 +159,10 @@ public class MemberServiceImpl implements MemberService{
             // 일반 사용자 myPage
             myPageResponse.setIsRegistrant(false);
 
-            List<Ticketing> findTicketings = ticketingRepository.findByMemberId(memberId);
+            Page<Ticketing> findTicketingsPage = ticketingRepository.findByMemberIdPage(memberId, pageable);
+            long totalCount = findTicketingsPage.getTotalElements();
+            List<Ticketing> findTicketings = findTicketingsPage.getContent();
+
             for (Ticketing findTicketing : findTicketings) {
                 Event findEvent = findTicketing.getEvent();
                 List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
@@ -175,13 +180,16 @@ public class MemberServiceImpl implements MemberService{
             myPageResponse.setCasting(casting);
             myPageResponse.setStartEvent(startEvent);
             myPageResponse.setEndEvent(endEvent);
+            myPageResponse.setTotalCount(totalCount);
 
         } else {
 
             // 등록자 myPage
             myPageResponse.setIsRegistrant(true);
 
-            List<Event> findEvents = eventRepository.findByMemberIdFetchAll(findMember.getId());
+            Page<Event> findEventsPage = eventRepository.findByMemberIdFetchAllPage(findMember.getId(), pageable);
+            long totalCount = findEventsPage.getTotalElements();
+            List<Event> findEvents = findEventsPage.getContent();
 
             List<Integer> ticketHolderCounts = new ArrayList<>();
             for (Event findEvent : findEvents) {
@@ -208,6 +216,7 @@ public class MemberServiceImpl implements MemberService{
             myPageResponse.setEndEvent(endEvent);
             myPageResponse.setTicketHolderCounts(ticketHolderCounts);
             myPageResponse.setIsCancelled(isCancelled);
+            myPageResponse.setTotalCount(totalCount);
         }
 
         return myPageResponse;

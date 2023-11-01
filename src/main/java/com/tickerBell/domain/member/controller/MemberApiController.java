@@ -11,6 +11,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -86,9 +89,13 @@ public class MemberApiController {
 
     @Operation(summary = "마이 페이지 조회 *")
     @GetMapping("/api/member/my")
-    public ResponseEntity<Response> myPage(@AuthenticationPrincipal MemberContext memberContext) {
+    public ResponseEntity<Response> myPage(@AuthenticationPrincipal MemberContext memberContext,
+                                           @PageableDefault(size = 10,
+                                           sort = "createdDate",
+                                           direction = Sort.Direction.DESC)Pageable pageable) {
+
         Member loginMember = memberContext.getMember();
-        MyPageResponse myPageResponse = memberService.getMyPage(loginMember.getId());
+        MyPageResponse myPageResponse = memberService.getMyPage(loginMember.getId(), pageable);
 
         return ResponseEntity.ok(new Response(myPageResponse, "마이페이지 조회 성공"));
     }
