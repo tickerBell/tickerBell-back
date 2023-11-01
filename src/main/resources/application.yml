@@ -1,13 +1,70 @@
 spring:
   profiles:
-    active: local
-    include: connection, oauth2, app
+    active: ${environment}
 
----
-spring:
-  profiles:
-    active: prod
-    include: connection2, oauth2, app
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_ENDPOINT}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  batch:
+    jdbc:
+      initialize-schema: always # batch repo 테이블 자동 생성
+    job:
+      enabled: false # 시작과 동시에 실행되는 것 방지
+
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_API_KEY}
+            redirect-uri: ${KAKAO_REDIRECT}
+            client-authentication-method: POST
+            authorization-grant-type: authorization_code # 웹 애플리케이션 또는 모바일 앱과 같은 안전한 환경에서 사용
+            scope: profile_nickname, profile_image, account_email
+            client-name: Kakao
+        provider:
+          kakao:
+            authorization_uri: https://kauth.kakao.com/oauth/authorize
+            token_uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user_name_attribute: id
+
+app:
+  auth:
+    secret-key: ${SECRET_KEY}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_ACCESS_KEY}
+    s3:
+      bucket: tickerbell-image
+    stack.auto: false #기본 cloudFormation 구성 시작 사용 x
+    region:
+      static: ap-northeast-2
+
+naver-cloud-sms:
+  accessKey: ${SMS_ACCESS_KEY}
+  secretKey: ${SMS_SECRET_KEY}
+  serviceId: ${SMS_SERVICE_ID}
+  senderPhone: ${SMS_SENDER_PHONE}
+
+naver-cloud-map:
+  api-key-id: ${MAP_API_KEY_ID}
+  api-key: ${MAP_API_KEY}
+
 
 
 # java -jar tickerBell-0.0.1-SNAPSHOT.jar --spring.profiles.active={local or prod} 로 명령어 실행
