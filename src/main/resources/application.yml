@@ -1,28 +1,13 @@
 spring:
   profiles:
     active: local
-    include: connection, oauth2
-app:
-  auth:
-    secret-key: ${SECRET_KEY}
+    include: connection, oauth2, app
 
-cloud:
-  aws:
-    credentials:
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_ACCESS_KEY}
-    s3:
-      bucket: tickerbell-image
-    stack.auto: false #기본 cloudFormation 구성 시작 사용 x
-    region:
-      static: ap-northeast-2
+---
+spring:
+  profiles:
+    active: prod
+    include: connection-prod, oauth2, app
 
-naver-cloud-sms:
-  accessKey: ${SMS_ACCESS_KEY}
-  secretKey: ${SMS_SECRET_KEY}
-  serviceId: ${SMS_SERVICE_ID}
-  senderPhone: ${SMS_SENDER_PHONE}
 
-naver-cloud-map:
-  api-key-id: ${MAP_API_KEY_ID}
-  api-key: ${MAP_API_KEY}
+# java -jar tickerBell-0.0.1-SNAPSHOT.jar --spring.profiles.active={local or prod} 로 실행
