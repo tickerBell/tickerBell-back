@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TicketingRepository extends JpaRepository<Ticketing, Long> {
+public interface TicketingRepository extends JpaRepository<Ticketing, Long>, TicketingRepositoryCustom {
 
     @Query("select t from Ticketing t join fetch t.member m where t.event.startEvent between :tomorrowStart and :tomorrowEnd")
     List<Ticketing> findTicketingTomorrow(@Param("tomorrowStart") LocalDateTime tomorrowStart, @Param("tomorrowEnd") LocalDateTime tomorrowEnd);

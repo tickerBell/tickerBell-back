@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -159,5 +161,30 @@ class EventRepositoryTest {
                 .build();
 
         return event;
+    }
+
+    @Test
+    @DisplayName("페이징을 적용한 회원 PK를 통한 이벤트 조회 테스트")
+    void findByMemberIdFetchAllPageTest() {
+        // given
+        Member member = Member.builder().build();
+        Member savedMember = memberRepository.save(member);
+        SpecialSeat specialSeat = SpecialSeat.builder().isSpecialSeatC(true).isSpecialSeatB(true).isSpecialSeatC(true).build();
+        SpecialSeat savedSpecialSeat = specialSeatRepository.save(specialSeat);
+        Event event = createMockEvent(savedMember, savedSpecialSeat);
+        eventRepository.save(event);
+        Event event2 = createMockEvent(savedMember, savedSpecialSeat);
+        eventRepository.save(event2);
+        Event event3 = createMockEvent(savedMember, savedSpecialSeat);
+        eventRepository.save(event3);
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<Event> findEventsPage = eventRepository.findByMemberIdFetchAllPage(savedMember.getId(), pageRequest);
+        List<Event> findEvents = findEventsPage.getContent();
+
+        // then
+        assertThat(findEvents.size()).isEqualTo(3);
     }
 }

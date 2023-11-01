@@ -3,6 +3,7 @@ package com.tickerBell.domain.member.service;
 import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Role;
+import org.springframework.data.domain.Pageable;
 
 public interface MemberService {
 
@@ -10,6 +11,6 @@ public interface MemberService {
     LoginResponse regenerateToken(RefreshTokenRequest refreshTokenRequest);
     LoginResponse login(String username, String password);
     JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request);
-    MyPageResponse getMyPage(Long memberId);
+    MyPageResponse getMyPage(Long memberId, Pageable pageable);
     MemberResponse getMember(Long memberId);
 }
