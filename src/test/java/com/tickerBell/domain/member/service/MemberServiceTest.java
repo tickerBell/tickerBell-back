@@ -26,6 +26,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -237,14 +239,17 @@ class MemberServiceTest {
         Casting casting = Casting.builder().event(event).castingName("name").build();
         List<Casting> castings = new ArrayList<>();
         castings.add(casting);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Long totalCount = 1L;
+        PageImpl<Ticketing> ticketingsPage = new PageImpl<>(ticketings, pageRequest, totalCount);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(generalMember));
-        when(ticketingRepository.findByMemberId(memberId)).thenReturn(ticketings);
+        when(ticketingRepository.findByMemberIdPage(memberId, pageRequest)).thenReturn(ticketingsPage);
         when(castingRepository.findByEventId(null)).thenReturn(castings);
 
         // when
-        MyPageResponse myPage = memberService.getMyPage(memberId);
+        MyPageResponse myPage = memberService.getMyPage(memberId, pageRequest);
 
         // then
         assertThat(myPage.getStartEvent()).isNotEmpty();
@@ -252,13 +257,13 @@ class MemberServiceTest {
         assertThat(myPage.getIsRegistrant()).isFalse();
         assertThat(myPage.getTicketHolderCounts()).isNull();
         verify(memberRepository, times(1)).findById(memberId);
-        verify(ticketingRepository, times(1)).findByMemberId(memberId);
+        verify(ticketingRepository, times(1)).findByMemberIdPage(memberId, pageRequest);
         verify(castingRepository, times(1)).findByEventId(null);
         verifyNoMoreInteractions(ticketingRepository);
     }
 
     @Test
-    @DisplayName("등록자 회원 마이페이지 조회 테스트")
+    @DisplayName("발")
     void getRegistrantMyPageTest() {
         // given
         Long memberId = 1L;
@@ -272,15 +277,18 @@ class MemberServiceTest {
         Casting casting = Casting.builder().event(event).castingName("name").build();
         List<Casting> castings = new ArrayList<>();
         castings.add(casting);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Long totalCount = 1L;
+        PageImpl<Event> eventsPage = new PageImpl<>(events, pageRequest, totalCount);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(generalMember));
-        when(eventRepository.findByMemberIdFetchAll(null)).thenReturn(events);
+        when(eventRepository.findByMemberIdFetchAllPage(null, pageRequest)).thenReturn(eventsPage);
         when(castingRepository.findByEventId(null)).thenReturn(castings);
         when(ticketingRepository.findByEventId(null)).thenReturn(ticketings);
 
         // when
-        MyPageResponse myPage = memberService.getMyPage(memberId);
+        MyPageResponse myPage = memberService.getMyPage(memberId, pageRequest);
 
         // then
         assertThat(myPage.getStartEvent()).isNotEmpty();

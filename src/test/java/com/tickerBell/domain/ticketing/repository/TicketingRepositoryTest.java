@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -53,6 +55,30 @@ public class TicketingRepositoryTest {
         assertThat(findTicketings.size()).isEqualTo(1);
         assertThat(findTicketings.get(0).getSelectedSeatList().size()).isEqualTo(1);
         assertThat(findTicketings.get(0).getSelectedSeatList().get(0).getTicketing()).isEqualTo(savedTicketing);
+    }
+
+    @Test
+    @DisplayName("페이징을 적용한 회원 PK를 통한 티켓팅 조회 테스트")
+    void findByMemberIdPageTest() {
+        // given
+        Member registrantMember = Member.builder().build();
+        Member savedRegistrantMember = memberRepository.save(registrantMember);
+        Event event = Event.builder().member(savedRegistrantMember).build();
+        Event savedEvent = eventRepository.save(event);
+        Member member = Member.builder().build();
+        Member savedMember = memberRepository.save(member);
+        Ticketing ticketing = Ticketing.builder().event(savedEvent).member(savedMember).build();
+        Ticketing savedTicketing = ticketingRepository.save(ticketing);
+        Ticketing ticketing2= Ticketing.builder().event(savedEvent).member(savedMember).build();
+        Ticketing savedTicketing2 = ticketingRepository.save(ticketing2);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // when
+        Page<Ticketing> findTicketingsPage = ticketingRepository.findByMemberIdPage(savedMember.getId(), pageRequest);
+        List<Ticketing> findTicketings = findTicketingsPage.getContent();
+
+        // then
+        assertThat(findTicketings.size()).isEqualTo(2);
     }
 
 }

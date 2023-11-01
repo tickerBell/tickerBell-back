@@ -36,6 +36,7 @@ public class EventApiController {
         Member loginMember = memberContext.getMember();
         // 이벤트, 특수석, 태그 저장
         eventService.saveEvent(loginMember.getId(), request, thumbNailImage, eventImages);
+
         return ResponseEntity.ok(new Response("이벤트 등록에 성공하였습니다."));
     }
 
