@@ -7,4 +7,5 @@ ARG JAR_FILE=./build/libs/tickerBell-0.0.1-SNAPSHOT.jar
 COPY ${JAR_FILE} app.jar
 
 # 시스템 진입점 정의
-ENTRYPOINT ["java","-Dspring.profiles.active=${USE_PROFILE}", "-jar","/app.jar"]
+ENTRYPOINT ["java", "-jar","/app.jar"]
+#ENTRYPOINT ["java","-Dspring.profiles.active=${USE_PROFILE}", "-jar","/app.jar"]
