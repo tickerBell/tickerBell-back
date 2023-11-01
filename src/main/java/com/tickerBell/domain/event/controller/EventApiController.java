@@ -55,6 +55,7 @@ public class EventApiController {
     @GetMapping("/api/main")
     public ResponseEntity<Response> getMainPage() {
         MainPageDto mainPage = eventService.getMainPage();
+
         return ResponseEntity.ok(new Response(mainPage, "메인 페이지 데이터 반환 완료"));
     }
 }
