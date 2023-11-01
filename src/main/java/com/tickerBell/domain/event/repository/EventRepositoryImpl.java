@@ -5,7 +5,11 @@ import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.MainPageDto;
 import com.tickerBell.domain.event.dtos.QEventListResponse;
 import com.tickerBell.domain.event.entity.Category;
+import com.tickerBell.domain.event.entity.Event;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.stream.Collectors;
 
 import static com.tickerBell.domain.event.entity.QEvent.*;
 import static com.tickerBell.domain.image.entity.QImage.*;
+import static com.tickerBell.domain.member.entity.QMember.member;
+import static com.tickerBell.domain.specialseat.entity.QSpecialSeat.specialSeat;
 
 @RequiredArgsConstructor
 public class EventRepositoryImpl implements EventRepositoryCustom {
@@ -179,6 +185,27 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                 .recommendEventList(null) // todo: 추천 이벤트 추가해야 함
                 .build();
         return mainPageDto;
+    }
+
+    @Override
+    public Page<Event> findByMemberIdFetchAllPage(Long memberId, Pageable pageable) {
+        List<Event> events = queryFactory.select(event)
+                .from(event)
+                .join(event.member, member).fetchJoin()
+                .join(event.specialSeat, specialSeat).fetchJoin()
+                .where(event.member.id.eq(memberId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long count = queryFactory.select(event.count())
+                .from(event)
+                .where(event.member.id.eq(memberId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchOne();
+
+        return new PageImpl<>(events, pageable, count);
     }
 
     // afterSalePrice 계산
