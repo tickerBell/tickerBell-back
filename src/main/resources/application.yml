@@ -7,7 +7,7 @@ spring:
 spring:
   profiles:
     active: prod
-    include: connection-prod, oauth2, app
+    include: connection2, oauth2, app
 
 
 # java -jar tickerBell-0.0.1-SNAPSHOT.jar --spring.profiles.active={local or prod} 로 명령어 실행
