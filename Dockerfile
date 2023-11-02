@@ -8,4 +8,4 @@ COPY ${JAR_FILE} app.jar
 
 # 시스템 진입점 정의
 #ENTRYPOINT ["java", "-jar","/app.jar"]
-ENTRYPOINT ["java","-Dspring.profiles.active=prod", "-jar","/app.jar"]
+ENTRYPOINT ["java","-Duser.timezone=Asia/Seoul","-Dspring.profiles.active=prod", "-jar","/app.jar"]

@@ -92,7 +92,7 @@ public class InitDB {
         }
 
         private void createEvent(Member member1, Category category) {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 3; i++) {
                 SpecialSeat specialSeat = SpecialSeat.builder()
                         .isSpecialSeatA(true)
                         .isSpecialSeatB(true)

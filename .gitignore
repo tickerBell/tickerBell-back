@@ -41,3 +41,6 @@ out/
 
 # queryDsl
 /src/main/generated
+
+# env 파일
+.env
