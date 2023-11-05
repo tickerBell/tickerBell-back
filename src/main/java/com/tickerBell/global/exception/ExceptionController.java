@@ -42,10 +42,10 @@ public class ExceptionController {
         return ResponseEntity.badRequest().body(new Response(e, builder.toString()));
     }
 
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<?> handleCustomException(Exception e, Model model) {
-//        log.info("핸들링하지 않은 에러 발생");
-//        log.info("exception: " + e);
-//        return ResponseEntity.badRequest().body(new Response(e.getMessage()));
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleCustomException(Exception e, Model model) {
+        log.info("핸들링하지 않은 에러 발생");
+        log.info("exception: " + e);
+        return ResponseEntity.badRequest().body(new Response(e.getMessage()));
+    }
 }

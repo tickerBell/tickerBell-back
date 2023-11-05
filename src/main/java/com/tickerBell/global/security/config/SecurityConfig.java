@@ -68,8 +68,8 @@ public class SecurityConfig {
                 .userDetailsService(customUserDetailsService);
 
         http
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+//                .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
 
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler) // 커스텀 AccessDeniedHandler 등록
