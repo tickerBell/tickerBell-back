@@ -46,55 +46,55 @@ jobs:
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
 
-  cd-pipeline:
-    needs: build-docker-image
-    runs-on: ubuntu-latest
-    steps:
-      # docker-compose.yml 파일을 ec2 /home/ubuntu 에 scp
-      - uses: actions/checkout@master
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          source: "./docker-compose.yml"
-          target: "/home/ubuntu/"
-
-      # ec2에 접속해 script 명령어 실행
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ubuntu
-          key: ${{ secrets.SSH_KEY }}
-          port: 22
-          script: "sudo docker-compose pull && sudo docker-compose up -d"
+#  cd-pipeline:
+#    needs: build-docker-image
+#    runs-on: ubuntu-latest
+#    steps:
+#      # docker-compose.yml 파일을 ec2 /home/ubuntu 에 scp
+#      - uses: actions/checkout@master
+#      - name: copy file via ssh password
+#        uses: appleboy/scp-action@master
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ubuntu
+#          key: ${{ secrets.SSH_KEY }}
+#          port: 22
+#          source: "./docker-compose.yml"
+#          target: "/home/ubuntu/"
+#
+#      # ec2에 접속해 script 명령어 실행
+#      - name: executing remote ssh commands using password
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ubuntu
+#          key: ${{ secrets.SSH_KEY }}
+#          port: 22
+#          script: "sudo docker-compose pull && sudo docker-compose up -d"
 
 # docker build 배포 방식
 
-#  run-docker-image-on-ec2:
-#    # build (위)과정이 완료되어야 실행됩니다.
-#    needs: build-docker-image
-#    runs-on: self-hosted
-#
-#    steps:
-#      # 최신 이미지를 풀받습니다
-#      - name: docker pull
-#        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
-#
-#      # 기존의 컨테이너를 중지시킵니다
-#      - name: docker stop container
-#        run: sudo docker stop tickerbell 2>/dev/null || true
-#
-#      # 최신 이미지를 컨테이너화하여 실행시킵니다
-#      - name: docker run new container
-#        run: sudo docker run --network tickerbell --name tickerbell --rm -d -e ACCESS_KEY=${{ secrets.ACCESS_KEY }} -e DB_ENDPOINT=${{ secrets.DB_ENDPOINT }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} -e KAKAO_REDIRECT=${{ secrets.KAKAO_REDIRECT }} -e SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }} -e SECRET_KEY=${{ secrets.SECRET_KEY }} -e SMS_ACCESS_KEY=${{ secrets.SMS_ACCESS_KEY }} -e SMS_SECRET_KEY=${{ secrets.SMS_SECRET_KEY }} -e SMS_SENDER_PHONE=${{ secrets.SMS_SENDER_PHONE }} -e SMS_SERVICE_ID=${{ secrets.SMS_SERVICE_ID }} -e MAP_API_KEY_ID=${{ secrets.MAP_API_KEY_ID }} -e MAP_API_KEY=${{ secrets.MAP_API_KEY }} -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
-#
-#      # 미사용 이미지를 정리합니다
-#      - name: delete old docker image
-#        run: sudo docker system prune -f
+  run-docker-image-on-ec2:
+    # build (위)과정이 완료되어야 실행됩니다.
+    needs: build-docker-image
+    runs-on: self-hosted
+
+    steps:
+      # 최신 이미지를 풀받습니다
+      - name: docker pull
+        run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
+
+      # 기존의 컨테이너를 중지시킵니다
+      - name: docker stop container
+        run: sudo docker stop tickerbell 2>/dev/null || true
+
+      # 최신 이미지를 컨테이너화하여 실행시킵니다
+      - name: docker run new container
+        run: sudo docker run --network tickerbell --name tickerbell --rm -d -e ACCESS_KEY=${{ secrets.ACCESS_KEY }} -e DB_ENDPOINT=${{ secrets.DB_ENDPOINT }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }} -e KAKAO_REDIRECT=${{ secrets.KAKAO_REDIRECT }} -e SECRET_ACCESS_KEY=${{ secrets.SECRET_ACCESS_KEY }} -e SECRET_KEY=${{ secrets.SECRET_KEY }} -e SMS_ACCESS_KEY=${{ secrets.SMS_ACCESS_KEY }} -e SMS_SECRET_KEY=${{ secrets.SMS_SECRET_KEY }} -e SMS_SENDER_PHONE=${{ secrets.SMS_SENDER_PHONE }} -e SMS_SERVICE_ID=${{ secrets.SMS_SERVICE_ID }} -e MAP_API_KEY_ID=${{ secrets.MAP_API_KEY_ID }} -e MAP_API_KEY=${{ secrets.MAP_API_KEY }} -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
+
+      # 미사용 이미지를 정리합니다
+      - name: delete old docker image
+        run: sudo docker system prune -f
 
 
 
