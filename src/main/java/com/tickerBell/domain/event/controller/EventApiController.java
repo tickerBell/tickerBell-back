@@ -12,7 +12,6 @@ import com.tickerBell.global.security.context.MemberContext;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +25,9 @@ public class EventApiController {
 
     private final EventService eventService;
 
+    @PostMapping(value = "/api/event")
     @Operation(description = "이벤트 등록 *")
-    @PostMapping(value = "/api/event", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Response> saveEvent(@RequestPart(name = "request") SaveEventRequest request,
+    public ResponseEntity<Response> saveEvent(@RequestBody SaveEventRequest request,
                                               @AuthenticationPrincipal MemberContext memberContext) {
         // 로그인한 회원 객체 조회
         Member loginMember = memberContext.getMember();
