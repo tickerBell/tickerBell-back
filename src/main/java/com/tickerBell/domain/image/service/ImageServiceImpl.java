@@ -4,6 +4,8 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.image.dtos.ImageResponse;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
 public class ImageServiceImpl implements ImageService {
     private final ImageRepository imageRepository;
     private final AmazonS3Client amazonS3Client;
+    private final EventRepository eventRepository;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
@@ -39,7 +42,7 @@ public class ImageServiceImpl implements ImageService {
         List<Image> imageList = new ArrayList<>();
         // 일반 이미지 맨 뒤에 썸네일 이미지 추가
         // 썸네일 이미지는 필수 값으로 받아 옴
-        multipartFiles.add(thumbNailImage); 
+        multipartFiles.add(thumbNailImage);
 
 
         for (MultipartFile multipartFile : multipartFiles) {
@@ -91,8 +94,11 @@ public class ImageServiceImpl implements ImageService {
         // 맨 뒤에 세팅해둔 썸네일 이미지 처리
         imageList.get(imageList.size() - 1).setThumbnail(true);
 
+        // db에 이미지 저장
+        List<Image> savedImageList = imageRepository.saveAll(imageList);
+
         // todo: 이미지 entity list 반환. 나중에 event 와 연관관계 맺어야 함
-        return imageList;
+        return savedImageList;
     }
 
     // 테스트를 위해 임시로 만든 함수입니다.
@@ -119,6 +125,19 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public List<Image> findByEventId(Long eventId) {
         return imageRepository.findImageByEventId(eventId);
+    }
+
+    @Override
+    public void updateEventByImageUrl(String imageUrl, Long eventId) {
+        Event findEvent = eventRepository.findById(eventId).orElseThrow(
+                () -> new CustomException(ErrorCode.EVENT_NOT_FOUND)
+        );
+
+        Image findImage = imageRepository.findByImageUrl(imageUrl).orElseThrow(
+                () -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)
+        );
+        findImage.updateEvent(findEvent);
+
     }
 
     private String createStoreImageName(String extension) {
