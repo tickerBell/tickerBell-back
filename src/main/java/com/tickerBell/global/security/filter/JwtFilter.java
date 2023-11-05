@@ -1,8 +1,10 @@
 package com.tickerBell.global.security.filter;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.global.dto.Response;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.global.security.context.MemberContext;
@@ -37,6 +39,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtProvider;
     private final MemberRepository memberRepository;
+    private final ObjectMapper objectMapper;
 
 
     @Override
@@ -73,7 +76,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 log.info("회원 인증 완료");
             }
-
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
             // 만료된 토큰 에러라면
@@ -91,6 +93,16 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 //        } catch (Exception e) {
 //            writeErrorLogs("Exception", e.getMessage(), e.getStackTrace());
+//
+//            // 반환 데이터 인코딩 처리
+//            response.setCharacterEncoding("UTF-8");
+//            response.setContentType("application/json;charset=UTF-8"); // JSON 응답을 UTF-8로 설정
+//            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+//            response.setContentType(APPLICATION_JSON_VALUE);
+//
+//            response.getWriter().write(objectMapper.writeValueAsString(new Response(e.getMessage())));
+//            response.getWriter().flush();
+//            response.getWriter().close();
 //
 //            if (response.getStatus() == HttpStatus.OK.value()) {
 //                response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());

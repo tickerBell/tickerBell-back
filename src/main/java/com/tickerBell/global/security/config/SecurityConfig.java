@@ -1,30 +1,21 @@
 package com.tickerBell.global.security.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tickerBell.global.dto.Response;
+import com.tickerBell.global.security.exceptionHandler.ExceptionHandlerFilter;
 import com.tickerBell.global.security.filter.JwtFilter;
 import com.tickerBell.global.security.service.CustomUserDetailsService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -33,8 +24,7 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtFilter jwtFilter;
-    private final ObjectMapper objectMapper;
-
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -57,7 +47,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/member").hasAnyRole("USER", "REGISTRANT")
                 .requestMatchers("/api/event", "/api/image").hasRole("REGISTRANT") // 등록자 권한 설정
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
-                .requestMatchers("/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/reissue", "/api/members", "/api/login",
+                        "/api/join/sms-validation", "/naver-api/path").permitAll()
+                .requestMatchers(HttpMethod.GET, "/ticketing-nonMember", "/api/main", "/api/events/{category}",
+                        "/api/event/{eventId}", "/login/oauth2/code/{registrationId}", "/error").permitAll()
+                .anyRequest().permitAll()
                 .and()
 
                 .oauth2Login()
@@ -69,20 +63,12 @@ public class SecurityConfig {
                 .userDetailsService(customUserDetailsService);
 
         http
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
 
-        http.exceptionHandling()
-                .authenticationEntryPoint(new AuthenticationEntryPoint() {
-                    @Override
-                    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-                        response.setCharacterEncoding("utf-8");
-                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                        response.getWriter().write(objectMapper.writeValueAsString(
-                                new Response("Authentication 에러 발생"))
-                        );
-                    }
-                });
+//        http.exceptionHandling()
+//                .accessDeniedHandler(customAccessDeniedHandler) // 커스텀 AccessDeniedHandler 등록
+//                .authenticationEntryPoint(customAuthenticationEntryPoint); // 커스텀 AuthenticationEntryPoint 등록
 
         return http.build();
     }
