@@ -1,5 +1,7 @@
 package com.tickerBell.global.security.config;
 
+import com.tickerBell.global.security.exceptionHandler.AccessDeniedHandlerImpl;
+import com.tickerBell.global.security.exceptionHandler.AuthenticationEntryPointHandlerImpl;
 import com.tickerBell.global.security.exceptionHandler.ExceptionHandlerFilter;
 import com.tickerBell.global.security.filter.JwtFilter;
 import com.tickerBell.global.security.service.CustomUserDetailsService;
@@ -25,6 +27,8 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtFilter jwtFilter;
     private final ExceptionHandlerFilter exceptionHandlerFilter;
+    private final AccessDeniedHandlerImpl accessDeniedHandler;
+    private final AuthenticationEntryPointHandlerImpl authenticationEntryPointHandler;
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -51,7 +55,7 @@ public class SecurityConfig {
                         "/api/join/sms-validation", "/naver-api/path").permitAll()
                 .requestMatchers(HttpMethod.GET, "/ticketing-nonMember", "/api/main", "/api/events/{category}",
                         "/api/event/{eventId}", "/login/oauth2/code/{registrationId}", "/error").permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
 
                 .oauth2Login()
@@ -66,9 +70,9 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
 
-//        http.exceptionHandling()
-//                .accessDeniedHandler(customAccessDeniedHandler) // 커스텀 AccessDeniedHandler 등록
-//                .authenticationEntryPoint(customAuthenticationEntryPoint); // 커스텀 AuthenticationEntryPoint 등록
+        http.exceptionHandling()
+                .accessDeniedHandler(accessDeniedHandler) // 커스텀 AccessDeniedHandler 등록
+                .authenticationEntryPoint(authenticationEntryPointHandler); // 커스텀 AuthenticationEntryPoint 등록
 
         return http.build();
     }
