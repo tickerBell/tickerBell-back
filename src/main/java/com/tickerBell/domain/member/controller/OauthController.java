@@ -21,19 +21,17 @@ public class OauthController {
     // 플랫폼에서 응답 받음
     @Operation(summary = "auth code 로 토큰 발급", description = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=8fd7a1f394d9bbd09fdfdd3827146d73&redirect_uri=\n" +
             "  http://localhost:3000/oauth/kakao")
-    @GetMapping("/login/oauth2/code/{registrationId}")
+    @GetMapping("/login/oauth2/code")
     public ResponseEntity<Response> redirect(
-            @PathVariable("registrationId") String registrationId
-            , @RequestParam("code") String code
+            @RequestParam("code") String code
             , @RequestParam(required = false ,value = "state") String state) {
 
-        log.info("registrationId 응답 완료: " + registrationId);
         log.info("auth code 응답 완료: " + code);
         log.info("state 응답 완료: " + state);
         return
                 oauthService.redirect(
                         TokenRequest.builder()
-                                .registrationId(registrationId)
+                                .registrationId("kakao")
                                 .code(code)
                                 .state(state)
                                 .build());

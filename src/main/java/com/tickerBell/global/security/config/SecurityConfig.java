@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/reissue", "/api/members", "/api/login",
                         "/api/join/sms-validation", "/naver-api/path").permitAll()
                 .requestMatchers(HttpMethod.GET, "/ticketing-nonMember", "/api/main", "/api/events/{category}",
-                        "/api/event/{eventId}", "/login/oauth2/code/{registrationId}", "/error").permitAll()
+                        "/api/event/{eventId}", "/login/oauth2/code", "/error").permitAll()
                 .anyRequest().authenticated()
                 .and()
 
