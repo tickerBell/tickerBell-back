@@ -359,4 +359,47 @@ class MemberServiceTest {
             assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
         });
     }
+
+    @Test
+    @DisplayName("회원 username 으로 조회 로직 테스트")
+    void getMemberByUsernameTest() {
+        // given
+        Long memberId = 1L;
+        Member mockMember = Member.builder()
+                .username("username")
+                .phone("1234")
+                .role(Role.ROLE_REGISTRANT)
+                .isAdult(true)
+                .build();
+
+        // stub
+        Member spyMember = spy(mockMember);
+        when(spyMember.getId()).thenReturn(memberId);
+        when(memberRepository.findByUsername(any(String.class))).thenReturn(Optional.of(spyMember));
+
+        // when
+        MemberResponse memberResponse = memberService.getMemberByUsername(mockMember.getUsername());
+
+        // then
+        assertThat(memberResponse.getMemberId()).isEqualTo(memberId);
+        assertThat(memberResponse.getUsername()).isEqualTo("username");
+        assertThat(memberResponse.getRole()).isEqualTo(Role.ROLE_REGISTRANT);
+        assertThat(memberResponse.getIsAdult()).isTrue();
+        verify(memberRepository, times(1)).findByUsername(any(String.class));
+    }
+
+    @Test
+    @DisplayName("회원 username 으로 조회 실패 테스트")
+    void getMemberByUsernameFailTest() {
+        // given
+        String username = "username";
+
+        // stub
+        when(memberRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> memberService.getMemberByUsername(username))
+                .isInstanceOf(CustomException.class)
+                .hasMessageContaining(ErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
+    }
 }
