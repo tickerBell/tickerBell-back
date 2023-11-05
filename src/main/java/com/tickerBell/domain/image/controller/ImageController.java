@@ -1,11 +1,13 @@
 package com.tickerBell.domain.image.controller;
 
+import com.tickerBell.domain.image.dtos.EventImageResponse;
 import com.tickerBell.domain.image.dtos.ImageRequest;
 import com.tickerBell.domain.image.dtos.ImageResponse;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.domain.image.service.ImageService;
 import com.tickerBell.global.dto.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,5 +42,16 @@ public class ImageController {
     public ResponseEntity<Response> deleteAllImage() {
         imageService.deleteImage(imageRepository.findAll());
         return ResponseEntity.ok(new Response("전체 이미지 삭제 완료"));
+    }
+
+    @Operation(description = "이미지 등록 *")
+    @PostMapping(value = "/api/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Response> uploadEventImage(@ModelAttribute ImageRequest request) {
+
+        List<Image> savedImageList = imageService.uploadImage(request.getThumbNailImg(), request.getImageList());
+        EventImageResponse eventImageResponse = EventImageResponse.from(savedImageList);
+
+
+        return ResponseEntity.ok(new Response(eventImageResponse, "이미지 등록 완료"));
     }
 }
