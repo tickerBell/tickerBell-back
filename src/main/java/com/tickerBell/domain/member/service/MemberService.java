@@ -13,4 +13,5 @@ public interface MemberService {
     JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request);
     MyPageResponse getMyPage(Long memberId, Pageable pageable);
     MemberResponse getMember(Long memberId);
+    MemberResponse getMemberByUsername(String username);
 }

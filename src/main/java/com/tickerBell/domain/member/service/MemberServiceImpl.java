@@ -230,4 +230,12 @@ public class MemberServiceImpl implements MemberService{
 
         return MemberResponse.from(findMember);
     }
+
+    @Override
+    public MemberResponse getMemberByUsername(String username) {
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+        return MemberResponse.from(findMember);
+    }
 }
