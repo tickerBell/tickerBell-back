@@ -9,6 +9,7 @@ import com.tickerBell.domain.member.repository.NonMemberRepository;
 import com.tickerBell.domain.selectedSeat.repository.SelectedSeatRepository;
 import com.tickerBell.domain.selectedSeat.service.SelectedSeatService;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
+import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberCancelRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
@@ -39,11 +40,9 @@ public class TicketingServiceImpl implements TicketingService {
     private final NonMemberRepository nonMemberRepository;
     private final SelectedSeatRepository selectedSeatRepository;
 
-    // todo: 이미 공연이 끝난 ticketing 에 대해서 spring batch 로 처리
-
     @Override
     @Transactional
-    public void saveTicketing(Long memberId, TicketingRequest request) {
+    public Long saveTicketing(Long memberId, TicketingRequest request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
@@ -55,7 +54,7 @@ public class TicketingServiceImpl implements TicketingService {
                 .event(event)
                 .member(member)
                 .build();
-        ticketingRepository.save(ticketing);
+        Ticketing savedTicketing = ticketingRepository.save(ticketing);
 
         // 선택된 좌석 정보 저장
         SpecialSeat specialSeat = event.getSpecialSeat(); // event 프리미엄 여부 확인
@@ -68,13 +67,14 @@ public class TicketingServiceImpl implements TicketingService {
 
         // event 남은 좌석 수 업데이트
         event.setRemainSeat(event.getRemainSeat() - savedSelectedSeatCount);
+        return savedTicketing.getId();
     }
 
 
 
     @Override
     @Transactional
-    public void saveTicketingNonMember(TicketingNonMemberRequest request) {
+    public Long saveTicketingNonMember(TicketingNonMemberRequest request) {
         Optional<NonMember> findNonMember = nonMemberRepository.findByNameAndPhone(request.getName(), request.getPhone());
         NonMember nonMember;
         // 이름, 핸드폰 조합의 정보가 DB 에 있을 때
@@ -99,7 +99,7 @@ public class TicketingServiceImpl implements TicketingService {
                 .event(event)
                 .nonMember(nonMember)
                 .build();
-        ticketingRepository.save(ticketing);
+        Ticketing savedTicketing = ticketingRepository.save(ticketing);
 
         SpecialSeat specialSeat = event.getSpecialSeat();
 
@@ -112,6 +112,7 @@ public class TicketingServiceImpl implements TicketingService {
 
         // event 남은 좌석 수 업데이트
         event.setRemainSeat(event.getRemainSeat() - savedSelectedSeatCount);
+        return savedTicketing.getId();
     }
 
     @Override
@@ -152,8 +153,8 @@ public class TicketingServiceImpl implements TicketingService {
 
     @Override
     @Transactional
-    public void cancelTicketingNonMember(Long ticketingId) {
-        Ticketing ticketing = ticketingRepository.findByIdWithEvent(ticketingId)
+    public void cancelTicketingNonMember(TicketingNonMemberCancelRequest request, Long ticketingId) {
+        Ticketing ticketing = ticketingRepository.findByIdAndNonMemberWithEvent(ticketingId, request.getName(), request.getPhone())
                 .orElseThrow(() -> new CustomException(ErrorCode.TICKETING_NOT_FOUND));
 
         // remain seat 수 업데이트

@@ -1,6 +1,6 @@
 package com.tickerBell.domain.ticketing.service;
 
-import com.tickerBell.domain.ticketing.dtos.TicketingHistoryNonMemberRequest;
+import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberCancelRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
@@ -8,10 +8,10 @@ import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
 import java.util.List;
 
 public interface TicketingService {
-    void saveTicketing(Long memberId, TicketingRequest request);
-    void saveTicketingNonMember(TicketingNonMemberRequest request);
+    Long saveTicketing(Long memberId, TicketingRequest request);
+    Long saveTicketingNonMember(TicketingNonMemberRequest request);
     List<TicketingResponse> getTicketingHistory(Long memberId);
     List<TicketingResponse> getTicketingHistoryNonMember(String name, String phone);
     void cancelTicketing(Long memberId, Long ticketingId);
-    void cancelTicketingNonMember(Long ticketingId);
+    void cancelTicketingNonMember(TicketingNonMemberCancelRequest request, Long ticketingId);
 }

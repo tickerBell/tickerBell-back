@@ -1,11 +1,12 @@
 package com.tickerBell.domain.ticketing.dtos;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter @Setter
 @NoArgsConstructor
-@Getter
-public class TicketingHistoryNonMemberRequest {
+@AllArgsConstructor
+@Builder
+public class TicketingNonMemberCancelRequest {
     private String name;
     private String phone;
 }
