@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -56,7 +55,7 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests()
                 .requestMatchers("/api/member").hasAnyRole("USER", "REGISTRANT")
-                .requestMatchers("/api/event").hasRole("REGISTRANT") // 등록자 권한 설정
+                .requestMatchers("/api/event", "/api/image").hasRole("REGISTRANT") // 등록자 권한 설정
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .requestMatchers("/**").permitAll()
                 .and()

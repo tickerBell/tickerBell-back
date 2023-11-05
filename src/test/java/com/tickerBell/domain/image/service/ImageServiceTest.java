@@ -3,10 +3,13 @@ package com.tickerBell.domain.image.service;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
+import org.assertj.core.api.AbstractObjectAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -39,6 +43,8 @@ class ImageServiceTest {
     private ImageRepository imageRepository;
     @Mock
     private AmazonS3Client amazonS3Client;
+    @Mock
+    private EventRepository eventRepository;
 
     @DisplayName("이미지 업로드 및 조회")
     @Test
@@ -136,5 +142,80 @@ class ImageServiceTest {
         // then
         assertThat(findImages).isNotNull();
         assertThat(findImages.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("이벤트 연관관계 업데이트 테스트")
+    void updateEventByImageUrlTest() {
+        // given
+        String imageUrl = "url";
+        Long eventId = 1L;
+        Event event = Event.builder().build();
+        Image image = Image.builder().build();
+
+        // stub
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(imageRepository.findByImageUrl(imageUrl)).thenReturn(Optional.of(image));
+
+        // when
+        imageService.updateEventByImageUrl(imageUrl, eventId);
+
+        // then
+        verify(eventRepository, times(1)).findById(eventId);
+        verify(imageRepository, times(1)).findByImageUrl(imageUrl);
+        assertThat(image.getEvent()).isEqualTo(event);
+    }
+
+    @Test
+    @DisplayName("이벤트 연관관계 업데이트 이벤트 조회 실패 테스트")
+    void updateEventByImageUrlEventFailTest() {
+        // given
+        String imageUrl = "url";
+        Long eventId = 1L;
+        Image image = Image.builder().build();
+
+        // stub
+        when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(
+                () -> imageService.updateEventByImageUrl(imageUrl, eventId))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.EVENT_NOT_FOUND);
+        });
+        verify(eventRepository, times(1)).findById(eventId);
+        verifyNoInteractions(imageRepository);
+        assertThat(image.getEvent()).isNull();
+    }
+    @Test
+    @DisplayName("이벤트 연관관계 업데이트 이미지 조회 실패 테스트")
+    void updateEventByImageUrlImageFailTest() {
+        // given
+        String imageUrl = "url";
+        Long eventId = 1L;
+        Event event = Event.builder().build();
+        Image image = Image.builder().build();
+
+        // stub
+        when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+        when(imageRepository.findByImageUrl(imageUrl)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(
+                () -> imageService.updateEventByImageUrl(imageUrl, eventId))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.IMAGE_NOT_FOUND);
+        });
+        verify(eventRepository, times(1)).findById(eventId);
+        verify(imageRepository, times(1)).findByImageUrl(imageUrl);
+        assertThat(image.getEvent()).isNull();
     }
 }

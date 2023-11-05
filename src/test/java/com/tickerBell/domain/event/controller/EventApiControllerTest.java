@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
+import com.tickerBell.domain.image.entity.Image;
+import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import org.junit.jupiter.api.AfterEach;
@@ -16,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,9 +25,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +43,8 @@ public class EventApiControllerTest {
     private MemberService memberService;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private ImageRepository imageRepository;
     @Autowired
     private PlatformTransactionManager transactionManager;
     private TransactionStatus transactionStatus;
@@ -68,21 +69,12 @@ public class EventApiControllerTest {
     void saveEventTest() throws Exception {
         // given
         SaveEventRequest mockRequest = createMockSaveEventRequest();
-
-        MockMultipartFile thumbNailImage = new MockMultipartFile("thumbNailImage", "image1.jpg", "image/jpeg", new byte[0]);
-        MockMultipartFile eventImage1 = new MockMultipartFile("eventImages", "image1.jpg", "image/jpeg", new byte[0]);
-        MockMultipartFile eventImage2 = new MockMultipartFile("eventImages", "image2.png", "image/png", new byte[0]);
-        String requestJson = objectMapper.writeValueAsString(mockRequest);
-        MockMultipartFile request = new MockMultipartFile("request", "request", "application/json", requestJson.getBytes(StandardCharsets.UTF_8));
+        imageRepository.save(Image.builder().s3Url("url").build());
 
         // when
-        ResultActions perform = mockMvc.perform(multipart("/api/event")
-                        .file(thumbNailImage)
-                        .file(eventImage1)
-                        .file(eventImage2)
-                        .file(request)
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .accept(MediaType.APPLICATION_JSON));
+        ResultActions perform = mockMvc.perform(post("/api/event")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(mockRequest)));
         // then
         perform
                 .andExpect(status().isOk())
@@ -112,6 +104,9 @@ public class EventApiControllerTest {
         List<String> tags = new ArrayList<>();
         tags.add("tag1");
         request.setTags(tags);
+        List<String> imageUrls = new ArrayList<>();
+        imageUrls.add("url");
+        request.setImageUrls(imageUrls);
         return request;
     }
 
@@ -127,11 +122,8 @@ public class EventApiControllerTest {
     void getEventById() throws Exception {
         // given
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
-        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
-        List<MultipartFile> eventImages = new ArrayList<>();
-        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
-        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        Long testEventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(false).build());
+        Long testEventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // when
         ResultActions perform = mockMvc.perform(get("/api/event/{eventId}", testEventId)

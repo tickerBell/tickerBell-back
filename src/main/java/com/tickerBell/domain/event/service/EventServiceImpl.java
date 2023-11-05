@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -50,7 +49,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public Long saveEvent(Long memberId, SaveEventRequest request, MultipartFile thumbNailImage, List<MultipartFile> eventImages) {
+    public Long saveEvent(Long memberId, SaveEventRequest request) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
@@ -98,9 +97,15 @@ public class EventServiceImpl implements EventService {
             castingRepository.save(Casting.builder().castingName(casting).event(event).build());
         }
 
-        imageService.uploadImage(thumbNailImage, eventImages);
+        Event savedEvent = eventRepository.save(event);
+        Long savedEventId = savedEvent.getId();
 
-        return eventRepository.save(event).getId();
+        List<String> imageUrls = request.getImageUrls();
+        for (String imageUrl : imageUrls) {
+            imageService.updateEventByImageUrl(imageUrl, savedEventId);
+        }
+
+        return savedEventId;
     }
 
     private LocalDateTime checkAvailablePurchaseTime(LocalDateTime availablePurchaseTime, LocalDateTime startTime) {

@@ -27,4 +27,8 @@ public class Image extends BaseEntity {
     public void setThumbnail(Boolean thumbnail) {
         isThumbnail = thumbnail;
     }
+
+    public void updateEvent(Event event) {
+        this.event = event;
+    }
 }
