@@ -56,4 +56,6 @@ public class SaveEventRequest {
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags;
+    @Schema(description = "이미지 url", example = "[\"url1\", \"url2\"]")
+    private List<String> imageUrls;
 }

@@ -12,5 +12,6 @@ public interface ImageService {
     List<ImageResponse> findAllImage();
     void deleteImage(List<Image> imageList);
     List<Image> findByEventId(Long eventId);
+    void updateEventByImageUrl(String imageUrl, Long eventId);
 
 }
