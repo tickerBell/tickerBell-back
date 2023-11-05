@@ -105,6 +105,7 @@ test {
 	finalizedBy jacocoTestReport // 테스트 후 JaCoCo 리포트 생성
 }
 
+// 리포트 생성 명령어: ./gradlew --console verbose test jacocoTestReport jacocoTestCoverageVerification
 // JaCoCo 리포트 설정
 jacocoTestReport {
 	reports {
