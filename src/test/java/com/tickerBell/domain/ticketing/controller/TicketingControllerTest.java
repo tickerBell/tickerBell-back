@@ -3,8 +3,14 @@ package com.tickerBell.domain.ticketing.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.tickerBell.domain.event.dtos.SaveEventRequest;
+import com.tickerBell.domain.event.entity.Category;
+import com.tickerBell.domain.event.service.EventService;
+import com.tickerBell.domain.member.dtos.MemberResponse;
+import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
+import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberCancelRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.domain.ticketing.service.TicketingService;
@@ -16,14 +22,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,6 +50,8 @@ class TicketingControllerTest {
     private TicketingService ticketingService;
     @Autowired
     private MemberService memberService;
+    @Autowired
+    private EventService eventService;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -77,7 +90,7 @@ class TicketingControllerTest {
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
                 .eventId(1L)
                 .selectedSeat(List.of("A-1", "B-2"))
-                .name("username")
+                .name("nonMember")
                 .phone("01012345678")
                 .build();
 
@@ -90,5 +103,178 @@ class TicketingControllerTest {
         perform
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("비회원 event 예매 완료"));
+    }
+
+    @Test
+    @DisplayName("회원일 때 예매내역 조회")
+    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    public void ticketingHistory() throws Exception {
+        // given
+        // event 저장
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        List<MultipartFile> eventImages = new ArrayList<>();
+        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
+        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+
+        // ticketing 저장
+        TicketingRequest request = TicketingRequest.builder()
+                .eventId(eventId)
+                .selectedSeat(List.of("A-1", "B-2"))
+                .build();
+        MemberResponse memberResponse = memberService.getMemberByUsername("username");
+        Long ticketingId = ticketingService.saveTicketing(memberResponse.getMemberId(), request);
+
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/ticketing")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("회원 예매 정보 반환"))
+                .andExpect(jsonPath("$.data[0].ticketingId").value(ticketingId))
+                .andExpect(jsonPath("$.data[0].payment").value(2 * (15000-1000))) // 회원일 땐 세일 o
+                .andExpect(jsonPath("$.data[0].selectedSeatResponseList", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].eventHistoryResponse").exists())
+                .andExpect(jsonPath("$.data[0].isPast").value(false));
+    }
+
+    @Test
+    @DisplayName("비회원일 때 예매내역 조회")
+    public void ticketingHistoryNonMember() throws Exception {
+        // given
+        // event 저장
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        List<MultipartFile> eventImages = new ArrayList<>();
+        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
+        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+
+        // ticketing 저장
+        TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
+                .eventId(1L)
+                .selectedSeat(List.of("A-1", "B-2"))
+                .name("nonMember")
+                .phone("01012345678")
+                .build();
+        Long ticketingId = ticketingService.saveTicketingNonMember(request);
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/ticketing-nonMember")
+                        .param("name", "nonMember")
+                        .param("phone", "01012345678"));
+
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("비회원 예매 정보 반환"))
+                .andExpect(jsonPath("$.data[0].ticketingId").value(ticketingId))
+                .andExpect(jsonPath("$.data[0].payment").value(2 * 15000)) // 비회원일 땐 세일 x
+                .andExpect(jsonPath("$.data[0].selectedSeatResponseList", hasSize(2)))
+                .andExpect(jsonPath("$.data[0].eventHistoryResponse").exists())
+                .andExpect(jsonPath("$.data[0].isPast").value(false));
+    }
+
+    @Test
+    @DisplayName("회원일 때 예매 취소")
+    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    public void ticketingCancel() throws Exception {
+        // given
+        // event 저장
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        List<MultipartFile> eventImages = new ArrayList<>();
+        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
+        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+
+        // ticketing 저장
+        TicketingRequest request = TicketingRequest.builder()
+                .eventId(eventId)
+                .selectedSeat(List.of("A-1", "B-2"))
+                .build();
+        MemberResponse memberResponse = memberService.getMemberByUsername("username");
+        Long ticketingId = ticketingService.saveTicketing(memberResponse.getMemberId(), request);
+
+        // when
+        ResultActions perform = mockMvc.perform(delete("/ticketing/{ticketingId}", ticketingId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("회원 예매 내역 취소 완료"));
+    }
+
+    @Test
+    @DisplayName("비회원일 때 예매 취소")
+    public void ticketingCancelNonMember() throws Exception {
+        // given
+        // event 저장
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        List<MultipartFile> eventImages = new ArrayList<>();
+        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
+        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+
+        // ticketing 저장
+        TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
+                .eventId(1L)
+                .selectedSeat(List.of("A-1", "B-2"))
+                .name("nonMember")
+                .phone("01012345678")
+                .build();
+        Long ticketingId = ticketingService.saveTicketingNonMember(request);
+
+        TicketingNonMemberCancelRequest requestCancel = TicketingNonMemberCancelRequest.builder()
+                .name("nonMember")
+                .phone("01012345678")
+                .build();
+
+        // when
+        ResultActions perform = mockMvc.perform(delete("/ticketing-nonMember/{ticketingId}", ticketingId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(requestCancel)));
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("비회원 예매 내역 취소 완료"));
+    }
+
+
+
+
+
+    private SaveEventRequest createMockSaveEventRequest() {
+        SaveEventRequest request = new SaveEventRequest();
+        request.setStartEvent(LocalDateTime.now().plusDays(1));
+        request.setEndEvent(LocalDateTime.now().plusDays(1).plusHours(2));
+        request.setName("mockName");
+        request.setNormalPrice(10000);
+        request.setPremiumPrice(15000);
+        request.setSaleDegree(1000F);
+        List<String> castings = new ArrayList<>();
+        castings.add("casting1");
+        request.setCastings(castings);
+        List<String> hosts = new ArrayList<>();
+        hosts.add("host1");
+        request.setHosts(hosts);
+        request.setPlace("mockPlace");
+        request.setIsAdult(false);
+        request.setIsSpecialA(true);
+        request.setIsSpecialB(true);
+        request.setIsSpecialC(true);
+        request.setCategory(Category.CONCERT);
+        List<String> tags = new ArrayList<>();
+        tags.add("tag1");
+        request.setTags(tags);
+        return request;
     }
 }

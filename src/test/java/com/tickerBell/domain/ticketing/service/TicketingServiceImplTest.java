@@ -9,6 +9,7 @@ import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.repository.NonMemberRepository;
 import com.tickerBell.domain.selectedSeat.service.SelectedSeatServiceImpl;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
+import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberCancelRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
@@ -332,16 +333,19 @@ class TicketingServiceImplTest {
                 .remainSeat(30)
                 .build();
         Ticketing ticketing = createTicketing(null, event);
+        TicketingNonMemberCancelRequest request = TicketingNonMemberCancelRequest.builder()
+                .name("nonMember").phone("01012345678").build();
 
         // stub
-        when(ticketingRepository.findByIdWithEvent(any(Long.class))).thenReturn(Optional.of(ticketing));
+        when(ticketingRepository.findByIdAndNonMemberWithEvent(any(Long.class), any(String.class), any(String.class)))
+                .thenReturn(Optional.of(ticketing));
         doNothing().when(ticketingRepository).delete(any(Ticketing.class));
 
         // when
-        ticketingService.cancelTicketingNonMember(ticketingId);
+        ticketingService.cancelTicketingNonMember(request, ticketingId);
 
         // then
-        verify(ticketingRepository, times(1)).findByIdWithEvent(any(Long.class));
+        verify(ticketingRepository, times(1)).findByIdAndNonMemberWithEvent(any(Long.class), any(String.class), any(String.class));
     }
 
 
