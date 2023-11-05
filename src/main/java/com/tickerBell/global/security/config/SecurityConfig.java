@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/member").hasAnyRole("USER", "REGISTRANT")
                 .requestMatchers("/api/event", "/api/image").hasRole("REGISTRANT") // 등록자 권한 설정
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
+                .requestMatchers("/api/event/**", "/api/members", "/reissue", "/api/login", "/api/join/sms-validation").permitAll()
                 .requestMatchers(HttpMethod.POST, "/reissue", "/api/members", "/api/login",
                         "/api/join/sms-validation", "/naver-api/path").permitAll()
                 .requestMatchers(HttpMethod.GET, "/ticketing-nonMember", "/api/main", "/api/events/{category}",
