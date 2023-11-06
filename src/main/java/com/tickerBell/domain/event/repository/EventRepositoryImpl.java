@@ -201,8 +201,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         Long count = queryFactory.select(event.count())
                 .from(event)
                 .where(event.member.id.eq(memberId))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .fetchOne();
 
         return new PageImpl<>(events, pageable, count);
