@@ -33,7 +33,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -48,7 +48,7 @@ public class MemberServiceImpl implements MemberService{
     @Transactional
     public Long join(String username, String password, String phone, Boolean isAdult, Role role, AuthProvider authProvider) {
         // validation 체크
-        if(memberRepository.findByUsername(username).isPresent()) {
+        if (memberRepository.findByUsername(username).isPresent()) {
             throw new CustomException(ErrorCode.MEMBER_ALREADY_EXIST);
         }
 
@@ -67,37 +67,35 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public LoginResponse regenerateToken(RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
-        try {
-            // Refresh Token 검증
-            if (jwtTokenProvider.isExpiration(refreshToken)) {
-                throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
-            }
-
-            // Access Token 에서 User email를 가져온다.
-            String username = (String) jwtTokenProvider.get(refreshToken).get("username");
-
-            // Redis에서 저장된 Refresh Token 값을 가져온다.
-            String findRefreshToken = redisTemplate.opsForValue().get(username);
-            if(!refreshToken.equals(findRefreshToken)) {
-                // 리프레쉬 토큰 두 개가 안 맞음
-                throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_MATCH);
-            }
-
-            // 토큰 재발행
-            String new_refresh_token = jwtTokenProvider.createRefreshToken(username);
-            LoginResponse loginResponse = LoginResponse.builder()
-                    .refreshToken(new_refresh_token)
-                    .accessToken(jwtTokenProvider.createAccessToken(username))
-                    .build();
-
-            // refresh 토큰 업데이트
-            jwtTokenProvider.saveRefreshTokenInRedis(username, new_refresh_token);
-
-            return loginResponse;
-        } catch (CustomException e) {
-            throw new CustomException(ErrorCode.REFRESH_TOKEN_UNKNOWN_ERROR);
+        // Refresh Token 검증
+        if (jwtTokenProvider.isExpiration(refreshToken)) {
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_EXPIRED);
         }
+
+        // Access Token 에서 User email를 가져온다.
+        String username = (String) jwtTokenProvider.get(refreshToken).get("username");
+
+        // Redis에서 저장된 Refresh Token 값을 가져온다.
+        String findRefreshToken = redisTemplate.opsForValue().get(username);
+        if (!refreshToken.equals(findRefreshToken)) {
+            // 리프레쉬 토큰 두 개가 안 맞음
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_NOT_MATCH);
+        }
+
+        // 토큰 재발행
+        String new_refresh_token = jwtTokenProvider.createRefreshToken(username);
+        LoginResponse loginResponse = LoginResponse.builder()
+                .refreshToken(new_refresh_token)
+                .accessToken(jwtTokenProvider.createAccessToken(username))
+                .build();
+
+        // refresh 토큰 업데이트
+        jwtTokenProvider.saveRefreshTokenInRedis(username, new_refresh_token);
+
+        return loginResponse;
     }
+
+}
 
     @Override
     public LoginResponse login(String username, String password) {
@@ -106,7 +104,7 @@ public class MemberServiceImpl implements MemberService{
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
         // 사용자가 입력한 Password 검증
-        if(!passwordEncoder.matches(password, findMember.getPassword())) {
+        if (!passwordEncoder.matches(password, findMember.getPassword())) {
             throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
