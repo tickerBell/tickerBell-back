@@ -95,7 +95,6 @@ public class MemberServiceImpl implements MemberService {
         return loginResponse;
     }
 
-}
 
     @Override
     public LoginResponse login(String username, String password) {
