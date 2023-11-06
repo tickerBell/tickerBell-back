@@ -6,8 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
+import com.tickerBell.domain.image.entity.Image;
+import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.domain.member.dtos.MemberResponse;
-import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberCancelRequest;
@@ -22,12 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,6 +51,8 @@ class TicketingControllerTest {
     private MemberService memberService;
     @Autowired
     private EventService eventService;
+    @Autowired
+    private ImageRepository imageRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -112,11 +113,8 @@ class TicketingControllerTest {
         // given
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
-        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
-        List<MultipartFile> eventImages = new ArrayList<>();
-        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
-        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+        imageRepository.save(Image.builder().s3Url("url").build());
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
         TicketingRequest request = TicketingRequest.builder()
@@ -148,11 +146,8 @@ class TicketingControllerTest {
         // given
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
-        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
-        List<MultipartFile> eventImages = new ArrayList<>();
-        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
-        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+        imageRepository.save(Image.builder().s3Url("url").build());
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
@@ -187,11 +182,8 @@ class TicketingControllerTest {
         // given
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
-        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
-        List<MultipartFile> eventImages = new ArrayList<>();
-        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
-        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+        imageRepository.save(Image.builder().s3Url("url").build());
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
         TicketingRequest request = TicketingRequest.builder()
@@ -217,11 +209,8 @@ class TicketingControllerTest {
         // given
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
-        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
-        List<MultipartFile> eventImages = new ArrayList<>();
-        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
-        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest(), thumbNailImage, eventImages);
+        imageRepository.save(Image.builder().s3Url("url").build());
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
@@ -275,6 +264,9 @@ class TicketingControllerTest {
         List<String> tags = new ArrayList<>();
         tags.add("tag1");
         request.setTags(tags);
+        List<String> imageUrls = new ArrayList<>();
+        imageUrls.add("url");
+        request.setImageUrls(imageUrls);
         return request;
     }
 }
