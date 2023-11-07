@@ -206,6 +206,25 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         return new PageImpl<>(events, pageable, count);
     }
 
+    @Override
+    public Page<Event> findByCategoryFetchAllPage(Category category, Pageable pageable) {
+        List<Event> events = queryFactory.select(event)
+                .from(event)
+                .join(event.member, member).fetchJoin()
+                .join(event.specialSeat, specialSeat).fetchJoin()
+                .where(event.category.eq(category))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long count = queryFactory.select(event.count())
+                .from(event)
+                .where(event.category.eq(category))
+                .fetchOne();
+
+        return new PageImpl<>(events, pageable, count);
+    }
+
     // afterSalePrice 계산
     private List<EventListResponse> setAfterSalePrice(List<EventListResponse> eventListResponseList) {
         List<EventListResponse> result = eventListResponseList.stream()
