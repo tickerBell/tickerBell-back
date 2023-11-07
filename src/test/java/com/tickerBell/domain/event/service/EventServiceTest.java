@@ -2,7 +2,7 @@ package com.tickerBell.domain.event.service;
 
 import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
-import com.tickerBell.domain.event.dtos.EventListResponse;
+import com.tickerBell.domain.event.dtos.EventCategoryResponse;
 import com.tickerBell.domain.event.dtos.EventResponse;
 import com.tickerBell.domain.event.dtos.SaveEventRequest;
 import com.tickerBell.domain.event.entity.Category;
@@ -26,6 +26,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -211,16 +213,18 @@ public class EventServiceTest {
         Category category = Category.SPORTS;
         List<Event> events = new ArrayList<>();
         events.add(Event.builder().build());
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        PageImpl<Event> eventsPage = new PageImpl<>(events, pageRequest, 10);
 
         // stub
-        when(eventRepository.findByCategory(category)).thenReturn(events);
+        when(eventRepository.findByCategoryFetchAllPage(category, pageRequest)).thenReturn(eventsPage);
 
         // when
-        List<EventListResponse> eventsResponse = eventService.getEventByCategory(category);
+        EventCategoryResponse eventCategoryResponse = eventService.getEventByCategory(category, pageRequest);
 
         // then
-        assertThat(eventsResponse).isNotEmpty();
-        verify(eventRepository, times(1)).findByCategory(category);
+        assertThat(eventCategoryResponse.getEventListResponses()).isNotEmpty();
+        verify(eventRepository, times(1)).findByCategoryFetchAllPage(category, pageRequest);
     }
 
     @Test
