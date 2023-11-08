@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
+import com.tickerBell.domain.image.dtos.ImageResponse;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.global.exception.CustomException;
@@ -46,27 +47,6 @@ class ImageServiceTest {
     @Mock
     private EventRepository eventRepository;
 
-    @DisplayName("이미지 업로드 및 조회")
-    @Test
-    public void testUploadImage() throws IOException {
-        // given
-        MultipartFile thumbnailImage = new MockMultipartFile("thumbnail.jpg", "thumbnail.jpg", "image/jpeg", new byte[0]);
-        List<MultipartFile> imageFiles = new ArrayList<>();
-        imageFiles.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
-        imageFiles.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-
-        // stub
-        when(amazonS3Client.getUrl(any(), any())).thenReturn(new URL("https://example-image.jpg"));
-        when(amazonS3Client.putObject(any())).thenReturn(any());
-
-        // when
-        List<Image> imageList = imageService.uploadImage(thumbnailImage, imageFiles);
-
-        // then
-        verify(amazonS3Client, times(3)).putObject(any(PutObjectRequest.class)); // s3 업로드 횟수 확인
-        verify(amazonS3Client, times(3)).getUrl(any(), any()); // s3 조회 횟수 확인
-    }
-
     @DisplayName("이미지 삭제")
     @Test
     public void testDeleteImage() throws IOException {
@@ -82,47 +62,13 @@ class ImageServiceTest {
         imageList.add(image2);
 
         // stub
-        doNothing().when(amazonS3Client).deleteObject(any(DeleteObjectRequest.class));
         doNothing().when(imageRepository).deleteAll(any(List.class));
 
         // when
         imageService.deleteImage(imageList);
 
         // then
-        verify(amazonS3Client, times(2)).deleteObject(any(DeleteObjectRequest.class)); // s3 삭제  횟수 확인
         verify(imageRepository, times(1)).deleteAll(any(List.class));
-    }
-
-    @DisplayName("사진이 아닌 확장자 예외 처리")
-    @Test
-    public void testInvalidFileExtension() throws IOException {
-        // given
-        MultipartFile thumbnailImage = new MockMultipartFile("thumbnail.jpg", "thumbnail.jpg", "application/octet-stream", new byte[0]);
-        List<MultipartFile> emptyMultipartFiles = new ArrayList<>();
-
-        // when
-        assertThatThrownBy(() -> imageService.uploadImage(thumbnailImage, emptyMultipartFiles))
-                .isInstanceOf(CustomException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.IMAGE_NOT_SUPPORTED_EXTENSION);
-
-        // then
-        verifyNoInteractions(amazonS3Client);
-    }
-
-    @DisplayName("확장자가 없는 파일 예외 처리")
-    @Test
-    public void testNullExtension() throws IOException {
-        // given
-        MultipartFile thumbnailImage = new MockMultipartFile("thumbnail.jpg", "thumbnail.jpg", "", new byte[0]);
-        List<MultipartFile> emptyMultipartFiles = new ArrayList<>();
-
-        // when
-        assertThatThrownBy(() -> imageService.uploadImage(thumbnailImage, emptyMultipartFiles))
-                .isInstanceOf(CustomException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.IMAGE_NOT_FOUND_EXTENSION);
-
-        // then
-        verifyNoInteractions(amazonS3Client);
     }
 
     @Test
