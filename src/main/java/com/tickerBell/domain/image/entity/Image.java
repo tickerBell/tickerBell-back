@@ -3,6 +3,7 @@ package com.tickerBell.domain.image.entity;
 
 import com.tickerBell.domain.common.BaseEntity;
 import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.image.dtos.ImageResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,15 @@ public class Image extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
     private Event event;
+
+    public static Image from(ImageResponse imageResponse) {
+        return Image.builder()
+                .originImgName(imageResponse.getOriginImgName())
+                .storeImgName(imageResponse.getStoreImgName())
+                .s3Url(imageResponse.getS3Url())
+                .isThumbnail(imageResponse.getIsThumbnail())
+                .build();
+    }
 
     public void setThumbnail(Boolean thumbnail) {
         isThumbnail = thumbnail;

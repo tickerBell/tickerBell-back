@@ -53,9 +53,10 @@ public class SecurityConfig {
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
                 .requestMatchers("/api/event/**", "/api/members", "/reissue", "/api/login", "/api/join/sms-validation").permitAll()
                 .requestMatchers(HttpMethod.POST, "/reissue", "/api/members", "/api/login",
-                        "/api/join/sms-validation", "/naver-api/path").permitAll()
+                        "/api/join/sms-validation", "/naver-api/path", "/ticketing-nonMember").permitAll()
                 .requestMatchers(HttpMethod.GET, "/ticketing-nonMember", "/api/main", "/api/events/{category}",
                         "/api/event/{eventId}", "/login/oauth2/code", "/error").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/ticketing-nonMember/{ticketingId}").permitAll()
                 .anyRequest().authenticated()
                 .and()
 
