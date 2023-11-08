@@ -4,10 +4,7 @@ import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
-import com.tickerBell.domain.member.dtos.LoginResponse;
-import com.tickerBell.domain.member.dtos.MemberResponse;
-import com.tickerBell.domain.member.dtos.MyPageResponse;
-import com.tickerBell.domain.member.dtos.RefreshTokenRequest;
+import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
@@ -249,13 +246,11 @@ class MemberServiceTest {
         when(castingRepository.findByEventId(null)).thenReturn(castings);
 
         // when
-        MyPageResponse myPage = memberService.getMyPage(memberId, pageRequest);
+        MyPageListResponse myPageListResponse = memberService.getMyPage(memberId, pageRequest);
 
         // then
-        assertThat(myPage.getStartEvent()).isNotEmpty();
-        assertThat(myPage.getEndEvent()).isNotEmpty();
-        assertThat(myPage.getIsRegistrant()).isFalse();
-        assertThat(myPage.getTicketHolderCounts()).isNull();
+        assertThat(myPageListResponse.getIsRegistrant()).isFalse();
+        assertThat(myPageListResponse.getMyPageResponse().get(0).getTicketHolderCounts()).isNull();
         verify(memberRepository, times(1)).findById(memberId);
         verify(ticketingRepository, times(1)).findByMemberIdPage(memberId, pageRequest);
         verify(castingRepository, times(1)).findByEventId(null);
@@ -263,7 +258,7 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("발")
+    @DisplayName("등록자 회원 마이페이지 조회 테스트")
     void getRegistrantMyPageTest() {
         // given
         Long memberId = 1L;
@@ -288,15 +283,12 @@ class MemberServiceTest {
         when(ticketingRepository.findByEventId(null)).thenReturn(ticketings);
 
         // when
-        MyPageResponse myPage = memberService.getMyPage(memberId, pageRequest);
+        MyPageListResponse myPageListResponse = memberService.getMyPage(memberId, pageRequest);
 
         // then
-        assertThat(myPage.getStartEvent()).isNotEmpty();
-        assertThat(myPage.getEndEvent()).isNotEmpty();
-        assertThat(myPage.getIsRegistrant()).isTrue();
-        assertThat(myPage.getTicketHolderCounts().size()).isEqualTo(1);
-        assertThat(myPage.getTicketHolderCounts().get(0)).isEqualTo(1);
-        assertThat(myPage.getIsCancelled().get(0)).isFalse();
+        assertThat(myPageListResponse.getMyPageResponse()).isNotEmpty();
+        assertThat(myPageListResponse.getIsRegistrant()).isTrue();
+        assertThat(myPageListResponse.getMyPageResponse().get(0).getTicketHolderCounts()).isNotNull();
         verify(memberRepository, times(1)).findById(memberId);
     }
 
