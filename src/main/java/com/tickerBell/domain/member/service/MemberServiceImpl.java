@@ -24,7 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -135,30 +134,27 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MyPageResponse getMyPage(Long memberId, Pageable pageable) {
+    public MyPageListResponse getMyPage(Long memberId, Pageable pageable) {
 
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
 
-        List<String> eventName = new ArrayList<>();
-        List<List<String>> casting = new ArrayList<>();
-        List<LocalDateTime> startEvent = new ArrayList<>();
-        List<LocalDateTime> endEvent = new ArrayList<>();
-        List<Boolean> isCancelled = new ArrayList<>();
+        MyPageListResponse myPageListResponse = new MyPageListResponse();
+        myPageListResponse.setUsername(findMember.getUsername());
+        myPageListResponse.setPhone(findMember.getPhone());
 
-        MyPageResponse myPageResponse = new MyPageResponse();
-        myPageResponse.setUsername(findMember.getUsername());
-        myPageResponse.setPhone(findMember.getPhone());
+        List<MyPageResponse> myPageResponses = new ArrayList<>();
 
         if (findMember.getRole().equals(Role.ROLE_USER)) {
 
             // 일반 사용자 myPage
-            myPageResponse.setIsRegistrant(false);
+            myPageListResponse.setIsRegistrant(false);
 
             Page<Ticketing> findTicketingsPage = ticketingRepository.findByMemberIdPage(memberId, pageable);
             long totalCount = findTicketingsPage.getTotalElements();
             List<Ticketing> findTicketings = findTicketingsPage.getContent();
+            myPageListResponse.setTotalCount(totalCount);
 
             for (Ticketing findTicketing : findTicketings) {
                 Event findEvent = findTicketing.getEvent();
@@ -167,31 +163,28 @@ public class MemberServiceImpl implements MemberService {
                 for (Casting findCasting : findCastings) {
                     castings.add(findCasting.getCastingName());
                 }
-                eventName.add(findEvent.getName());
-                casting.add(castings);
-                startEvent.add(findEvent.getStartEvent());
-                endEvent.add(findEvent.getEndEvent());
-            }
 
-            myPageResponse.setEventName(eventName);
-            myPageResponse.setCasting(casting);
-            myPageResponse.setStartEvent(startEvent);
-            myPageResponse.setEndEvent(endEvent);
-            myPageResponse.setTotalCount(totalCount);
+                MyPageResponse myPageResponse = new MyPageResponse();
+                myPageResponse.setEventName(findEvent.getName());
+                myPageResponse.setCasting(castings);
+                myPageResponse.setStartEvent(findEvent.getStartEvent());
+                myPageResponse.setEndEvent(findEvent.getEndEvent());
+
+                myPageResponses.add(myPageResponse);
+            }
 
         } else {
 
             // 등록자 myPage
-            myPageResponse.setIsRegistrant(true);
+            myPageListResponse.setIsRegistrant(true);
 
             Page<Event> findEventsPage = eventRepository.findByMemberIdFetchAllPage(findMember.getId(), pageable);
             long totalCount = findEventsPage.getTotalElements();
             List<Event> findEvents = findEventsPage.getContent();
+            myPageListResponse.setTotalCount(totalCount);
 
-            List<Integer> ticketHolderCounts = new ArrayList<>();
+
             for (Event findEvent : findEvents) {
-                eventName.add(findEvent.getName());
-                isCancelled.add(findEvent.getIsCancelled());
 
                 List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
 
@@ -199,24 +192,25 @@ public class MemberServiceImpl implements MemberService {
                 for (Casting findCasting : findCastings) {
                     castings.add(findCasting.getCastingName());
                 }
-                casting.add(castings);
-                startEvent.add(findEvent.getStartEvent());
-                endEvent.add(findEvent.getEndEvent());
 
                 List<Ticketing> findTicketings = ticketingRepository.findByEventId(findEvent.getId());
-                ticketHolderCounts.add(findTicketings.size());
+
+                MyPageResponse myPageResponse = new MyPageResponse();
+                myPageResponse.setEventName(findEvent.getName());
+                myPageResponse.setCasting(castings);
+                myPageResponse.setStartEvent(findEvent.getStartEvent());
+                myPageResponse.setEndEvent(findEvent.getEndEvent());
+                myPageResponse.setIsCancelled(findEvent.getIsCancelled());
+                myPageResponse.setTicketHolderCounts(findTicketings.size());
+
+                myPageResponses.add(myPageResponse);
             }
 
-            myPageResponse.setEventName(eventName);
-            myPageResponse.setCasting(casting);
-            myPageResponse.setStartEvent(startEvent);
-            myPageResponse.setEndEvent(endEvent);
-            myPageResponse.setTicketHolderCounts(ticketHolderCounts);
-            myPageResponse.setIsCancelled(isCancelled);
-            myPageResponse.setTotalCount(totalCount);
         }
 
-        return myPageResponse;
+        myPageListResponse.setMyPageResponse(myPageResponses);
+
+        return myPageListResponse;
     }
 
     @Override

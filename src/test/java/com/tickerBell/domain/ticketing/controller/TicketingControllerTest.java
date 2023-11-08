@@ -10,8 +10,8 @@ import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.domain.image.service.ImageS3Handler;
 import com.tickerBell.domain.image.service.ImageService;
+
 import com.tickerBell.domain.member.dtos.MemberResponse;
-import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberCancelRequest;
@@ -26,12 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -61,6 +59,7 @@ class TicketingControllerTest {
     @Autowired
     private ImageS3Handler imageS3Handler;
     @Autowired
+
     private ImageRepository imageRepository;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -221,12 +220,7 @@ class TicketingControllerTest {
         // given
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
-        MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
-        List<MultipartFile> eventImages = new ArrayList<>();
-        eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
-        eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        List<Image> imageList = imageS3Handler.uploadImage(thumbNailImage, eventImages);
-        imageService.saveImage(imageList);
+
         imageRepository.save(Image.builder().s3Url("url").build());
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 

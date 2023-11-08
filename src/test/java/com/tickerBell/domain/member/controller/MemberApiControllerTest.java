@@ -218,10 +218,7 @@ class MemberApiControllerTest {
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
                 .andExpect(jsonPath("$.data.username").value("testUsername"))
-                .andExpect(jsonPath("$.data.isRegistrant").value("false"))
-                .andExpect(jsonPath("$.data.eventName").isNotEmpty())
-                .andExpect(jsonPath("$.data.eventName[0]").isNotEmpty())
-                .andExpect(jsonPath("$.data.eventName[1]").doesNotExist());
+                .andExpect(jsonPath("$.data.isRegistrant").value("false"));
     }
 
     @Test
@@ -238,9 +235,6 @@ class MemberApiControllerTest {
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
                 .andExpect(jsonPath("$.data.username").value("abcdefg"))
-                .andExpect(jsonPath("$.data.isRegistrant").value("true"))
-                .andExpect(jsonPath("$.data.eventName").isArray())
-                .andExpect(jsonPath("$.data.ticketHolderCounts").isArray())
-                .andExpect(jsonPath("$.data.ticketHolderCounts").isNotEmpty());
+                .andExpect(jsonPath("$.data.isRegistrant").value("true"));
     }
 }

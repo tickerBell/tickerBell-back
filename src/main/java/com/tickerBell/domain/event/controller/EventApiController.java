@@ -1,9 +1,6 @@
 package com.tickerBell.domain.event.controller;
 
-import com.tickerBell.domain.event.dtos.EventListResponse;
-import com.tickerBell.domain.event.dtos.EventResponse;
-import com.tickerBell.domain.event.dtos.MainPageDto;
-import com.tickerBell.domain.event.dtos.SaveEventRequest;
+import com.tickerBell.domain.event.dtos.*;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
 import com.tickerBell.domain.member.entity.Member;
@@ -12,11 +9,12 @@ import com.tickerBell.global.security.context.MemberContext;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,9 +36,12 @@ public class EventApiController {
     }
 
     @GetMapping("api/events/{category}")
-    public ResponseEntity<Response> getEventByCategory(@PathVariable("category") Category category) {
-        List<EventListResponse> eventListResponseList = eventService.getEventByCategory(category);
-        return ResponseEntity.ok(new Response(eventListResponseList, "카테고리에 해당하는 event 목록 반환 완료"));
+    public ResponseEntity<Response> getEventByCategory(@PathVariable("category") Category category,
+                                                       @PageableDefault(size = 10,
+                                                               sort = "createdDate",
+                                                               direction = Sort.Direction.DESC) Pageable pageable) {
+        EventCategoryResponse eventCategoryResponse = eventService.getEventByCategory(category, pageable);
+        return ResponseEntity.ok(new Response(eventCategoryResponse, "카테고리에 해당하는 event 목록 반환 완료"));
     }
 
     @GetMapping("/api/event/{eventId}")

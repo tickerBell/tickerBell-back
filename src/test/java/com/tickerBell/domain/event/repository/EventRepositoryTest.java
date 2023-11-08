@@ -187,4 +187,29 @@ class EventRepositoryTest {
         // then
         assertThat(findEvents.size()).isEqualTo(3);
     }
+
+    @Test
+    @DisplayName("페이징을 적용한 카테고리로 이벤트 조회 테스트")
+    void findByCategoryFetchAllPageTest() {
+        // given
+        Member member = Member.builder().build();
+        Member savedMember = memberRepository.save(member);
+        SpecialSeat specialSeat = SpecialSeat.builder().isSpecialSeatC(true).isSpecialSeatB(true).isSpecialSeatC(true).build();
+        SpecialSeat savedSpecialSeat = specialSeatRepository.save(specialSeat);
+        Event event = createMockEvent(savedMember, savedSpecialSeat);
+        eventRepository.save(event);
+        Event event2 = createMockEvent(savedMember, savedSpecialSeat);
+        eventRepository.save(event2);
+        Event event3 = createMockEvent(savedMember, savedSpecialSeat);
+        eventRepository.save(event3);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Category category = Category.MUSICAL;
+
+        // when
+        Page<Event> findEventsPage = eventRepository.findByCategoryFetchAllPage(category, pageRequest);
+        List<Event> findEvent = findEventsPage.getContent();
+
+        // then
+        assertThat(findEvent.size()).isEqualTo(3);
+    }
 }

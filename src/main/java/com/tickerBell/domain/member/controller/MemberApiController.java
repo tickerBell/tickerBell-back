@@ -95,8 +95,8 @@ public class MemberApiController {
                                            direction = Sort.Direction.DESC)Pageable pageable) {
 
         Member loginMember = memberContext.getMember();
-        MyPageResponse myPageResponse = memberService.getMyPage(loginMember.getId(), pageable);
+        MyPageListResponse myPageListResponse = memberService.getMyPage(loginMember.getId(), pageable);
 
-        return ResponseEntity.ok(new Response(myPageResponse, "마이페이지 조회 성공"));
+        return ResponseEntity.ok(new Response(myPageListResponse, "마이페이지 조회 성공"));
     }
 }

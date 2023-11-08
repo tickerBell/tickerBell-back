@@ -2,10 +2,7 @@ package com.tickerBell.domain.event.service;
 
 import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
-import com.tickerBell.domain.event.dtos.EventListResponse;
-import com.tickerBell.domain.event.dtos.EventResponse;
-import com.tickerBell.domain.event.dtos.MainPageDto;
-import com.tickerBell.domain.event.dtos.SaveEventRequest;
+import com.tickerBell.domain.event.dtos.*;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
@@ -23,6 +20,8 @@ import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -117,15 +116,22 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventListResponse> getEventByCategory(Category category) {
-        List<Event> findEventsByCategory = eventRepository.findByCategory(category);
+    public EventCategoryResponse getEventByCategory(Category category, Pageable pageable) {
+        Page<Event> findEventsPage = eventRepository.findByCategoryFetchAllPage(category, pageable);
+
+        List<Event> findEvents = findEventsPage.getContent();
+
         List<EventListResponse> responses = new ArrayList<>();
-        for (Event event : findEventsByCategory) {
+        for (Event event : findEvents) {
             EventListResponse response = EventListResponse.from(event);
             responses.add(response);
         }
 
-        return responses;
+        EventCategoryResponse eventCategoryResponse = new EventCategoryResponse();
+        eventCategoryResponse.setEventListResponses(responses);
+        eventCategoryResponse.setTotalCount(findEventsPage.getTotalElements());
+
+        return eventCategoryResponse;
     }
 
     @Override
