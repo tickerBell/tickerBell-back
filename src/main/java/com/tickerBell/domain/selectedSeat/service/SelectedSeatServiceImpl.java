@@ -36,14 +36,7 @@ public class SelectedSeatServiceImpl implements SelectedSeatService{
 
         if (findSelectedSeat.isPresent()) {
             log.info("이미 선택된 좌석이 선택됨");
-            throw new CustomException(findSelectedSeat.get().getSeatInfo() + "은 이미 선택되었습니다."); // 이미 선택된 좌석 에러
+            throw new CustomException(findSelectedSeat.get().getSeatInfo() + "은 이미 선택된 좌석 입니다."); // 이미 선택된 좌석 에러
         }
     }
-
-    @Override
-    @Transactional
-    public void deleteBySelectedSeatList(List<SelectedSeat> selectedSeatList) {
-        selectedSeatRepository.deleteAll(selectedSeatList);
-    }
-
 }
