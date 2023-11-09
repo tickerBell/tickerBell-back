@@ -3,6 +3,7 @@ package com.tickerBell.domain.map.service;
 import com.tickerBell.domain.map.dtos.MapApiRequest;
 import com.tickerBell.domain.map.dtos.MapApiResultPath;
 import com.tickerBell.domain.map.dtos.MapApiResultXY;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.RequestEntity;
@@ -19,8 +20,10 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 @Slf4j
 public class MapApiServiceImpl implements MapApiService {
+    private final RestTemplate restTemplate;
 
     @Value("${naver-cloud-map.api-key-id}")
     private String apiKeyId;
@@ -40,8 +43,6 @@ public class MapApiServiceImpl implements MapApiService {
                 .encode()
                 .build()
                 .toUri();
-
-        RestTemplate restTemplate = new RestTemplate();
 
         // 아래는 헤더를 넣기 위함
         RequestEntity<Void> header_getXY = RequestEntity
