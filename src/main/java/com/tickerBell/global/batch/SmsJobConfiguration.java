@@ -32,7 +32,7 @@ import java.util.Map;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class SimpleJobConfiguration {
+public class SmsJobConfiguration {
     private final SmsService smsService;
     private final EntityManagerFactory entityManagerFactory;
     @Bean
