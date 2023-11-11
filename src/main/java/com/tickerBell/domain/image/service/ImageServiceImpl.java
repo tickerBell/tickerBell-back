@@ -46,15 +46,6 @@ public class ImageServiceImpl implements ImageService {
         return savedImageList;
     }
 
-    // 테스트를 위해 임시로 만든 함수입니다.
-    @Override
-    public List<ImageResponse> findAllImage() {
-        List<ImageResponse> imageResponseList = imageRepository.findAll().stream()
-                .map(imageEntity -> ImageResponse.from(imageEntity))
-                .collect(Collectors.toList());
-        return imageResponseList;
-    }
-
     @Override
     public void deleteImage(List<Image> imageList) {
         // todo: 이벤트 삭제 로직 작성 시 컨트롤러에서 이미지 먼저 삭제 후 s3에서 지워야 함
@@ -79,11 +70,5 @@ public class ImageServiceImpl implements ImageService {
         );
         findImage.updateEvent(findEvent);
 
-    }
-
-    private String createStoreImageName(String extension) {
-        String uuid = UUID.randomUUID().toString();
-        String storeFileName = uuid + extension;
-        return storeFileName;
     }
 }
