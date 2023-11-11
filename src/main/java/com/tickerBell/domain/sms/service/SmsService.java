@@ -30,6 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class SmsService {
+    private final RestTemplate restTemplate;
 
     /**
      * 참고 블로그
@@ -76,7 +77,6 @@ public class SmsService {
         System.out.println(body.getBody());
 
         // restTemplate로 post 요청을 보낸다. 별 일 없으면 202 코드 반환된다.
-        RestTemplate restTemplate = new RestTemplate();
         SendSmsResponse sendSmsResponseDto = restTemplate.postForObject(new URI("https://sens.apigw.ntruss.com/sms/v2/services/"+this.serviceId+"/messages"), body, SendSmsResponse.class);
         System.out.println(sendSmsResponseDto.getStatusCode());
         return sendSmsResponseDto;

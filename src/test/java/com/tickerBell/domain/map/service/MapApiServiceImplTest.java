@@ -5,6 +5,7 @@ import com.tickerBell.domain.map.dtos.MapApiRequest;
 import com.tickerBell.domain.map.dtos.MapApiResultPath;
 import com.tickerBell.domain.map.dtos.MapApiResultXY;
 import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +30,7 @@ class MapApiServiceImplTest {
     @Mock
     private RestTemplate restTemplate;
 
-    @Before
+    @BeforeEach
     public void setup() {
         ReflectionTestUtils.setField(mapApiService, "apiKeyId", "mock_apiKey_id");
         ReflectionTestUtils.setField(mapApiService, "apiKey", "mock_apiKey");
