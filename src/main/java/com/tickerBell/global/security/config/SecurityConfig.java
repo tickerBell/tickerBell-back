@@ -2,7 +2,6 @@ package com.tickerBell.global.security.config;
 
 import com.tickerBell.global.security.exceptionHandler.AccessDeniedHandlerImpl;
 import com.tickerBell.global.security.exceptionHandler.AuthenticationEntryPointHandlerImpl;
-import com.tickerBell.global.security.exceptionHandler.ExceptionHandlerFilter;
 import com.tickerBell.global.security.filter.JwtFilter;
 import com.tickerBell.global.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtFilter jwtFilter;
-    private final ExceptionHandlerFilter exceptionHandlerFilter;
     private final AccessDeniedHandlerImpl accessDeniedHandler;
     private final AuthenticationEntryPointHandlerImpl authenticationEntryPointHandler;
     @Bean
@@ -70,7 +68,6 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-//                .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
 
         http.exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler) // 커스텀 AccessDeniedHandler 등록

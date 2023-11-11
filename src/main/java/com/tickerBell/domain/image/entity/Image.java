@@ -25,15 +25,6 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    public static Image from(ImageResponse imageResponse) {
-        return Image.builder()
-                .originImgName(imageResponse.getOriginImgName())
-                .storeImgName(imageResponse.getStoreImgName())
-                .s3Url(imageResponse.getS3Url())
-                .isThumbnail(imageResponse.getIsThumbnail())
-                .build();
-    }
-
     public void setThumbnail(Boolean thumbnail) {
         isThumbnail = thumbnail;
     }
