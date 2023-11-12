@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class SaveAlarmRequest {
 
     Long memberId;
+    String message;
 }

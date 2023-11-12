@@ -15,6 +15,7 @@ import java.util.List;
 public class MyPageResponse {
 
     // 이벤트 관련
+    private Long eventId;
     private String eventName;
     private List<String> casting;
     private LocalDateTime startEvent;
