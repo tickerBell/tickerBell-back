@@ -165,6 +165,7 @@ public class MemberServiceImpl implements MemberService {
                 }
 
                 MyPageResponse myPageResponse = new MyPageResponse();
+                myPageResponse.setEventId(findEvent.getId());
                 myPageResponse.setEventName(findEvent.getName());
                 myPageResponse.setCasting(castings);
                 myPageResponse.setStartEvent(findEvent.getStartEvent());
@@ -196,6 +197,7 @@ public class MemberServiceImpl implements MemberService {
                 List<Ticketing> findTicketings = ticketingRepository.findByEventId(findEvent.getId());
 
                 MyPageResponse myPageResponse = new MyPageResponse();
+                myPageResponse.setEventId(findEvent.getId());
                 myPageResponse.setEventName(findEvent.getName());
                 myPageResponse.setCasting(castings);
                 myPageResponse.setStartEvent(findEvent.getStartEvent());

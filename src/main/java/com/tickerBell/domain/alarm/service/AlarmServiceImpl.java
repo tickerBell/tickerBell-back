@@ -1,5 +1,6 @@
 package com.tickerBell.domain.alarm.service;
 
+import com.tickerBell.domain.alarm.domain.Alarm;
 import com.tickerBell.domain.alarm.dtos.SaveAlarmRequest;
 import com.tickerBell.domain.alarm.repository.AlarmRepository;
 import com.tickerBell.domain.member.entity.Member;
@@ -26,6 +27,15 @@ public class AlarmServiceImpl implements AlarmService{
         Member findMember = memberRepository.findById(request.getMemberId()).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
         );
-        return null;
+
+        Alarm alarm = Alarm.builder()
+                .message(request.getMessage())
+                .isRead(false)
+                .member(findMember)
+                .build();
+
+        Alarm savedAlarm = alarmRepository.save(alarm);
+
+        return savedAlarm.getId();
     }
 }
