@@ -31,8 +31,7 @@ import java.util.Map;
 public class SmsJobConfiguration {
     private final SmsService smsService;
     private final EntityManagerFactory entityManagerFactory;
-    @Bean
-    @Qualifier("smsSendJob")
+    @Bean @Qualifier(value = "smsSendJob")
     public Job smsSendJob(JobRepository jobRepository, Step smsSendStep) {
         return new JobBuilder("smsSendJob", jobRepository)
                 .start(smsSendStep)

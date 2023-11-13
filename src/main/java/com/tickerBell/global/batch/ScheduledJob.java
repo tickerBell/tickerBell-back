@@ -1,11 +1,7 @@
 package com.tickerBell.global.batch;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.sms.service.SmsService;
-import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameter;
@@ -15,31 +11,29 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class ScheduledJob {
-    @Autowired
-    private JobLauncher jobLauncher;
+    private final SmsService smsService;
+    private final TicketingRepository ticketingRepository;
+    private final JobLauncher jobLauncher;
+    private final Job SmsSendJob;
+    private final Job alarmJob;
 
-    @Autowired
-    @Qualifier("smsSendJob")
-    private Job SmsSendJob;
+    public ScheduledJob(SmsService smsService, TicketingRepository ticketingRepository, JobLauncher jobLauncher, @Qualifier("smsSendJob") Job smsSendJob, @Qualifier("alarmJob") Job alarmJob) {
+        this.smsService = smsService;
+        this.ticketingRepository = ticketingRepository;
+        this.jobLauncher = jobLauncher;
+        SmsSendJob = smsSendJob;
+        this.alarmJob = alarmJob;
+    }
 
     @Scheduled(cron = "0 0 20 * * *", zone = "Asia/Seoul") // 초 분 시 일 월 요일
 //    @Scheduled(fixedDelay = 30000)
@@ -50,6 +44,7 @@ public class ScheduledJob {
 
         try {
             jobLauncher.run(SmsSendJob, jobParameters);
+            jobLauncher.run(alarmJob, jobParameters);
         } catch (JobExecutionAlreadyRunningException e) {
             throw new RuntimeException(e);
         } catch (JobRestartException e) {
