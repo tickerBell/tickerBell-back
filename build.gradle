@@ -88,6 +88,10 @@ dependencies {
 	// redis Mock
 	testImplementation "org.testcontainers:testcontainers:1.19.1"
 	testImplementation "org.testcontainers:junit-jupiter:1.19.1"
+
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-graphql', version: '3.0.0'
+//	api(project(':graphql-spring-boot-autoconfigure'))
 }
 
 tasks.named('test') {

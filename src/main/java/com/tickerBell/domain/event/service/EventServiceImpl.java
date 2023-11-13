@@ -176,5 +176,16 @@ public class EventServiceImpl implements EventService {
 
         return mainPage;
     }
+
+
+    //== graphql 에 사용 ==//
+    @Override
+    public List<Event> getEventByPlace(String place) {
+        return eventRepository.findByPlace(place);
+    }
+    @Override
+    public List<Event> getEventByName(String name) {
+        return eventRepository.findByName(name);
+    }
 }
 

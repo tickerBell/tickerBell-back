@@ -33,4 +33,9 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             " join fetch e.specialSeat es" +
             " where e.member.id = :memberId")
     List<Event> findByMemberIdFetchAll(@Param("memberId") Long memberId);
+
+
+    //== graphql 에서 사용 ==//
+    List<Event> findByPlace(String place);
+    List<Event> findByName(String name);
 }
