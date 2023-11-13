@@ -167,6 +167,7 @@ public class MemberServiceImpl implements MemberService {
                 MyPageResponse myPageResponse = new MyPageResponse();
                 myPageResponse.setEventId(findEvent.getId());
                 myPageResponse.setEventName(findEvent.getName());
+                myPageResponse.setPlace(findEvent.getPlace());
                 myPageResponse.setCasting(castings);
                 myPageResponse.setStartEvent(findEvent.getStartEvent());
                 myPageResponse.setEndEvent(findEvent.getEndEvent());
@@ -199,6 +200,7 @@ public class MemberServiceImpl implements MemberService {
                 MyPageResponse myPageResponse = new MyPageResponse();
                 myPageResponse.setEventId(findEvent.getId());
                 myPageResponse.setEventName(findEvent.getName());
+                myPageResponse.setPlace(findEvent.getPlace());
                 myPageResponse.setCasting(castings);
                 myPageResponse.setStartEvent(findEvent.getStartEvent());
                 myPageResponse.setEndEvent(findEvent.getEndEvent());
