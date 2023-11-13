@@ -17,6 +17,7 @@ public class MyPageResponse {
     // 이벤트 관련
     private Long eventId;
     private String eventName;
+    private String place;
     private List<String> casting;
     private LocalDateTime startEvent;
     private LocalDateTime endEvent;
