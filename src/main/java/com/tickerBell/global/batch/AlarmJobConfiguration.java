@@ -18,6 +18,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -37,6 +38,7 @@ public class AlarmJobConfiguration {
     private final EmitterService emitterService;
 
     @Bean
+    @Qualifier("alarmJob")
     public Job alarmJob(JobRepository jobRepository, Step alarmStep) {
         return new JobBuilder("alarmJob", jobRepository)
                 .start(alarmStep)

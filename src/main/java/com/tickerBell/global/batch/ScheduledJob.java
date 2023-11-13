@@ -16,6 +16,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -31,13 +32,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class ScheduledJob {
-    private final SmsService smsService;
-    private final TicketingRepository ticketingRepository;
-    private final JobLauncher jobLauncher;
-    private final Job SmsSendJob;
+    @Autowired
+    private JobLauncher jobLauncher;
+
+    @Autowired
+    @Qualifier("smsSendJob")
+    private Job SmsSendJob;
 
     @Scheduled(cron = "0 0 20 * * *", zone = "Asia/Seoul") // 초 분 시 일 월 요일
 //    @Scheduled(fixedDelay = 30000)
