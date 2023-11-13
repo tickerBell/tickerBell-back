@@ -66,5 +66,12 @@ naver-cloud-map:
   api-key: ${MAP_API_KEY}
 
 
-
-# java -jar tickerBell-0.0.1-SNAPSHOT.jar --spring.profiles.active={local or prod} 로 명령어 실행
+#graphql:
+#  servlet:
+#    mapping: /test
+#    cors-enabled: true
+#    max-query-depth: 100
+#    exception-handlers-enabled: true
+#    enabled: true
+#  tools:
+#    schema-location-pattern: "**/*.graphqls"

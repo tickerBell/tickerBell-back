@@ -31,7 +31,7 @@ public class ImageController {
     @Operation(description = "이미지 등록 *")
     @PostMapping(value = "/api/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Response> uploadEventImage(@Parameter(description = "썸네일 이미지") @RequestPart(name = "thumbNailImage") MultipartFile thumbNailImage,
-                                                     @Parameter(description = "이벤트 이미지") @RequestPart(name = "eventImages") List<MultipartFile> eventImages) {
+                                                     @Parameter(description = "이벤트 이미지") @RequestPart(name = "eventImages", required = false) List<MultipartFile> eventImages) {
 
         List<Image> imageList = imageS3Handler.uploadImage(thumbNailImage, eventImages);
 
