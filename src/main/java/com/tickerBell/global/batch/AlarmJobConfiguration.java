@@ -18,6 +18,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -36,7 +37,7 @@ public class AlarmJobConfiguration {
     private final AlarmService alarmService;
     private final EmitterService emitterService;
 
-    @Bean
+    @Bean @Qualifier(value = "alarmJob")
     public Job alarmJob(JobRepository jobRepository, Step alarmStep) {
         return new JobBuilder("alarmJob", jobRepository)
                 .start(alarmStep)
@@ -59,16 +60,14 @@ public class AlarmJobConfiguration {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime todayStart = today.withHour(0).withMinute(0);
-        String todayStartFormat = todayStart.format(formatter);
 
         LocalDateTime after3Days = LocalDateTime.now().plusDays(3).withHour(23).withMinute(59);
-        String after3DaysFormat = after3Days.format(formatter);
 
         return new JpaCursorItemReaderBuilder<Event>()
                 .name("eventReader")
                 .entityManagerFactory(entityManagerFactory)
                 .queryString("select e from Event e join fetch e.member em where e.startEvent between :today and :after")
-                .parameterValues(Map.of("today", todayStartFormat, "after", after3DaysFormat))
+                .parameterValues(Map.of("today", todayStart, "after", after3Days))
                 .build();
     }
 
