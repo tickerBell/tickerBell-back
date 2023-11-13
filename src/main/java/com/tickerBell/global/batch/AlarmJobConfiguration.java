@@ -5,6 +5,7 @@ import com.tickerBell.domain.alarm.service.AlarmService;
 import com.tickerBell.domain.emitter.service.EmitterService;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.member.entity.Member;
+import com.tickerBell.domain.ticketing.entity.Ticketing;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @Slf4j
@@ -47,34 +47,34 @@ public class AlarmJobConfiguration {
     @Bean
     public Step alarmStep(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
         return new StepBuilder("alarmJob", jobRepository)
-                .<Event, Event> chunk(5, platformTransactionManager)
-                .reader(eventItemReader())
-                .processor(eventItemProcessor())
-                .writer(eventItemWriter())
+                .<Ticketing, Ticketing> chunk(5, platformTransactionManager)
+                .reader(alarmItemReader())
+                .processor(alarmItemProcessor())
+                .writer(alarmItemWriter())
                 .build();
     }
 
     @Bean
-    public ItemReader<Event> eventItemReader() {
+    public ItemReader<Ticketing> alarmItemReader() {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime today = LocalDateTime.now();
         LocalDateTime todayStart = today.withHour(0).withMinute(0);
 
         LocalDateTime after3Days = LocalDateTime.now().plusDays(3).withHour(23).withMinute(59);
 
-        return new JpaCursorItemReaderBuilder<Event>()
-                .name("eventReader")
+        return new JpaCursorItemReaderBuilder<Ticketing>()
+                .name("alarmItemReader")
                 .entityManagerFactory(entityManagerFactory)
-                .queryString("select e from Event e join fetch e.member em where e.startEvent between :today and :after")
+                .queryString("select t from Ticketing t join fetch t.event te join fetch t.member tm where te.startEvent between :today and :after")
                 .parameterValues(Map.of("today", todayStart, "after", after3Days))
                 .build();
     }
 
     @Bean
-    public ItemProcessor<Event, Event> eventItemProcessor() {
-        return event -> {
-            Member member = event.getMember();
+    public ItemProcessor<Ticketing, Ticketing> alarmItemProcessor() {
+        return ticketing -> {
+            Member member = ticketing.getMember();
+            Event event = ticketing.getEvent();
             LocalDateTime startEvent = event.getStartEvent();
             LocalDateTime now = LocalDateTime.now();
 
@@ -90,7 +90,7 @@ public class AlarmJobConfiguration {
             saveAlarmRequest.setMessage(message);
             alarmService.saveAlarm(saveAlarmRequest);
 
-            return event;
+            return ticketing;
         };
     }
 
@@ -102,8 +102,8 @@ public class AlarmJobConfiguration {
     }
 
     @Bean
-    public JpaItemWriter<Event> eventItemWriter() {
-        return new JpaItemWriterBuilder<Event>()
+    public JpaItemWriter<Ticketing> alarmItemWriter() {
+        return new JpaItemWriterBuilder<Ticketing>()
                 .entityManagerFactory(entityManagerFactory)
                 .build();
     }
