@@ -182,8 +182,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void cancelEventByEventId(Long eventId) {
+    public void cancelEventByEventId(Long eventId, Long memberId) {
         Event findEvent = eventRepository.findByIdFetchAll(eventId);
+
+        if (findEvent.getMember().getId() != memberId) {
+            throw new CustomException(ErrorCode.EVENT_CANCEL_FAIL);
+        }
 
         LocalDateTime startEvent = findEvent.getStartEvent();
         LocalDateTime now = LocalDateTime.now();
