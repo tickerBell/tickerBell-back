@@ -349,6 +349,92 @@ public class EventServiceTest {
         assertThat(event.getIsCancelled()).isTrue();
     }
 
+    @Test
+    @DisplayName("이벤트 취소 내가 등록한 이벤트가 아닐 때 실패 테스트")
+    void cancelEventByEventIdMemberFailTest() {
+        // given
+        Long eventId = 1L;
+        Long memberId = 2L;
+        Member member = Member.builder().build();
+        Event event = Event.builder().startEvent(LocalDateTime.now().plusDays(8)).member(member).build();
+        List<Ticketing> ticketings = new ArrayList<>();
+
+        // stub
+        when(eventRepository.findByIdFetchAll(eventId)).thenAnswer(invocation -> {
+            setPrivateField(member, "id", 1L);
+            return event;
+        });
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> eventService.cancelEventByEventId(eventId, memberId))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.EVENT_CANCEL_FAIL);
+        });
+        assertThat(event.getIsCancelled()).isFalse();
+    }
+
+    @Test
+    @DisplayName("이벤트 취소 예매내역 실패 테스트")
+    void cancelEventByEventIdTicketingFailTest() {
+        // given
+        Long eventId = 1L;
+        Long memberId = 2L;
+        Member member = Member.builder().build();
+        Event event = Event.builder().startEvent(LocalDateTime.now().plusDays(8)).member(member).build();
+        List<Ticketing> ticketings = new ArrayList<>();
+        ticketings.add(Ticketing.builder().build());
+
+        // stub
+        when(eventRepository.findByIdFetchAll(eventId)).thenAnswer(invocation -> {
+            setPrivateField(member, "id", 1L);
+            return event;
+        });
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> eventService.cancelEventByEventId(eventId, memberId))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.EVENT_CANCEL_FAIL);
+        });
+        assertThat(event.getIsCancelled()).isFalse();
+    }
+
+    @Test
+    @DisplayName("이벤트 취소 남은 날짜 실패 테스트")
+    void cancelEventByEventIdDayFailTest() {
+        // given
+        Long eventId = 1L;
+        Long memberId = 2L;
+        Member member = Member.builder().build();
+        Event event = Event.builder().startEvent(LocalDateTime.now().plusDays(6)).member(member).build();
+        List<Ticketing> ticketings = new ArrayList<>();
+        ticketings.add(Ticketing.builder().build());
+
+        // stub
+        when(eventRepository.findByIdFetchAll(eventId)).thenAnswer(invocation -> {
+            setPrivateField(member, "id", 1L);
+            return event;
+        });
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> eventService.cancelEventByEventId(eventId, memberId))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.EVENT_CANCEL_FAIL);
+        });
+        assertThat(event.getIsCancelled()).isFalse();
+    }
+
     private Member createMockMember() {
         return Member.builder().build();
     }
