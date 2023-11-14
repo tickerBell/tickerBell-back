@@ -12,6 +12,7 @@ public interface EventService {
     EventCategoryResponse getEventByCategory(Category category, Pageable pageable);
     EventResponse findByIdFetchAll(Long eventId);
     MainPageDto getMainPage();
+    void cancelEventByEventId(Long eventId);
 
     //== graphql 에 사용 ==//
     List<Event> getEventByPlace(String place);
