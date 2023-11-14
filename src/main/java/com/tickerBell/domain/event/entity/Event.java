@@ -64,4 +64,7 @@ public class Event extends BaseEntity {
     public void updateViewCount() {
         this.viewCount += 1;
     }
+    public void cancelEvent() {
+        this.isCancelled = true;
+    }
 }
