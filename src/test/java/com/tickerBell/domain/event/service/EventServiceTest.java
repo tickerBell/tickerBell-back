@@ -17,6 +17,8 @@ import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
 import com.tickerBell.domain.specialseat.service.SpecialSeatService;
 import com.tickerBell.domain.tag.service.TagService;
+import com.tickerBell.domain.ticketing.entity.Ticketing;
+import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import org.assertj.core.api.AbstractObjectAssert;
@@ -31,6 +33,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +62,8 @@ public class EventServiceTest {
     private CastingRepository castingRepository;
     @Mock
     private ImageService imageService;
+    @Mock
+    private TicketingRepository ticketingRepository;
 
     @Test
     @DisplayName("이벤트 저장 테스트")
@@ -320,6 +325,30 @@ public class EventServiceTest {
 
     }
 
+    @Test
+    @DisplayName("이벤트 취소 테스트")
+    void cancelEventByEventIdTest() {
+        // given
+        Long eventId = 1L;
+        Long memberId = 1L;
+        Member member = Member.builder().build();
+        Event event = Event.builder().startEvent(LocalDateTime.now().plusDays(8)).member(member).build();
+        List<Ticketing> ticketings = new ArrayList<>();
+
+        // stub
+        when(eventRepository.findByIdFetchAll(eventId)).thenAnswer(invocation -> {
+            setPrivateField(member, "id", 1L);
+            return event;
+        });
+        when(ticketingRepository.findByEventId(null)).thenReturn(ticketings);
+
+        // when
+        eventService.cancelEventByEventId(eventId, memberId);
+
+        // then
+        assertThat(event.getIsCancelled()).isTrue();
+    }
+
     private Member createMockMember() {
         return Member.builder().build();
     }
@@ -348,5 +377,11 @@ public class EventServiceTest {
                 .member(member)
                 .specialSeat(specialSeat)
                 .build();
+    }
+
+    private void setPrivateField(Object object, String fieldName, Object value) throws Exception {
+        Field field = object.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(object, value);
     }
 }
