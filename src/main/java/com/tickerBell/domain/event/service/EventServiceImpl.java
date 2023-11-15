@@ -16,6 +16,8 @@ import com.tickerBell.domain.specialseat.entity.SpecialSeat;
 import com.tickerBell.domain.specialseat.service.SpecialSeatService;
 import com.tickerBell.domain.tag.entity.Tag;
 import com.tickerBell.domain.tag.service.TagService;
+import com.tickerBell.domain.ticketing.entity.Ticketing;
+import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -44,6 +47,7 @@ public class EventServiceImpl implements EventService {
     private final HostRepository hostRepository;
     private final CastingRepository castingRepository;
     private final ImageService imageService;
+    private final TicketingRepository ticketingRepository;
 
     @Override
     @Transactional
@@ -185,6 +189,22 @@ public class EventServiceImpl implements EventService {
         return new PageImpl<>(eventListResponseList, eventListPage.getPageable(), eventListPage.getTotalElements());
     }
 
+    public void cancelEventByEventId(Long eventId, Long memberId) {
+        Event findEvent = eventRepository.findByIdFetchAll(eventId);
+
+        if (findEvent.getMember().getId() != memberId) {
+            throw new CustomException(ErrorCode.EVENT_CANCEL_FAIL);
+        }
+
+        LocalDateTime startEvent = findEvent.getStartEvent();
+        LocalDateTime now = LocalDateTime.now();
+        List<Ticketing> findTicketings = ticketingRepository.findByEventId(findEvent.getId());
+        if (findTicketings.size() == 0 && startEvent.isAfter(now.plus(7, ChronoUnit.DAYS))) {
+            findEvent.cancelEvent();
+        } else {
+            throw new CustomException(ErrorCode.EVENT_CANCEL_FAIL);
+        }
+    }
 
     //== graphql 에 사용 ==//
     @Override

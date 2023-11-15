@@ -14,6 +14,7 @@ public interface EventService {
     EventResponse findByIdFetchAll(Long eventId);
     MainPageDto getMainPage();
     Page<EventListResponse> findAllEvent(int page, int size);
+    void cancelEventByEventId(Long eventId, Long memberId);
 
     //== graphql 에 사용 ==//
     List<Event> getEventByPlace(String place);

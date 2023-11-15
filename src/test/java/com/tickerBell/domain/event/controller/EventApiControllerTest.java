@@ -8,6 +8,7 @@ import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.service.EventService;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
+import com.tickerBell.domain.member.dtos.MemberResponse;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.service.MemberService;
 import org.junit.jupiter.api.AfterEach;
@@ -147,5 +148,53 @@ public class EventApiControllerTest {
                 .andExpect(jsonPath("$.data.isSpecialSeatC").value(true))
                 .andExpect(jsonPath("$.message").value("이벤트 상세 데이터 반환 완료"));
         // todo 다대일 관계 andExpect 추가
+    }
+
+    @Test
+    @DisplayName("이벤트 취소 테스트")
+    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void cancelEventByEventIdFailTest() throws Exception {
+        // given
+        MemberResponse username = memberService.getMemberByUsername("username");
+        Long memberId = username.getMemberId();
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(false).build());
+        Long eventId = eventService.saveEvent(memberId, createMockCancelEventRequest());
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/event/cancel/{eventId}", eventId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isOk());
+    }
+
+    private SaveEventRequest createMockCancelEventRequest() {
+        SaveEventRequest request = new SaveEventRequest();
+        request.setStartEvent(LocalDateTime.now().plusDays(8));
+        request.setEndEvent(LocalDateTime.now());
+        request.setName("mockName");
+        request.setNormalPrice(10000);
+        request.setPremiumPrice(15000);
+        request.setSaleDegree(1000F);
+        List<String> castings = new ArrayList<>();
+        castings.add("casting1");
+        request.setCastings(castings);
+        List<String> hosts = new ArrayList<>();
+        hosts.add("host1");
+        request.setHosts(hosts);
+        request.setPlace("mockPlace");
+        request.setIsAdult(false);
+        request.setIsSpecialA(true);
+        request.setIsSpecialB(true);
+        request.setIsSpecialC(true);
+        request.setCategory(Category.CONCERT);
+        List<String> tags = new ArrayList<>();
+        tags.add("tag1");
+        request.setTags(tags);
+        List<String> imageUrls = new ArrayList<>();
+        imageUrls.add("url");
+        request.setImageUrls(imageUrls);
+        return request;
     }
 }

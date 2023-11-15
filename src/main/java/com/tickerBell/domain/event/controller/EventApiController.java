@@ -37,6 +37,7 @@ public class EventApiController {
     }
 
     @GetMapping("api/events/{category}")
+    @Operation(summary = "카테고리로 이벤트 조회")
     public ResponseEntity<Response> getEventByCategory(@PathVariable("category") Category category,
                                                        @PageableDefault(size = 10,
                                                                sort = "createdDate",
@@ -45,6 +46,7 @@ public class EventApiController {
         return ResponseEntity.ok(new Response(eventCategoryResponse, "카테고리에 해당하는 event 목록 반환 완료"));
     }
 
+    @Operation(summary = "이벤트 조회")
     @GetMapping("/api/event/{eventId}")
     public ResponseEntity<Response> getEventById(@PathVariable("eventId") Long eventId) {
         EventResponse eventResponse = eventService.findByIdFetchAll(eventId);
@@ -66,4 +68,14 @@ public class EventApiController {
         Page<EventListResponse> eventListResponseList = eventService.findAllEvent(page, size);
         return ResponseEntity.ok(new Response(eventListResponseList, "전체 이벤트 데이터 반환 완료"));
     }
+    @Operation(summary = "이벤트 취소 *")
+    @PostMapping("/api/event/cancel/{eventId}")
+    public ResponseEntity<Response> cancelEventByEventId(@PathVariable("eventId") Long eventId,
+                                                         @AuthenticationPrincipal MemberContext memberContext) {
+        Member loginMember = memberContext.getMember();
+        eventService.cancelEventByEventId(eventId, loginMember.getId());
+
+        return ResponseEntity.ok(new Response("이벤트 취소 성공"));
+    }
+
 }
