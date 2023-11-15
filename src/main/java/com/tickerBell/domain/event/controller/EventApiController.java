@@ -56,4 +56,14 @@ public class EventApiController {
 
         return ResponseEntity.ok(new Response(mainPage, "메인 페이지 데이터 반환 완료"));
     }
+
+    @PostMapping("/api/event/cancel/{eventId}")
+    public ResponseEntity<Response> cancelEventByEventId(@PathVariable("eventId") Long eventId,
+                                                         @AuthenticationPrincipal MemberContext memberContext) {
+        Member loginMember = memberContext.getMember();
+        eventService.cancelEventByEventId(eventId, loginMember.getId());
+
+        return ResponseEntity.ok(new Response("이벤트 취소 성공"));
+    }
+
 }
