@@ -382,7 +382,7 @@ public class EventServiceTest {
     void cancelEventByEventIdTicketingFailTest() {
         // given
         Long eventId = 1L;
-        Long memberId = 2L;
+        Long memberId = 1L;
         Member member = Member.builder().build();
         Event event = Event.builder().startEvent(LocalDateTime.now().plusDays(8)).member(member).build();
         List<Ticketing> ticketings = new ArrayList<>();
@@ -393,6 +393,7 @@ public class EventServiceTest {
             setPrivateField(member, "id", 1L);
             return event;
         });
+        when(ticketingRepository.findByEventId(null)).thenReturn(ticketings);
 
         // when
         AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> eventService.cancelEventByEventId(eventId, memberId))
@@ -411,7 +412,7 @@ public class EventServiceTest {
     void cancelEventByEventIdDayFailTest() {
         // given
         Long eventId = 1L;
-        Long memberId = 2L;
+        Long memberId = 1L;
         Member member = Member.builder().build();
         Event event = Event.builder().startEvent(LocalDateTime.now().plusDays(6)).member(member).build();
         List<Ticketing> ticketings = new ArrayList<>();
