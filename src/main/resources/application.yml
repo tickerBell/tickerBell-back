@@ -68,14 +68,3 @@ naver-cloud-sms:
 naver-cloud-map:
   api-key-id: ${MAP_API_KEY_ID}
   api-key: ${MAP_API_KEY}
-
-
-#graphql:
-#  servlet:
-#    mapping: /test
-#    cors-enabled: true
-#    max-query-depth: 100
-#    exception-handlers-enabled: true
-#    enabled: true
-#  tools:
-#    schema-location-pattern: "**/*.graphqls"
