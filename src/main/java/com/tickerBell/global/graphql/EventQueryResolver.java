@@ -1,26 +1,34 @@
-//package com.tickerBell.global.graphql;
-//
-//import com.tickerBell.domain.event.entity.Event;
-//import com.tickerBell.domain.event.service.EventService;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.graphql.data.method.annotation.QueryMapping;
-//import org.springframework.stereotype.Component;
-//
-//import java.util.List;
-//
-//@Component
-//@RequiredArgsConstructor
-//public class EventQueryResolver {
-//    private final EventService eventService;
-//
-//    @QueryMapping
-//    public List<Event> getEventByPlace(String place) {
-//        return eventService.getEventByPlace(place);
-//    }
-//
-//    @QueryMapping
-//    public List<Event> getEventByName(String name) {
-//        return eventService.getEventByName(name);
-//    }
-//
-//}
+package com.tickerBell.global.graphql;
+
+import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.event.service.EventService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+
+import java.util.List;
+
+@Controller
+@RequiredArgsConstructor
+@Slf4j
+public class EventQueryResolver {
+    private final EventService eventService;
+
+    @QueryMapping
+    public List<Event> getEventByPlace(@Argument String place) {
+        log.info("getEventByPlace 호출");
+        List<Event> eventList = eventService.getEventByPlace(place);
+        return eventList;
+    }
+
+    @QueryMapping
+    public List<Event> getEventByName(@Argument String name) {
+        log.info("getEventByName 호출");
+        List<Event> eventList = eventService.getEventByName(name);
+        return eventList;
+    }
+
+}

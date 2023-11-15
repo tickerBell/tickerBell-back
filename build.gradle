@@ -90,8 +90,8 @@ dependencies {
 	testImplementation "org.testcontainers:junit-jupiter:1.19.1"
 
 
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-graphql', version: '3.0.0'
-//	api(project(':graphql-spring-boot-autoconfigure'))
+	implementation 'org.springframework.boot:spring-boot-starter-graphql'
+	testImplementation 'org.springframework.graphql:spring-graphql-test'
 }
 
 tasks.named('test') {

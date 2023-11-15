@@ -40,6 +40,10 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user_name_attribute: id
 
+  graphql:
+    graphiql:
+      enabled: true
+
 app:
   auth:
     secret-key: ${SECRET_KEY}

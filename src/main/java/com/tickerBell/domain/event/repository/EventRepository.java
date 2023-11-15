@@ -42,7 +42,9 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
 
 
     //== graphql 에서 사용 ==//
-    List<Event> findByPlace(String place);
-    List<Event> findByName(String name);
+    @Query("select e from Event e where e.place like %:place%")
+    List<Event> findByPlace(@Param("place") String place);
+    @Query("select e from Event e where e.name like %:name%")
+    List<Event> findByName(@Param("name") String name);
 
 }

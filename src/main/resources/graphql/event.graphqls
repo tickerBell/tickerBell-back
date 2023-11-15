@@ -1,0 +1,85 @@
+type Event {
+  id: ID
+  name: String
+  startEvent: String
+  endEvent: String
+  availablePurchaseTime: String
+  normalPrice: Int
+  premiumPrice: Int
+  saleDegree: Float
+  totalSeat: Int
+  remainSeat: Int
+  place: String
+  isAdult: Boolean
+  viewCount: Int
+  isCancelled: Boolean
+  category: Category
+  member: Member
+  specialSeat: SpecialSeat
+}
+
+type Member {
+  memberId: ID
+  username: String
+  password: String
+  phone: String
+  isAdult: Boolean
+  role: Role
+  authProvider: AuthProvider
+}
+
+type SpecialSeat {
+  specialSeatId: ID
+  isSpecialSeatA: Boolean
+  isSpecialSeatB: Boolean
+  isSpecialSeatC: Boolean
+}
+
+enum Category {
+  MUSICAL
+  CONCERT
+  PLAY
+  CLASSIC
+  SPORTS
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+}
+
+type Query {
+  getEventByPlace(place: String!): [Event]
+  getEventByName(name: String!): [Event]
+}
+
+# 쓰기 연산 로직
+# type Mutation {}
+
+
+
+#query {
+#  getEventByName(name: "콘서트 이벤트0") {
+#    id
+#    name
+#    startEvent
+#    endEvent
+#    availablePurchaseTime
+#    normalPrice
+#    premiumPrice
+#    saleDegree
+#    totalSeat
+#    remainSeat
+#    place
+#    isAdult
+#    viewCount
+#    isCancelled
+#    category
+#  }
+#}

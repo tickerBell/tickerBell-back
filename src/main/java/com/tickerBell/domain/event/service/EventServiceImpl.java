@@ -189,6 +189,7 @@ public class EventServiceImpl implements EventService {
         return new PageImpl<>(eventListResponseList, eventListPage.getPageable(), eventListPage.getTotalElements());
     }
 
+    @Override
     public void cancelEventByEventId(Long eventId, Long memberId) {
         Event findEvent = eventRepository.findByIdFetchAll(eventId);
 
