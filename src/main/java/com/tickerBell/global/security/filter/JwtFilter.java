@@ -49,7 +49,7 @@ public class JwtFilter extends OncePerRequestFilter {
             String token;
             String username;
             // 헤더가 null 이 아니고 올바른 토큰이라면
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && !request.getRequestURI().equals("/reissue")) {
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ") && !shouldExcludeUrl(request.getRequestURI())) {
                 // 토큰 추출
                 token = authorizationHeader.substring(7);
                 // 만료 체크
@@ -148,5 +148,9 @@ public class JwtFilter extends OncePerRequestFilter {
         log.error("**** " + exception + " ****");
         log.error("**** error message : " + message);
         log.error("**** stack trace : " + Arrays.toString(stackTraceElements));
+    }
+
+    private boolean shouldExcludeUrl(String requestUri) {
+        return requestUri.startsWith("/api/main") || requestUri.startsWith("/reissue");
     }
 }
