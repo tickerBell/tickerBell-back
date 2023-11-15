@@ -20,6 +20,10 @@ import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -116,24 +120,25 @@ public class TicketingServiceImpl implements TicketingService {
     }
 
     @Override
-    public List<TicketingResponse> getTicketingHistory(Long memberId) {
+    public Page<TicketingResponse> getTicketingHistory(Long memberId, int page, int size) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
-        List<TicketingResponse> ticketingResponseList = ticketingRepository.findByMemberId(member.getId()).stream()
+        Page<Ticketing> ticketingListPage = ticketingRepository.findByMemberId(member.getId(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
+        List<TicketingResponse> ticketingResponseList = ticketingListPage.stream()
                 .map(ticketing -> TicketingResponse.from(ticketing))
                 .collect(Collectors.toList());
-        return ticketingResponseList;
+        return new PageImpl<>(ticketingResponseList, ticketingListPage.getPageable(), ticketingListPage.getTotalElements());
     }
 
     @Override
-    public List<TicketingResponse> getTicketingHistoryNonMember(String name, String phone) {
+    public Page<TicketingResponse> getTicketingHistoryNonMember(String name, String phone, int page, int size) {
         NonMember nonMember = nonMemberRepository.findByNameAndPhone(name, phone)
                 .orElseThrow(() -> new CustomException(ErrorCode.NON_MEMBER_NOT_FOUND));
-
-        List<TicketingResponse> ticketingResponseList = ticketingRepository.findByNonMemberId(nonMember.getId()).stream()
+        Page<Ticketing> ticketingListPage = ticketingRepository.findByNonMemberId(nonMember.getId(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
+        List<TicketingResponse> ticketingResponseList = ticketingListPage.stream()
                 .map(ticketing -> TicketingResponse.from(ticketing))
                 .collect(Collectors.toList());
-        return ticketingResponseList;
+        return new PageImpl<>(ticketingResponseList, ticketingListPage.getPageable(), ticketingListPage.getTotalElements());
     }
 
     @Override

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -45,15 +46,21 @@ public class TicketingController {
 
     @Operation(summary = "예매 내역 회원 조회", description = "회원일 때 이벤트 조회")
     @GetMapping("/ticketing")
-    public ResponseEntity<Response> ticketingHistory(@AuthenticationPrincipal MemberContext memberContext) {
-        List<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistory(memberContext.getMember().getId());
+    public ResponseEntity<Response> ticketingHistory(@AuthenticationPrincipal MemberContext memberContext,
+                                                     @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                     @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+        Page<TicketingResponse> ticketingResponseList =
+                ticketingService.getTicketingHistory(memberContext.getMember().getId(), page, size);
         return ResponseEntity.ok(new Response(ticketingResponseList, "회원 예매 정보 반환"));
     }
     @Operation(summary = "예매 내역 비회원 조회", description = "비회원일 때 이벤트 조회")
     @GetMapping("/ticketing-nonMember")
     public ResponseEntity<Response> ticketingHistoryNonMember(@RequestParam("name") String name,
-                                                              @RequestParam("phone") String phone) {
-        List<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistoryNonMember(name, phone);
+                                                              @RequestParam("phone") String phone,
+                                                              @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                              @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+        Page<TicketingResponse> ticketingResponseList =
+                ticketingService.getTicketingHistoryNonMember(name, phone, page, size);
         return ResponseEntity.ok(new Response(ticketingResponseList, "비회원 예매 정보 반환"));
     }
 

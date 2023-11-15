@@ -23,6 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -256,21 +259,21 @@ class TicketingServiceImplTest {
         Ticketing ticketing = createTicketing(member, event);
         List<Ticketing> ticketingList = new ArrayList<>();
         ticketingList.add(ticketing);
+        Page<Ticketing> ticketingPage = new PageImpl<>(ticketingList);
 
         // stub
         Member spyMember = spy(member);
 
         when(spyMember.getId()).thenReturn(1L);
         when(memberRepository.findById(any())).thenReturn(Optional.of(spyMember));
-        when(ticketingRepository.findByMemberId(any(Long.class))).thenReturn(ticketingList);
+        when(ticketingRepository.findByMemberId(any(Long.class), PageRequest.of(0, 10))).thenReturn(ticketingPage);
 
         // when
-        List<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistory(memberId);
+        Page<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistory(memberId, 0, 10);
 
         // then
         verify(memberRepository, times(1)).findById(any(Long.class));
-        verify(ticketingRepository, times(1)).findByMemberId(any(Long.class));
-        assertThat(ticketingResponseList.size()).isEqualTo(ticketingList.size());
+        verify(ticketingRepository, times(1)).findByMemberId(any(Long.class), PageRequest.of(0, 10));
     }
 
     @Test
@@ -283,20 +286,20 @@ class TicketingServiceImplTest {
         Ticketing ticketing = createTicketingNonMember(nonMember, event);
         List<Ticketing> ticketingList = new ArrayList<>();
         ticketingList.add(ticketing);
+        Page<Ticketing> ticketingPage = new PageImpl<>(ticketingList);
 
         // stub
         NonMember spyNonMember = spy(nonMember);
         when(spyNonMember.getId()).thenReturn(1L);
         when(nonMemberRepository.findByNameAndPhone(any(String.class), any(String.class))).thenReturn(Optional.of(spyNonMember));
-        when(ticketingRepository.findByNonMemberId(any(Long.class))).thenReturn(ticketingList);
+        when(ticketingRepository.findByNonMemberId(any(Long.class), any(PageRequest.class))).thenReturn(ticketingPage);
 
         // when
-        List<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistoryNonMember(nonMember.getName(), nonMember.getPhone());
+        Page<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistoryNonMember(nonMember.getName(), nonMember.getPhone(), 0, 10);
 
         // then
         verify(nonMemberRepository, times(1)).findByNameAndPhone(any(String.class), any(String.class));
-        verify(ticketingRepository, times(1)).findByNonMemberId(any(Long.class));
-        assertThat(ticketingResponseList.size()).isEqualTo(ticketingList.size());
+        verify(ticketingRepository, times(1)).findByNonMemberId(any(Long.class), any(PageRequest.class));
     }
 
     @Test

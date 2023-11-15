@@ -1,6 +1,9 @@
 package com.tickerBell.domain.ticketing.repository;
 
 import com.tickerBell.domain.ticketing.entity.Ticketing;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,11 +20,11 @@ public interface TicketingRepository extends JpaRepository<Ticketing, Long>, Tic
     @Query("select t from Ticketing t join fetch t.member m where t.event.startEvent between :tomorrowStart and :tomorrowEnd")
     List<Ticketing> findTicketingTomorrow(@Param("tomorrowStart") LocalDateTime tomorrowStart, @Param("tomorrowEnd") LocalDateTime tomorrowEnd);
 
-    @Query("select t from Ticketing t join fetch t.event e where t.member.id = :memberId")
-    List<Ticketing> findByMemberId(@Param("memberId") Long memberId);
+    @Query("select t from Ticketing t where t.member.id = :memberId")
+    Page<Ticketing> findByMemberId(@Param("memberId") Long memberId, Pageable pageable);
 
-    @Query("select t from Ticketing t join fetch t.event e where t.nonMember.id = :nonMemberId")
-    List<Ticketing> findByNonMemberId(@Param("nonMemberId") Long nonMemberId);
+    @Query("select t from Ticketing t where t.nonMember.id = :nonMemberId")
+    Page<Ticketing> findByNonMemberId(@Param("nonMemberId") Long nonMemberId, Pageable pageable);
 
     @Modifying(clearAutomatically = true)
     @Query("delete from Ticketing t where t.member.id = :memberId and t.id = :ticketingId")
