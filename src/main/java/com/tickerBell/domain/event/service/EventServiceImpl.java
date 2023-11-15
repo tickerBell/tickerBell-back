@@ -20,8 +20,7 @@ import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -173,8 +172,17 @@ public class EventServiceImpl implements EventService {
     @Override
     public MainPageDto getMainPage() {
         MainPageDto mainPage = eventRepository.getMainPage();
-
         return mainPage;
+    }
+
+    @Override
+    public Page<EventListResponse> findAllEvent(int page, int size) {
+        // todo: 조건이 추가될 것 같음 and 테스트코드 작성
+        Page<Event> eventListPage = eventRepository.findAllEventsPage(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
+        List<EventListResponse> eventListResponseList = eventListPage.stream()
+                .map(e -> EventListResponse.from(e))
+                .collect(Collectors.toList());
+        return new PageImpl<>(eventListResponseList, eventListPage.getPageable(), eventListPage.getTotalElements());
     }
 
 

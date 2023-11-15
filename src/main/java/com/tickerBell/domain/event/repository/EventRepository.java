@@ -3,6 +3,9 @@ package com.tickerBell.domain.event.repository;
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,8 +37,12 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             " where e.member.id = :memberId")
     List<Event> findByMemberIdFetchAll(@Param("memberId") Long memberId);
 
+    @Query("select e from Event e")
+    Page<Event> findAllEventsPage(Pageable pageable);
+
 
     //== graphql 에서 사용 ==//
     List<Event> findByPlace(String place);
     List<Event> findByName(String name);
+
 }

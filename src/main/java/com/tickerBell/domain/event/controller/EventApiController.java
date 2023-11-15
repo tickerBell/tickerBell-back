@@ -9,6 +9,7 @@ import com.tickerBell.global.security.context.MemberContext;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -51,9 +52,18 @@ public class EventApiController {
     }
 
     @GetMapping("/api/main")
+    @Operation(summary = "메인 페이지", description = "이벤트 등록 *")
     public ResponseEntity<Response> getMainPage() {
         MainPageDto mainPage = eventService.getMainPage();
 
         return ResponseEntity.ok(new Response(mainPage, "메인 페이지 데이터 반환 완료"));
+    }
+
+    @Operation(summary = "전체 event 반환", description = "전체 event 시간 순으로 정렬해서 반환")
+    @GetMapping("/api/events")
+    public ResponseEntity<Response> getAllEvent(@RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                                @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+        Page<EventListResponse> eventListResponseList = eventService.findAllEvent(page, size);
+        return ResponseEntity.ok(new Response(eventListResponseList, "전체 이벤트 데이터 반환 완료"));
     }
 }
