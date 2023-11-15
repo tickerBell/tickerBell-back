@@ -17,10 +17,11 @@ import java.util.stream.Collectors;
 public class TicketingResponse {
 
     private Long ticketingId; // 예매 pk
-    private Float payment; // 지불 금액
+    private Float payment; // 총 지불 금액 (좌석이 2개라면 2개의 합)
     private List<SelectedSeatResponse> selectedSeatResponseList; // 선택한 좌석 정보 (위치, 가격)
     private EventHistoryResponse eventHistoryResponse; // 예매한 공연 정보
     private Boolean isPast; // 현재 시점으로부터 지난 예매인지 여부
+    private String place; // 장소
 
     public static TicketingResponse from(Ticketing ticketing) {
         // selectedSeat dto 변환
@@ -42,6 +43,7 @@ public class TicketingResponse {
                 .selectedSeatResponseList(selectedSeatResponseList)
                 .eventHistoryResponse(eventHistoryResponse)
                 .payment(payment)
+                .place(ticketing.getEvent().getPlace())
                 .isPast(isPast)
                 .build();
     }
