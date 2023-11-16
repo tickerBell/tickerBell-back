@@ -9,6 +9,7 @@ import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.host.entity.Host;
 import com.tickerBell.domain.host.repository.HostRepository;
 import com.tickerBell.domain.image.entity.Image;
+import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.domain.image.service.ImageService;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
@@ -49,6 +50,7 @@ public class EventServiceImpl implements EventService {
     private final CastingRepository castingRepository;
     private final ImageService imageService;
     private final TicketingRepository ticketingRepository;
+    private final ImageRepository imageRepository;
 
     @Override
     @Transactional
@@ -128,6 +130,8 @@ public class EventServiceImpl implements EventService {
         List<EventListResponse> responses = new ArrayList<>();
         for (Event event : findEvents) {
             EventListResponse response = EventListResponse.from(event);
+            Image thumbNailImage = imageRepository.findThumbNailImageByEventId(event.getId());
+            response.setThumbNailImage(thumbNailImage.getS3Url());
             responses.add(response);
         }
 
