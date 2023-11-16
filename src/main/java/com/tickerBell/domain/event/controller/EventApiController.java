@@ -25,7 +25,7 @@ public class EventApiController {
     private final EventService eventService;
 
     @PostMapping(value = "/api/event")
-    @Operation(description = "이벤트 등록 *")
+    @Operation(summary = "이벤트 등록 *")
     public ResponseEntity<Response> saveEvent(@RequestBody SaveEventRequest request,
                                               @AuthenticationPrincipal MemberContext memberContext) {
         // 로그인한 회원 객체 조회

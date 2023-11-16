@@ -3,11 +3,13 @@ package com.tickerBell.domain.event.dtos;
 import com.tickerBell.domain.event.entity.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -45,10 +47,13 @@ public class SaveEventRequest {
     @NotBlank
     @Schema(description = "성인여부", example = "true")
     private Boolean isAdult;
+    @NotNull
     @Schema(description = "A 좌석 특별석 여부", example = "true")
     private Boolean isSpecialA;
+    @NotNull
     @Schema(description = "B 좌석 특별석 여부", example = "true")
     private Boolean isSpecialB;
+    @NotNull
     @Schema(description = "C 좌석 특별석 여부", example = "true")
     private Boolean isSpecialC;
     @NotBlank
@@ -56,6 +61,19 @@ public class SaveEventRequest {
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags;
+    @NotBlank
     @Schema(description = "이미지 url", example = "[\"url1\", \"url2\"]")
     private List<String> imageUrls;
+
+    public void setPremiumPrice(Integer premiumPrice) {
+        this.premiumPrice = premiumPrice == null ? -1 :premiumPrice;
+    }
+
+    public void setSaleDegree(Float saleDegree) {
+        this.saleDegree = saleDegree == null ? 0F : saleDegree;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags == null ? new ArrayList<>() : tags;
+    }
 }

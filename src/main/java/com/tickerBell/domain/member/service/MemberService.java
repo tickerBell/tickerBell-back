@@ -14,4 +14,5 @@ public interface MemberService {
     MyPageListResponse getMyPage(Long memberId, Pageable pageable);
     MemberResponse getMember(Long memberId);
     MemberResponse getMemberByUsername(String username);
+    void updatePassword(Long memberId, String password);
 }
