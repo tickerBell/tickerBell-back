@@ -412,6 +412,8 @@ class MemberServiceTest {
 
         // then
         assertThat(currentMember.getPassword()).isEqualTo("encodePassword");
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(passwordEncoder, times(1)).encode(password);
     }
 
     @Test
@@ -433,5 +435,73 @@ class MemberServiceTest {
         extracting.satisfies(ex -> {
             assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
         });
+        verify(memberRepository, times(1)).findById(memberId);
+        verifyNoInteractions(passwordEncoder);
+    }
+
+    @Test
+    @DisplayName("사용자 현재 비밀번호 확인 테스트")
+    void checkCurrentPasswordTest() {
+        Long memberId = 1L;
+        String password = "password";
+        Member currentMember = Member.builder().password(password).build();
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(currentMember));
+        when(passwordEncoder.matches(password, currentMember.getPassword())).thenReturn(true);
+
+        // when
+        Boolean currentPassword = memberService.checkCurrentPassword(memberId, password);
+
+        // then
+        assertThat(currentPassword).isEqualTo(true);
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(passwordEncoder, times(1)).matches(password, currentMember.getPassword());
+    }
+
+    @Test
+    @DisplayName("사용자 현재 비밀번호 확인 회원조회 실패 테스트")
+    void checkCurrentPasswordMemberFailTest() {
+        Long memberId = 1L;
+        String password = "password";
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.checkCurrentPassword(memberId, password))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+        });
+        verify(memberRepository, times(1)).findById(memberId);
+        verifyNoInteractions(passwordEncoder);
+    }
+
+    @Test
+    @DisplayName("사용자 현재 비밀번호 확인 비밀번호 매치 실패 테스트")
+    void checkCurrentPasswordMatchFailTest() {
+        Long memberId = 1L;
+        String password = "password";
+        Member currentMember = Member.builder().password(password).build();
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(currentMember));
+        when(passwordEncoder.matches(password, currentMember.getPassword())).thenReturn(false);
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.checkCurrentPassword(memberId, password))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.PASSWORD_NOT_MATCH);
+        });
+        verify(memberRepository, times(1)).findById(memberId);
+        verify(passwordEncoder, times(1)).matches(password, currentMember.getPassword());
     }
 }
