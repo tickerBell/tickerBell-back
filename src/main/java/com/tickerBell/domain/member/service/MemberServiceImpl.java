@@ -233,4 +233,13 @@ public class MemberServiceImpl implements MemberService {
         );
         return MemberResponse.from(findMember);
     }
+
+    @Override
+    public void updatePassword(Long memberId, String password) {
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        findMember.updatePassword(passwordEncoder.encode(password));
+    }
 }

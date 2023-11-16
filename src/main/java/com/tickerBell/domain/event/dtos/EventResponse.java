@@ -2,6 +2,7 @@ package com.tickerBell.domain.event.dtos;
 
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.utils.SeatPriceCalculator;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -39,8 +40,8 @@ public class EventResponse {
                 .endEvent(event.getEndEvent())
                 .normalPrice(event.getNormalPrice())
                 .premiumPrice(event.getPremiumPrice())
-                .discountNormalPrice(discount(event.getNormalPrice(), event.getSaleDegree()))
-                .discountPremiumPrice(discount(event.getPremiumPrice(), event.getSaleDegree()))
+                .discountNormalPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getNormalPrice()))
+                .discountPremiumPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getPremiumPrice()))
                 .place(event.getPlace())
                 .isAdult(event.getIsAdult())
                 .category(event.getCategory())
@@ -48,19 +49,5 @@ public class EventResponse {
                 .isSpecialSeatB(event.getSpecialSeat().getIsSpecialSeatB())
                 .isSpecialSeatC(event.getSpecialSeat().getIsSpecialSeatC())
                 .build();
-    }
-
-    private static Float discount(Integer price, Float saleDegree) {
-        if (saleDegree != null) {
-            if (saleDegree < 1 && saleDegree > 0) {
-                return price - ((Float) (price * saleDegree));
-            } else if (saleDegree >= 1) {
-                return price - saleDegree;
-            } else {
-                return price.floatValue();
-            }
-        } else {
-            return price.floatValue();
-        }
     }
 }
