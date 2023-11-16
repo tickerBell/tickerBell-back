@@ -242,4 +242,17 @@ public class MemberServiceImpl implements MemberService {
 
         findMember.updatePassword(passwordEncoder.encode(password));
     }
+
+    @Override
+    public Boolean checkCurrentPassword(Long memberId, String password) {
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        if (!passwordEncoder.matches(password, findMember.getPassword())) {
+            throw new CustomException(ErrorCode.PASSWORD_NOT_MATCH);
+        }
+
+        return true;
+    }
 }
