@@ -16,4 +16,6 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findImageByEventId(@Param("eventId") Long eventId);
     @Query("select i from Image i where i.s3Url = :imageUrl")
     Optional<Image> findByImageUrl(@Param("imageUrl") String imageUrl);
+    @Query("select i from Image i where i.event.id = :eventId and i.isThumbnail = true")
+    Image findThumbNailImageByEventId(@Param("eventId") Long eventId);
 }

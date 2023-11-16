@@ -16,6 +16,7 @@ import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
 import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
 import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
+import com.tickerBell.domain.utils.SeatPriceCalculator;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -181,25 +182,25 @@ public class TicketingServiceImpl implements TicketingService {
             // A좌석 선택
             if (parts[0].equals("A")) {
                 if (specialSeat.getIsSpecialSeatA()) {
-                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
+                    seatPrice = SeatPriceCalculator.getSeatPrice(saleDegree, event.getPremiumPrice());
                 } else {
-                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
+                    seatPrice = SeatPriceCalculator.getSeatPrice(saleDegree, event.getNormalPrice());
                 }
             }
             // B좌석 선택
             else if (parts[0].equals("B")) {
                 if (specialSeat.getIsSpecialSeatB()) {
-                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
+                    seatPrice = SeatPriceCalculator.getSeatPrice(saleDegree, event.getPremiumPrice());
                 } else {
-                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
+                    seatPrice = SeatPriceCalculator.getSeatPrice(saleDegree, event.getNormalPrice());
                 }
             }
             // C좌석 선택
             else if (parts[0].equals("C")) {
                 if (specialSeat.getIsSpecialSeatC()) {
-                    seatPrice = getSeatPrice(saleDegree, event.getPremiumPrice());
+                    seatPrice = SeatPriceCalculator.getSeatPrice(saleDegree, event.getPremiumPrice());
                 } else {
-                    seatPrice = getSeatPrice(saleDegree, event.getNormalPrice());
+                    seatPrice = SeatPriceCalculator.getSeatPrice(saleDegree, event.getNormalPrice());
                 }
             } else {
                 // A, B, C 로 구분할 수 없다면 예외
@@ -210,21 +211,5 @@ public class TicketingServiceImpl implements TicketingService {
             selectedSeatList.add(selectedSeat);
         }
         return selectedSeatList;
-    }
-
-    // 할인된 가격 계산
-    private float getSeatPrice(float saleDegree, int price) {
-        float seatPrice = 0;
-        if (saleDegree == 0) { // 할인 x
-            seatPrice = price;
-        } else if (saleDegree >= 1.0) { // 상수값 할인
-            seatPrice = price - saleDegree;
-        } else if (saleDegree < 1.0 && saleDegree > 0) { // 퍼센트 할인
-            seatPrice = price - (price * saleDegree);
-        } else {
-            // saleDegree 가 위 3개에 해당하지 않을 때
-            throw new CustomException(ErrorCode.SALE_DEGREE_NOT_VALID_FORMAT);
-        }
-        return seatPrice;
     }
 }
