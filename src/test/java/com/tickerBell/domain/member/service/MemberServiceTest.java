@@ -394,4 +394,44 @@ class MemberServiceTest {
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(ErrorCode.MEMBER_NOT_FOUND.getErrorMessage());
     }
+
+    @Test
+    @DisplayName("사용자 비밀번호 변경 테스트")
+    void updatePasswordTest() {
+        // given
+        Long memberId = 1L;
+        String password = "password";
+        Member currentMember = Member.builder().password("currentPassword").build();
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(currentMember));
+        when(passwordEncoder.encode(password)).thenReturn("encodePassword");
+
+        // when
+        memberService.updatePassword(memberId, password);
+
+        // then
+        assertThat(currentMember.getPassword()).isEqualTo("encodePassword");
+    }
+
+    @Test
+    @DisplayName("사용자 비밀번호 변경 실패 테스트")
+    void updatePasswordFailTest() {
+        // given
+        Long memberId = 1L;
+        String password = "password";
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.updatePassword(memberId, password))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+        });
+    }
 }
