@@ -19,8 +19,8 @@ public class OauthController {
     private final OauthService oauthService;
 
     // 플랫폼에서 응답 받음
-    @Operation(summary = "auth code 로 토큰 발급", description = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=8fd7a1f394d9bbd09fdfdd3827146d73&redirect_uri=\n" +
-            "  http://localhost:3000/oauth/kakao")
+    @Operation(summary = "auth code 로 토큰 발급", description = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=8fd7a1f394d9bbd09fdfdd3827146d73&redirect_uri=" +
+            "http://localhost:3000/oauth/kakao")
     @GetMapping("/login/oauth2/code")
     public ResponseEntity<Response> redirect(
             @RequestParam("code") String code

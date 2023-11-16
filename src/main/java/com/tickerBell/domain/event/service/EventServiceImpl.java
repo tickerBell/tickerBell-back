@@ -186,7 +186,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public Page<EventListResponse> findAllEvent(int page, int size) {
         // todo: 조건이 추가될 것 같음 and 테스트코드 작성
-        Page<Event> eventListPage = eventRepository.findAllEventsPage(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
+        Page<Event> eventListPage = eventRepository.findAllEventsPage(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startEvent")));
         List<EventListResponse> eventListResponseList = eventListPage.stream()
                 .map(e -> EventListResponse.from(e))
                 .collect(Collectors.toList());
