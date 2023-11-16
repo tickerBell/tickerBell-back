@@ -2,6 +2,8 @@ package com.tickerBell.domain.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tickerBell.domain.member.dtos.JoinMemberRequest;
+import com.tickerBell.domain.member.dtos.MemberResponse;
+import com.tickerBell.domain.member.dtos.MemberPasswordRequest;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
@@ -26,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -236,5 +237,26 @@ class MemberApiControllerTest {
                 .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
                 .andExpect(jsonPath("$.data.username").value("abcdefg"))
                 .andExpect(jsonPath("$.data.isRegistrant").value("true"));
+    }
+
+    @Test
+    @DisplayName("사용자 비밀번호 변경 테스트")
+    @WithUserDetails(value = "abcdefg", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void updateMemberPasswordTest() throws Exception {
+        // given
+        MemberPasswordRequest memberPasswordRequest = new MemberPasswordRequest("mockPassword");
+        String request = objectMapper.writeValueAsString(memberPasswordRequest);
+
+        // when
+        ResultActions perform = mockMvc.perform(put("/api/member/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request));
+        MemberResponse memberResponse = memberService.getMemberByUsername("abcdefg");
+        Boolean passCheck = memberService.checkCurrentPassword(memberResponse.getMemberId(), "mockPassword");
+
+        // then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("비밀번호 변경 성공"));
+        assertThat(passCheck).isTrue();
     }
 }
