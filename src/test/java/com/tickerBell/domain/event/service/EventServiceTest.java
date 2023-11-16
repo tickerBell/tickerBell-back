@@ -11,6 +11,7 @@ import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.host.entity.Host;
 import com.tickerBell.domain.host.repository.HostRepository;
 import com.tickerBell.domain.image.entity.Image;
+import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.domain.image.service.ImageService;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
@@ -64,6 +65,8 @@ public class EventServiceTest {
     private ImageService imageService;
     @Mock
     private TicketingRepository ticketingRepository;
+    @Mock
+    private ImageRepository imageRepository;
 
     @Test
     @DisplayName("이벤트 저장 테스트")
@@ -217,12 +220,14 @@ public class EventServiceTest {
         // given
         Category category = Category.SPORTS;
         List<Event> events = new ArrayList<>();
-        events.add(Event.builder().build());
+        events.add(Event.builder().normalPrice(1000).premiumPrice(-1).saleDegree(0.5F).build());
         PageRequest pageRequest = PageRequest.of(0, 10);
         PageImpl<Event> eventsPage = new PageImpl<>(events, pageRequest, 10);
+        Image image = Image.builder().s3Url("s3Url").build();
 
         // stub
         when(eventRepository.findByCategoryFetchAllPage(category, pageRequest)).thenReturn(eventsPage);
+        when(imageRepository.findThumbNailImageByEventId(null)).thenReturn(image);
 
         // when
         EventCategoryResponse eventCategoryResponse = eventService.getEventByCategory(category, pageRequest);
