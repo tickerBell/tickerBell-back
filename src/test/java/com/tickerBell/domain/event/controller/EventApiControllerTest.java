@@ -113,9 +113,15 @@ public class EventApiControllerTest {
 
     @Test
     @DisplayName("카테고리를 통해 이벤트 조회 테스트")
-    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void getEventByCategoryTest() throws Exception {
-        // todo
+        // given
+        Category concert = Category.CONCERT;
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/events/{category}", concert));
+
+        // then
+        perform.andExpect(jsonPath("$.message").value("카테고리에 해당하는 event 목록 반환 완료"));
     }
 
     @Test
