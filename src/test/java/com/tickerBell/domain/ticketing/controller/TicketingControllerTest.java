@@ -142,11 +142,11 @@ class TicketingControllerTest {
         perform
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("회원 예매 정보 반환"))
-                .andExpect(jsonPath("$.data[0].ticketingId").value(ticketingId))
-                .andExpect(jsonPath("$.data[0].payment").value(2 * (15000-1000))) // 회원일 땐 세일 o
-                .andExpect(jsonPath("$.data[0].selectedSeatResponseList", hasSize(2)))
-                .andExpect(jsonPath("$.data[0].eventHistoryResponse").exists())
-                .andExpect(jsonPath("$.data[0].isPast").value(false));
+                .andExpect(jsonPath("$.data.content[0].ticketingId").value(ticketingId))
+                .andExpect(jsonPath("$.data.content[0].payment").value(2 * (15000-1000))) // 회원일 땐 세일 o
+                .andExpect(jsonPath("$.data.content[0].selectedSeatResponseList", hasSize(2)))
+                .andExpect(jsonPath("$.data.content[0].eventHistoryResponse").exists())
+                .andExpect(jsonPath("$.data.content[0].isPast").value(false));
     }
 
     @Test
@@ -178,11 +178,11 @@ class TicketingControllerTest {
         perform
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("비회원 예매 정보 반환"))
-                .andExpect(jsonPath("$.data[0].ticketingId").value(ticketingId))
-                .andExpect(jsonPath("$.data[0].payment").value(2 * 15000)) // 비회원일 땐 세일 x
-                .andExpect(jsonPath("$.data[0].selectedSeatResponseList", hasSize(2)))
-                .andExpect(jsonPath("$.data[0].eventHistoryResponse").exists())
-                .andExpect(jsonPath("$.data[0].isPast").value(false));
+                .andExpect(jsonPath("$.data.content[0].ticketingId").value(ticketingId))
+                .andExpect(jsonPath("$.data.content[0].payment").value(2 * 15000)) // 비회원일 땐 세일 x
+                .andExpect(jsonPath("$.data.content[0].selectedSeatResponseList", hasSize(2)))
+                .andExpect(jsonPath("$.data.content[0].eventHistoryResponse").exists())
+                .andExpect(jsonPath("$.data.content[0].isPast").value(false));
     }
 
     @Test

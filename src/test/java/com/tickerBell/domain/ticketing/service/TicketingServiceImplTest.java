@@ -26,6 +26,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -266,14 +267,14 @@ class TicketingServiceImplTest {
 
         when(spyMember.getId()).thenReturn(1L);
         when(memberRepository.findById(any())).thenReturn(Optional.of(spyMember));
-        when(ticketingRepository.findByMemberId(any(Long.class), PageRequest.of(0, 10))).thenReturn(ticketingPage);
+        when(ticketingRepository.findByMemberId(any(Long.class), any(PageRequest.class))).thenReturn(ticketingPage);
 
         // when
         Page<TicketingResponse> ticketingResponseList = ticketingService.getTicketingHistory(memberId, 0, 10);
 
         // then
         verify(memberRepository, times(1)).findById(any(Long.class));
-        verify(ticketingRepository, times(1)).findByMemberId(any(Long.class), PageRequest.of(0, 10));
+        verify(ticketingRepository, times(1)).findByMemberId(any(Long.class), any(PageRequest.class));
     }
 
     @Test

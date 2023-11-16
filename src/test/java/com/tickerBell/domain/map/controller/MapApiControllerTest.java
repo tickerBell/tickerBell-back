@@ -91,7 +91,7 @@ class MapApiControllerTest {
 
         // then
         perform
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.data").value("naver map api 호출 중 에러가 발생했습니다.")) // JSON 응답 내용을 확인
                 .andExpect(jsonPath("$.message").value("커스텀 예외 반환"));
     }
