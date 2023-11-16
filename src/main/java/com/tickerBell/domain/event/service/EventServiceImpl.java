@@ -130,7 +130,7 @@ public class EventServiceImpl implements EventService {
         for (Event event : findEvents) {
             EventListResponse response = EventListResponse.from(event);
             Image thumbNailImage = imageRepository.findThumbNailImageByEventId(event.getId());
-            response.setThumbNailImage(thumbNailImage.getS3Url());
+            response.setThumbNailUrl(thumbNailImage.getS3Url());
             responses.add(response);
         }
 

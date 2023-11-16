@@ -16,7 +16,7 @@ public class EventListResponse {
     private Long eventId;
     private String eventName; // 이벤트 이름
     private LocalDateTime startEvent; // 이벤트 시작 시간
-    private String thumbNailImage; // 썸네일
+    private String thumbNailUrl; // 썸네일
     private Integer normalPrice; // 일반 좌석 가격
     private Integer premiumPrice; // 특수석 좌석 가격
     private Float saleDegree; // 세일
@@ -31,7 +31,7 @@ public class EventListResponse {
                 .eventId(event.getId())
                 .startEvent(event.getStartEvent())
                 .eventName(event.getName())
-                .thumbNailImage(null) //todo: 나중에 썸네일 이미지로 바꿔야함
+                .thumbNailUrl(null) //todo: 나중에 썸네일 이미지로 바꿔야함
                 .normalPrice(event.getNormalPrice())
                 .saleDegree(event.getSaleDegree())
                 .afterSalePrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getNormalPrice()))
@@ -40,11 +40,11 @@ public class EventListResponse {
     }
 
     @QueryProjection
-    public EventListResponse(Long eventId, String eventName, LocalDateTime startEvent, String thumbNailImage, Integer normalPrice, Float saleDegree, Category category) {
+    public EventListResponse(Long eventId, String eventName, LocalDateTime startEvent, String thumbNailUrl, Integer normalPrice, Float saleDegree, Category category) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.startEvent = startEvent;
-        this.thumbNailImage = thumbNailImage;
+        this.thumbNailUrl = thumbNailUrl;
         this.normalPrice = normalPrice;
         this.saleDegree = saleDegree;
         this.category = category;
