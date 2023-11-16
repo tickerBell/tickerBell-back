@@ -3,6 +3,7 @@ package com.tickerBell.domain.emitter.controller;
 import com.tickerBell.domain.emitter.service.EmitterService;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.global.security.context.MemberContext;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ public class EmitterApiController {
 
     private final EmitterService emitterService;
 
+    @Operation(summary = "SSE 구독 * ")
     @GetMapping(value = "/api/emitter/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe (@RequestHeader(value = "Last-Event-Id", required = false, defaultValue = " ") String lastEventId,
                                  @AuthenticationPrincipal MemberContext memberContext) {
