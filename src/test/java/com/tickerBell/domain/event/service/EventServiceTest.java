@@ -302,7 +302,7 @@ public class EventServiceTest {
                 // then
                 assertThat(eventResponse.getDiscountNormalPrice()).isEqualTo(mockEvent.getNormalPrice() - mockEvent.getSaleDegree());
             } else if (i == 1) {
-                Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), -1F);
+                Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), 0F);
                 Long eventId = 1L;
 
                 // stub
@@ -314,7 +314,7 @@ public class EventServiceTest {
                 // then
                 assertThat(eventResponse.getDiscountNormalPrice()).isEqualTo(mockEvent.getNormalPrice().floatValue());
             } else {
-                Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), null);
+                Event mockEvent = createMockEvent(createMockMember(), createMockSpecialSeat(), 0F);
                 Long eventId = 1L;
 
                 // stub
