@@ -259,4 +259,22 @@ class MemberApiControllerTest {
                 .andExpect(jsonPath("$.message").value("비밀번호 변경 성공"));
         assertThat(passCheck).isTrue();
     }
+
+    @Test
+    @DisplayName("사용자 현재 비밀번호 확인 테스트")
+    @WithUserDetails(value = "abcdefg", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    void checkMemberPasswordTest() throws Exception {
+        // given
+        MemberPasswordRequest memberPasswordRequest = new MemberPasswordRequest("abcdefg1");
+        String request = objectMapper.writeValueAsString(memberPasswordRequest);
+
+        // when
+        ResultActions perform = mockMvc.perform(post("/api/member/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(request));
+
+        // then
+        perform.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("사용자의 비밀번호와 일치합니다."));
+    }
 }
