@@ -107,4 +107,15 @@ public class MemberApiController {
 
         return ResponseEntity.ok(new Response("비밀번호 변경 성공"));
     }
+
+    @PostMapping("/api/member/password")
+    @Operation(summary = "사용자 현재 비밀번호 확인 *")
+    public ResponseEntity<Response> checkMemberPassword(@RequestBody MemberPasswordRequest request,
+                                                        @AuthenticationPrincipal MemberContext memberContext) {
+
+        Member loginMember = memberContext.getMember();
+
+        memberService.checkCurrentPassword(loginMember.getId(), request.getPassword());
+        return ResponseEntity.ok(new Response("사용자의 비밀번호와 일치합니다."));
+    }
 }
