@@ -3,15 +3,12 @@ package com.tickerBell.domain.image.entity;
 
 import com.tickerBell.domain.common.BaseEntity;
 import com.tickerBell.domain.event.entity.Event;
-import com.tickerBell.domain.image.dtos.ImageResponse;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Image extends BaseEntity {
     @Id
     @GeneratedValue
@@ -25,11 +22,22 @@ public class Image extends BaseEntity {
     @JoinColumn(name = "event_id")
     private Event event;
 
+    @Builder
+    public Image(String originImgName, String storeImgName, String s3Url, Boolean isThumbnail, Event event) {
+        this.originImgName = originImgName;
+        this.storeImgName = storeImgName;
+        this.s3Url = s3Url;
+        this.isThumbnail = isThumbnail;
+        this.event = event;
+    }
+
     public void setThumbnail(Boolean thumbnail) {
         isThumbnail = thumbnail;
     }
 
-    public void updateEvent(Event event) {
+    // == 연관관계 편의 메서드 == //
+    public void addEvent(Event event) {
         this.event = event;
+        event.getImageList().add(this);
     }
 }
