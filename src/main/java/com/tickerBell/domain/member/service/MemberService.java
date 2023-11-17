@@ -15,4 +15,5 @@ public interface MemberService {
     MemberResponse getMember(Long memberId);
     MemberResponse getMemberByUsername(String username);
     void updatePassword(Long memberId, String password);
+    Boolean checkCurrentPassword(Long memberId, String password);
 }

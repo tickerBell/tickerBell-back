@@ -4,8 +4,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.tickerBell.domain.event.repository.EventRepository;
-import com.tickerBell.domain.image.dtos.ImageResponse;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
@@ -34,6 +32,9 @@ public class ImageS3Handler {
         List<Image> imageList = new ArrayList<>();
         // 일반 이미지 맨 뒤에 썸네일 이미지 추가
         // 썸네일 이미지는 필수 값으로 받아 옴
+        if (multipartFiles == null) {
+            multipartFiles = new ArrayList<>();
+        }
         multipartFiles.add(thumbNailImage);
 
 

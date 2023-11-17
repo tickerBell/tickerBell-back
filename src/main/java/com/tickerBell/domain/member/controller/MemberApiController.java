@@ -16,10 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -98,5 +95,27 @@ public class MemberApiController {
         MyPageListResponse myPageListResponse = memberService.getMyPage(loginMember.getId(), pageable);
 
         return ResponseEntity.ok(new Response(myPageListResponse, "마이페이지 조회 성공"));
+    }
+
+    @PutMapping("/api/member/password")
+    @Operation(summary = "사용자 비밀번호 변경 *")
+    public ResponseEntity<Response> updateMemberPassword(@RequestBody MemberPasswordRequest request,
+                                                         @AuthenticationPrincipal MemberContext memberContext) {
+        Member loginMember = memberContext.getMember();
+
+        memberService.updatePassword(loginMember.getId(), request.getPassword());
+
+        return ResponseEntity.ok(new Response("비밀번호 변경 성공"));
+    }
+
+    @PostMapping("/api/member/password")
+    @Operation(summary = "사용자 현재 비밀번호 확인 *")
+    public ResponseEntity<Response> checkMemberPassword(@RequestBody MemberPasswordRequest request,
+                                                        @AuthenticationPrincipal MemberContext memberContext) {
+
+        Member loginMember = memberContext.getMember();
+
+        memberService.checkCurrentPassword(loginMember.getId(), request.getPassword());
+        return ResponseEntity.ok(new Response("사용자의 비밀번호와 일치합니다."));
     }
 }

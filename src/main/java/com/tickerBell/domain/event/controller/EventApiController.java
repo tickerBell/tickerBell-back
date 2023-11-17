@@ -78,4 +78,6 @@ public class EventApiController {
         return ResponseEntity.ok(new Response("이벤트 취소 성공"));
     }
 
+
+
 }
