@@ -99,16 +99,17 @@ public class EventServiceTest {
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url1");
         SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, imageUrls);
+        Event event = Event.builder().build();
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
         when(specialSeatService.saveSpecialSeat(anyBoolean(), anyBoolean(), anyBoolean())).thenReturn(SpecialSeat.builder().build());
         when(tagService.saveTagList(any(List.class))).thenReturn(1);
-        when(hostRepository.save(any(Host.class))).thenReturn(Host.builder().build());
-        when(castingRepository.save(any(Casting.class))).thenReturn(Casting.builder().build());
+        when(hostRepository.save(any(Host.class))).thenReturn(Host.builder().event(event).build());
+        when(castingRepository.save(any(Casting.class))).thenReturn(Casting.builder().event(event).build());
         doNothing().when(imageService).updateEventByImageUrl("url1", null);
 
-        when(eventRepository.save(any(Event.class))).thenReturn(Event.builder().build());
+        when(eventRepository.save(any(Event.class))).thenReturn(event);
 
 
         // when
@@ -220,10 +221,12 @@ public class EventServiceTest {
         // given
         Category category = Category.SPORTS;
         List<Event> events = new ArrayList<>();
-        events.add(Event.builder().normalPrice(1000).premiumPrice(-1).saleDegree(0.5F).build());
+        Event event = Event.builder().normalPrice(1000).premiumPrice(-1).saleDegree(0.5F).build();
+        events.add(event);
         PageRequest pageRequest = PageRequest.of(0, 10);
         PageImpl<Event> eventsPage = new PageImpl<>(events, pageRequest, 10);
         Image image = Image.builder().s3Url("s3Url").build();
+        Casting.builder().castingName("casting").event(event).build();
 
         // stub
         when(eventRepository.findByCategoryFetchAllPage(category, pageRequest)).thenReturn(eventsPage);
@@ -247,18 +250,16 @@ public class EventServiceTest {
         List<Casting> castings = new ArrayList<>();
         List<Image> images = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
-            hosts.add(Host.builder().hostName("host").build());
-            castings.add(Casting.builder().castingName("casting").build());
+            hosts.add(Host.builder().hostName("host").event(mockEvent).build());
+            castings.add(Casting.builder().castingName("casting").event(mockEvent).build());
         }
         images.add(Image.builder().isThumbnail(true).s3Url("url").build());
         images.add(Image.builder().isThumbnail(false).s3Url("url").build());
-
+        images.get(0).addEvent(mockEvent);
+        images.get(1).addEvent(mockEvent);
 
         // stub
         when(eventRepository.findByIdFetchAll(eventId)).thenReturn(mockEvent);
-        when(hostRepository.findByEventId(null)).thenReturn(hosts);
-        when(castingRepository.findByEventId(null)).thenReturn(castings);
-        when(imageService.findByEventId(null)).thenReturn(images);
 
         // when
         EventResponse eventResponse = eventService.findByIdFetchAll(eventId);
