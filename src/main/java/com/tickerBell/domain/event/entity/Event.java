@@ -27,6 +27,7 @@ public class Event extends BaseEntity {
     private LocalDateTime startEvent; // 이벤트 시작 시간
     private LocalDateTime endEvent; // 이벤트 종료 시간
     private LocalDateTime availablePurchaseTime; // 구매 가능 시간
+    private Integer eventTime; // 이벤트 시간
     private Integer normalPrice; // 일반 좌석 가격
     private Integer premiumPrice; // 앞열 좌석 가격
     private Float saleDegree; // 1.0 이상: n 원 할인  |  1.0 미만: n 퍼센트 할인 | 0: 세일 x
@@ -52,10 +53,11 @@ public class Event extends BaseEntity {
     private List<Host> hostList = new ArrayList<>();
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
+    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer eventTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
+        this.eventTime = eventTime;
         this.availablePurchaseTime = availablePurchaseTime;
         this.normalPrice = normalPrice;
         this.premiumPrice = premiumPrice;
