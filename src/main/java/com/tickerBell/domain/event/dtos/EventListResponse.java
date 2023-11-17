@@ -6,8 +6,6 @@ import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.utils.SeatPriceCalculator;
-import com.tickerBell.global.exception.CustomException;
-import com.tickerBell.global.exception.ErrorCode;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,12 +21,17 @@ public class EventListResponse {
     private Long eventId;
     private String name; // 이벤트 이름
     private LocalDateTime startEvent; // 이벤트 시작 시간
+    private LocalDateTime endEvent; // 이벤트 종료 시간
     private Float saleDegree; // 세일
     private Integer normalPrice; // 일반 좌석 가격
+    private Integer premiumPrice; // 특수석 좌석 가격
     private Float discountNormalPrice; // 세일 후 특수석 좌석 가격
-    private Category category;
+    private Float discountPremiumPrice; // 세일 후 특수석 좌석 가격
+    private Category category; // 카테고리
     private String thumbNailUrl; // 썸네일 (service 에서 추가)
     private List<String> castings; // 캐스팅 정보 (service 에서 추가)
+    private String place; // 장소
+    private Boolean isAdult; // 성인여부
 
     //todo: 리스트에 반환할 데이터 더 필요하다면 추가
 
@@ -46,12 +49,17 @@ public class EventListResponse {
                 .eventId(event.getId())
                 .name(event.getName())
                 .startEvent(event.getStartEvent())
+                .endEvent(event.getEndEvent())
                 .saleDegree(event.getSaleDegree())
                 .normalPrice(event.getNormalPrice())
+                .premiumPrice(event.getPremiumPrice())
                 .discountNormalPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getNormalPrice()))
+                .discountPremiumPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getPremiumPrice()))
                 .category(event.getCategory())
                 .thumbNailUrl((thumbnailImage != null && !thumbnailImage.isEmpty()) ? thumbnailImage.get(0).getS3Url() : null)
                 .castings(castings)
+                .place(event.getPlace())
+                .isAdult(event.getIsAdult())
                 .build();
     }
 
