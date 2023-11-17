@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EventResponse {
 
+    private String eventId;
     private String name;
     private LocalDateTime startEvent;
     private LocalDateTime endEvent;
@@ -34,6 +35,7 @@ public class EventResponse {
 
     // todo 주최자 별도 처리
     public static EventResponse from(Event event) {
+
         return EventResponse.builder()
                 .name(event.getName())
                 .startEvent(event.getStartEvent())

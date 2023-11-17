@@ -30,13 +30,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         // 뮤지컬 상위 조회수 7개 (공연 예정인 이벤트에 대해서)
         List<EventListResponse> musicalEventList = queryFactory
                 .select(new QEventListResponse(
-                        event.id,
-                        event.name,
-                        event.startEvent,
-                        image.s3Url,
-                        event.normalPrice,
-                        event.saleDegree,
-                        event.category
+                        event
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -51,13 +45,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         // 콘서트 상위 조회수 7개 (공연 예정인 이벤트에 대해서)
         List<EventListResponse> concertEventList = queryFactory
                 .select(new QEventListResponse(
-                        event.id,
-                        event.name,
-                        event.startEvent,
-                        image.s3Url,
-                        event.normalPrice,
-                        event.saleDegree,
-                        event.category
+                        event
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -72,13 +60,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         // 공연 상위 조회수 7개 (공연 예정인 이벤트에 대해서)
         List<EventListResponse> playEventList = queryFactory
                 .select(new QEventListResponse(
-                        event.id,
-                        event.name,
-                        event.startEvent,
-                        image.s3Url,
-                        event.normalPrice,
-                        event.saleDegree,
-                        event.category
+                        event
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -93,13 +75,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         // 클래식 상위 조회수 7개 (공연 예정인 이벤트에 대해서)
         List<EventListResponse> classicEventList = queryFactory
                 .select(new QEventListResponse(
-                        event.id,
-                        event.name,
-                        event.startEvent,
-                        image.s3Url,
-                        event.normalPrice,
-                        event.saleDegree,
-                        event.category
+                        event
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -114,13 +90,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         // 스포츠 상위 조회수 7개 (공연 예정인 이벤트에 대해서)
         List<EventListResponse> sportsEventList = queryFactory
                 .select(new QEventListResponse(
-                        event.id,
-                        event.name,
-                        event.startEvent,
-                        image.s3Url,
-                        event.normalPrice,
-                        event.saleDegree,
-                        event.category
+                        event
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -135,13 +105,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         // 세일 상위 조회수 7개 (공연 예정인 이벤트에 대해서)
         List<EventListResponse> saleEventList = queryFactory
                 .select(new QEventListResponse(
-                        event.id,
-                        event.name,
-                        event.startEvent,
-                        image.s3Url,
-                        event.normalPrice,
-                        event.saleDegree,
-                        event.category
+                        event
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -156,13 +120,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
         // 마감 임박 상위 조회수 7개
         List<EventListResponse> deadLineEventList = queryFactory
                 .select(new QEventListResponse(
-                        event.id,
-                        event.name,
-                        event.startEvent,
-                        image.s3Url,
-                        event.normalPrice,
-                        event.saleDegree,
-                        event.category
+                        event
                 ))
                 .from(event)
                 .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
@@ -175,13 +133,13 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
 
 
         MainPageDto mainPageDto = MainPageDto.builder()
-                .rankingMusicalEventList(setAfterSalePrice(musicalEventList))
-                .rankingConcertEventList(setAfterSalePrice(concertEventList))
-                .rankingPlayEventList(setAfterSalePrice(playEventList))
-                .rankingClassicEventList(setAfterSalePrice(classicEventList))
-                .rankingSportsEventList(setAfterSalePrice(sportsEventList))
-                .saleEventList(setAfterSalePrice(saleEventList))
-                .deadLineEventList(setAfterSalePrice(deadLineEventList))
+                .rankingMusicalEventList(musicalEventList)
+                .rankingConcertEventList(concertEventList)
+                .rankingPlayEventList(playEventList)
+                .rankingClassicEventList(classicEventList)
+                .rankingSportsEventList(sportsEventList)
+                .saleEventList(saleEventList)
+                .deadLineEventList(deadLineEventList)
                 .recommendEventList(null) // todo: 추천 이벤트 추가해야 함
                 .build();
         return mainPageDto;
@@ -223,24 +181,5 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                 .fetchOne();
 
         return new PageImpl<>(events, pageable, count);
-    }
-
-    // afterSalePrice 계산
-    private List<EventListResponse> setAfterSalePrice(List<EventListResponse> eventListResponseList) {
-        List<EventListResponse> result = eventListResponseList.stream()
-                .map(m -> {
-                    Float afterSalePrice = 0F;
-                    if (m.getSaleDegree() == 0) { // 할인 x
-                        afterSalePrice = Float.valueOf(m.getNormalPrice());
-                    } else if (m.getSaleDegree() >= 1.0) { // 상수값 할인
-                        afterSalePrice = m.getNormalPrice() - m.getSaleDegree();
-                    } else if (m.getSaleDegree() < 1.0 && m.getSaleDegree() > 0) { // 퍼센트 할인
-                        afterSalePrice = m.getNormalPrice() - (m.getNormalPrice() * m.getSaleDegree());
-                    }
-                    m.setAfterSalePrice(afterSalePrice);
-                    return m;
-                })
-                .collect(Collectors.toList());
-        return result;
     }
 }
