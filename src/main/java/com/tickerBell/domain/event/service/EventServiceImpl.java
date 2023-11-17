@@ -68,6 +68,7 @@ public class EventServiceImpl implements EventService {
                 .startEvent(request.getStartEvent())
                 .endEvent(request.getEndEvent())
                 .availablePurchaseTime(availablePurchaseTime)
+                .eventTime(request.getEventTime())
                 .normalPrice(request.getNormalPrice())
                 .premiumPrice(request.getPremiumPrice())
                 .saleDegree(request.getSaleDegree())

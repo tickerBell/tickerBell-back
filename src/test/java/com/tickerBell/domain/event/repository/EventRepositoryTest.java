@@ -43,6 +43,7 @@ class EventRepositoryTest {
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
         LocalDateTime availablePurchaseTime = LocalDateTime.now();
+        Integer eventTime = 90;
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
         Float saleDegree = 0.0F;
@@ -56,6 +57,7 @@ class EventRepositoryTest {
                 .startEvent(startEvent)
                 .endEvent(endEvent)
                 .availablePurchaseTime(availablePurchaseTime)
+                .eventTime(eventTime)
                 .normalPrice(normalPrice)
                 .premiumPrice(premiumPrice)
                 .saleDegree(saleDegree)
@@ -77,6 +79,7 @@ class EventRepositoryTest {
         assertThat(savedEvent.getName()).isEqualTo(event.getName());
         assertThat(savedEvent.getStartEvent()).isEqualTo(event.getStartEvent());
         assertThat(savedEvent.getEndEvent()).isEqualTo(event.getEndEvent());
+        assertThat(savedEvent.getEventTime()).isEqualTo(event.getEventTime());
         assertThat(savedEvent.getNormalPrice()).isEqualTo(event.getNormalPrice());
         assertThat(savedEvent.getPremiumPrice()).isEqualTo(event.getPremiumPrice());
         assertThat(savedEvent.getSaleDegree()).isEqualTo(event.getSaleDegree());

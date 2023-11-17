@@ -29,6 +29,9 @@ public class SaveEventRequest {
     @Schema(description = "구매 가능 시간", example = "2023-09-30T14:30:00")
     private LocalDateTime availablePurchaseTime;
     @NotBlank
+    @Schema(description = "사영시간 (분단위)", example = "90")
+    private Integer eventTime;
+    @NotBlank
     @Schema(description = "일반석 가격", example = "10000")
     private Integer normalPrice;
     @Schema(description = "특수석 가격", example = "15000")
