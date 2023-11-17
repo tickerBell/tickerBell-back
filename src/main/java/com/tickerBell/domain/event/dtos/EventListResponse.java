@@ -87,11 +87,16 @@ public class EventListResponse {
         this.eventId = e.getId();
         this.name = e.getName();
         this.startEvent = e.getStartEvent();
+        this.endEvent = e.getEndEvent(); // 이벤트 종료 시간
         this.saleDegree = e.getSaleDegree();
         this.normalPrice = e.getNormalPrice();
+        this.premiumPrice = e.getPremiumPrice();
         this.discountNormalPrice = SeatPriceCalculator.getSeatPrice(e.getSaleDegree(), e.getNormalPrice());
+        this.discountPremiumPrice = SeatPriceCalculator.getSeatPrice(e.getSaleDegree(), e.getPremiumPrice());
         this.category = e.getCategory();
         this.thumbNailUrl = (thumbnailImage != null && !thumbnailImage.isEmpty()) ? thumbnailImage.get(0).getS3Url() : null;
         this.castings = castings;
+        this.place = e.getPlace();
+        this.isAdult = e.getIsAdult();
     }
 }
