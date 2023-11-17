@@ -2,6 +2,7 @@ package com.tickerBell.domain.event.entity;
 
 import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.common.BaseEntity;
+import com.tickerBell.domain.host.entity.Host;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
@@ -9,11 +10,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Event extends BaseEntity {
 
@@ -44,9 +45,11 @@ public class Event extends BaseEntity {
     @JoinColumn(name = "special_seat_id")
     private SpecialSeat specialSeat;
     @OneToMany(mappedBy = "event")
-    private List<Casting> castingList;
+    private List<Casting> castingList = new ArrayList<>();
     @OneToMany(mappedBy = "event")
-    private List<Image> imageList;
+    private List<Image> imageList = new ArrayList<>();
+    @OneToMany(mappedBy = "event")
+    private List<Host> hostList = new ArrayList<>();
 
     @Builder
     public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
@@ -68,6 +71,9 @@ public class Event extends BaseEntity {
         this.isCancelled = false;
     }
 
+    public void setRemainSeat(Integer remainSeat) {
+        this.remainSeat = remainSeat;
+    }
     public void updateViewCount() {
         this.viewCount += 1;
     }

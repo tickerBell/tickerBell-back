@@ -1,30 +1,17 @@
 package com.tickerBell.domain.image.service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
-import com.tickerBell.domain.image.dtos.ImageResponse;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +55,6 @@ public class ImageServiceImpl implements ImageService {
         Image findImage = imageRepository.findByImageUrl(imageUrl).orElseThrow(
                 () -> new CustomException(ErrorCode.IMAGE_NOT_FOUND)
         );
-        findImage.updateEvent(findEvent);
-
+        findImage.addEvent(findEvent);
     }
 }

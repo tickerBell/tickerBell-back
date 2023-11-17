@@ -1,11 +1,15 @@
 package com.tickerBell.domain.event.dtos;
 
+import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
+import com.tickerBell.domain.host.entity.Host;
+import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.utils.SeatPriceCalculator;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EventResponse {
 
-    private String eventId;
+    private Long eventId;
     private String name;
     private LocalDateTime startEvent;
     private LocalDateTime endEvent;
@@ -33,10 +37,30 @@ public class EventResponse {
     private String thumbNailUrl;
     private List<String> imageUrls;
 
-    // todo 주최자 별도 처리
     public static EventResponse from(Event event) {
 
+        List<String> castings = new ArrayList<>();
+        for (Casting findCasting : event.getCastingList()) {
+            castings.add(findCasting.getCastingName());
+        }
+
+        List<String> hosts = new ArrayList<>();
+        for (Host host : event.getHostList()) {
+            hosts.add(host.getHostName());
+        }
+
+        List<String> imageUrls = new ArrayList<>();
+        String thumbNailUrl = null;
+        for (Image image : event.getImageList()) {
+            if (image.getIsThumbnail()) {
+                thumbNailUrl = image.getS3Url();
+            } else {
+                imageUrls.add(image.getS3Url());
+            }
+        }
+
         return EventResponse.builder()
+                .eventId(event.getId())
                 .name(event.getName())
                 .startEvent(event.getStartEvent())
                 .endEvent(event.getEndEvent())
@@ -50,6 +74,10 @@ public class EventResponse {
                 .isSpecialSeatA(event.getSpecialSeat().getIsSpecialSeatA())
                 .isSpecialSeatB(event.getSpecialSeat().getIsSpecialSeatB())
                 .isSpecialSeatC(event.getSpecialSeat().getIsSpecialSeatC())
+                .castings(castings)
+                .hosts(hosts)
+                .thumbNailUrl(thumbNailUrl)
+                .imageUrls(imageUrls)
                 .build();
     }
 }

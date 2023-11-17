@@ -147,31 +147,6 @@ public class EventServiceImpl implements EventService {
         Event findEvent = eventRepository.findByIdFetchAll(eventId);
         EventResponse response = EventResponse.from(findEvent);
 
-        List<Host> findHosts = hostRepository.findByEventId(findEvent.getId());
-        List<String> hosts = new ArrayList<>();
-        for (Host findHost : findHosts) {
-            hosts.add(findHost.getHostName());
-        }
-        response.setHosts(hosts);
-
-        List<Casting> findCastings = castingRepository.findByEventId(findEvent.getId());
-        List<String> castings = new ArrayList<>();
-        for (Casting findCasting : findCastings) {
-            castings.add(findCasting.getCastingName());
-        }
-        response.setCastings(castings);
-
-        List<Image> findImages = imageService.findByEventId(findEvent.getId());
-        List<String> imageUrls = new ArrayList<>();
-        for (Image findImage : findImages) {
-            if (findImage.getIsThumbnail()) {
-                response.setThumbNailUrl(findImage.getS3Url());
-            } else {
-                imageUrls.add(findImage.getS3Url());
-            }
-        }
-        response.setImageUrls(imageUrls);
-
         // 조회수 증가
         findEvent.updateViewCount();
         return response;
