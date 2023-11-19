@@ -40,7 +40,7 @@ public class EventApiController {
     @Operation(summary = "카테고리로 이벤트 조회")
     public ResponseEntity<Response> getEventByCategory(@PathVariable("category") Category category,
                                                        @PageableDefault(size = 10,
-                                                               sort = "createdDate",
+                                                               sort = "startEvent",
                                                                direction = Sort.Direction.DESC) Pageable pageable) {
         EventCategoryResponse eventCategoryResponse = eventService.getEventByCategory(category, pageable);
         return ResponseEntity.ok(new Response(eventCategoryResponse, "카테고리에 해당하는 event 목록 반환 완료"));
