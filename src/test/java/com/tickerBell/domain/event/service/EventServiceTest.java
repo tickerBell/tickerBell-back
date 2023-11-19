@@ -2,9 +2,7 @@ package com.tickerBell.domain.event.service;
 
 import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
-import com.tickerBell.domain.event.dtos.EventCategoryResponse;
-import com.tickerBell.domain.event.dtos.EventResponse;
-import com.tickerBell.domain.event.dtos.SaveEventRequest;
+import com.tickerBell.domain.event.dtos.*;
 import com.tickerBell.domain.event.entity.Category;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
@@ -29,8 +27,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -67,6 +67,19 @@ public class EventServiceTest {
     private TicketingRepository ticketingRepository;
     @Mock
     private ImageRepository imageRepository;
+//    private static MockedStatic<EventListResponse> eventListResponseMockedStatic; // static 메소드 mocking
+//
+//    @BeforeEach
+//    void setUp() {
+//        eventListResponseMockedStatic = Mockito.mockStatic(EventListResponse.class);
+//    }
+//
+//    @AfterEach
+//    void afterEach() {
+//        // static 을 mocking 할 경우 다른 테스트 케이스에도 영향을 미치기 때문에 close
+//        eventListResponseMockedStatic.close();
+//    }
+
 
     @Test
     @DisplayName("이벤트 저장 테스트")
@@ -479,5 +492,83 @@ public class EventServiceTest {
         Field field = object.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(object, value);
+    }
+
+    @Test
+    @DisplayName("메인 페이지 반환 테스트")
+    public void mainPageTest() {
+        // given
+        MainPageDto mainPageDto = MainPageDto.builder().build();
+
+        // stub
+        when(eventService.getMainPage()).thenReturn(mainPageDto);
+
+        // when
+        MainPageDto mainPage = eventService.getMainPage();
+
+        // then
+        verify(eventRepository, times(1)).getMainPage();
+    }
+
+    @Test
+    @DisplayName("모든 이벤트 조회 테스트")
+    public void allEventFindTest() {
+        // given
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startEvent"));
+        Event mockEvent = mock(Event.class);
+        Image mockImage = mock(Image.class);
+        Casting casting = Casting.builder().event(mockEvent).build();
+        List<Event> eventEntities = List.of(mockEvent);
+        Page<Event> eventPage = new PageImpl<>(eventEntities);
+
+        // stub
+        when(mockEvent.getCastingList()).thenReturn(List.of(casting));
+        when(mockEvent.getImageList()).thenReturn(List.of(mockImage));
+        when(mockEvent.getSaleDegree()).thenReturn(1000F);
+        when(mockImage.getIsThumbnail()).thenReturn(true);
+        when(eventRepository.findAllEventsPage(pageRequest)).thenReturn(eventPage);
+
+        // when
+        Page<EventListResponse> eventListResponseList = eventService.findAllEvent(page, size);
+
+        // then
+        verify(eventRepository, times(1)).findAllEventsPage(any(PageRequest.class));
+        assertThat(eventListResponseList.getTotalElements()).isEqualTo(eventEntities.size());
+    }
+
+    @Test
+    @DisplayName("graphql 장소 검색 테스트")
+    public void getEventByPlaceTest() {
+        // given
+        String place = "place";
+        List<Event> eventList = List.of(Event.builder().build());
+        // stub
+        when(eventRepository.findByPlace(any(String.class))).thenReturn(eventList);
+
+        // when
+        List<Event> eventByPlace = eventService.getEventByPlace(place);
+
+        // then
+        verify(eventRepository, times(1)).findByPlace(any(String.class));
+        assertThat(eventByPlace.size()).isEqualTo(eventList.size());
+    }
+
+    @Test
+    @DisplayName("graphql 이벤트명 검색 테스트")
+    public void getEventByNameTest() {
+        // given
+        String name = "name";
+        List<Event> eventList = List.of(Event.builder().build());
+        // stub
+        when(eventRepository.findByName(any(String.class))).thenReturn(eventList);
+
+        // when
+        List<Event> eventByName = eventService.getEventByName(name);
+
+        // then
+        verify(eventRepository, times(1)).findByName(any(String.class));
+        assertThat(eventByName.size()).isEqualTo(eventList.size());
     }
 }

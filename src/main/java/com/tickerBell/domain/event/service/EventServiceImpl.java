@@ -50,7 +50,6 @@ public class EventServiceImpl implements EventService {
     private final ImageService imageService;
     private final TicketingRepository ticketingRepository;
     private final ImageRepository imageRepository;
-
     @Override
     @Transactional
     public Long saveEvent(Long memberId, SaveEventRequest request) {
@@ -161,7 +160,6 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Page<EventListResponse> findAllEvent(int page, int size) {
-        // todo: 테스트코드 작성
         Page<Event> eventListPage = eventRepository.findAllEventsPage(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "startEvent")));
         List<EventListResponse> eventListResponseList = eventListPage.stream()
                 .map(e -> EventListResponse.from(e))

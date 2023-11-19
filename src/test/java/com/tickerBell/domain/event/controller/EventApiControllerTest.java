@@ -175,6 +175,25 @@ public class EventApiControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("이벤트 전체 조회 테스트")
+    public void findAllEventTest() throws Exception {
+        // given
+        int page = 0;
+        int size = 10;
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/events")
+                .param("page", String.valueOf(page))
+                .param("size", String.valueOf(size))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("전체 이벤트 데이터 반환 완료"));
+    }
+
     private SaveEventRequest createMockCancelEventRequest() {
         SaveEventRequest request = new SaveEventRequest();
         request.setStartEvent(LocalDateTime.now().plusDays(8));
