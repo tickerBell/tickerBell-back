@@ -188,12 +188,17 @@ public class EventServiceImpl implements EventService {
 
     //== graphql 에 사용 ==//
     @Override
-    public List<Event> getEventByPlace(String place) {
-        return eventRepository.findByPlace(place);
+    public List<EventListResponse> getEventByPlace(String place) {
+        List<EventListResponse> eventListResponseList = eventRepository.findByPlace(place).stream()
+                .map(event -> EventListResponse.from(event))
+                .collect(Collectors.toList());
+        return eventListResponseList;
     }
     @Override
-    public List<Event> getEventByName(String name) {
-        return eventRepository.findByName(name);
+    public List<EventListResponse> getEventByName(String name) {
+        return eventRepository.findByName(name).stream()
+                .map(event -> EventListResponse.from(event))
+                .collect(Collectors.toList());
     }
 }
 

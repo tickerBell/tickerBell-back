@@ -18,6 +18,24 @@ type Event {
   specialSeat: SpecialSeat
 }
 
+
+type EventListResponse {
+  eventId: ID
+  name: String
+  startEvent: String
+  endEvent: String
+  saleDegree: Float
+  normalPrice: Int
+  premiumPrice: Int
+  discountNormalPrice: Float
+  discountPremiumPrice: Float
+  category: Category
+  thumbNailUrl: String
+  castings: [String]
+  place: String
+  isAdult: Boolean
+}
+
 type Member {
   memberId: ID
   username: String
@@ -55,8 +73,8 @@ enum AuthProvider {
 }
 
 type Query {
-  getEventByPlace(place: String!): [Event]
-  getEventByName(name: String!): [Event]
+  getEventByPlace(place: String!): [EventListResponse]
+  getEventByName(name: String!): [EventListResponse]
 }
 
 # 쓰기 연산 로직

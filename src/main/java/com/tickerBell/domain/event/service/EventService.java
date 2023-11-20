@@ -17,7 +17,7 @@ public interface EventService {
     void cancelEventByEventId(Long eventId, Long memberId);
 
     //== graphql 에 사용 ==//
-    List<Event> getEventByPlace(String place);
-    List<Event> getEventByName(String name);
+    List<EventListResponse> getEventByPlace(String place);
+    List<EventListResponse> getEventByName(String name);
 
 }

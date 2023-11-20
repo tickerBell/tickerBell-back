@@ -1,5 +1,6 @@
 package com.tickerBell.global.graphql;
 
+import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.service.EventService;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +19,17 @@ public class EventQueryResolver {
     private final EventService eventService;
 
     @QueryMapping
-    public List<Event> getEventByPlace(@Argument String place) {
+    public List<EventListResponse> getEventByPlace(@Argument String place) {
         log.info("getEventByPlace 호출");
-        List<Event> eventList = eventService.getEventByPlace(place);
+        List<EventListResponse> eventList = eventService.getEventByPlace(place);
+
         return eventList;
     }
 
     @QueryMapping
-    public List<Event> getEventByName(@Argument String name) {
+    public List<EventListResponse> getEventByName(@Argument String name) {
         log.info("getEventByName 호출");
-        List<Event> eventList = eventService.getEventByName(name);
+        List<EventListResponse> eventList = eventService.getEventByName(name);
         return eventList;
     }
 

@@ -64,17 +64,6 @@ public class EventListResponse {
     }
 
     @QueryProjection
-    public EventListResponse(Long eventId, String name, LocalDateTime startEvent, String thumbNailUrl, Integer normalPrice, Float saleDegree, Category category) {
-        this.eventId = eventId;
-        this.name = name;
-        this.startEvent = startEvent;
-        this.thumbNailUrl = thumbNailUrl;
-        this.normalPrice = normalPrice;
-        this.saleDegree = saleDegree;
-        this.category = category;
-    }
-
-    @QueryProjection
     public EventListResponse(Event e) {
         List<String> castings = new ArrayList<>();
         for (Casting findCasting : e.getCastingList()) {
