@@ -21,6 +21,7 @@ import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
+import com.tickerBell.global.graphql.dtos.EventGraphqlResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
@@ -188,16 +189,22 @@ public class EventServiceImpl implements EventService {
 
     //== graphql 에 사용 ==//
     @Override
-    public List<EventListResponse> getEventByPlace(String place) {
-        List<EventListResponse> eventListResponseList = eventRepository.findByPlace(place).stream()
-                .map(event -> EventListResponse.from(event))
+    public List<EventGraphqlResponse> getEventByPlace(String place) {
+        return eventRepository.findByPlace(place).stream()
+                .map(event -> EventGraphqlResponse.from(event))
                 .collect(Collectors.toList());
-        return eventListResponseList;
     }
     @Override
-    public List<EventListResponse> getEventByName(String name) {
+    public List<EventGraphqlResponse> getEventByName(String name) {
         return eventRepository.findByName(name).stream()
-                .map(event -> EventListResponse.from(event))
+                .map(event -> EventGraphqlResponse.from(event))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventGraphqlResponse> getEventByCasting(String casting) {
+        return eventRepository.findByCasting(casting).stream()
+                .map(event -> EventGraphqlResponse.from(event))
                 .collect(Collectors.toList());
     }
 }

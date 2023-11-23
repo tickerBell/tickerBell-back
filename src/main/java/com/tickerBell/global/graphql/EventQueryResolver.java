@@ -3,6 +3,7 @@ package com.tickerBell.global.graphql;
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.service.EventService;
+import com.tickerBell.global.graphql.dtos.EventGraphqlResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -19,17 +20,24 @@ public class EventQueryResolver {
     private final EventService eventService;
 
     @QueryMapping
-    public List<EventListResponse> getEventByPlace(@Argument String place) {
+    public List<EventGraphqlResponse> getEventByPlace(@Argument String place) {
         log.info("getEventByPlace 호출");
-        List<EventListResponse> eventList = eventService.getEventByPlace(place);
+        List<EventGraphqlResponse> eventList = eventService.getEventByPlace(place);
 
         return eventList;
     }
 
     @QueryMapping
-    public List<EventListResponse> getEventByName(@Argument String name) {
+    public List<EventGraphqlResponse> getEventByName(@Argument String name) {
         log.info("getEventByName 호출");
-        List<EventListResponse> eventList = eventService.getEventByName(name);
+        List<EventGraphqlResponse> eventList = eventService.getEventByName(name);
+        return eventList;
+    }
+
+    @QueryMapping
+    public List<EventGraphqlResponse> getEventByCasting(@Argument String casting) {
+        log.info("getEventByName 호출");
+        List<EventGraphqlResponse> eventList = eventService.getEventByCasting(casting);
         return eventList;
     }
 
