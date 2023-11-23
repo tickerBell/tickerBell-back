@@ -170,6 +170,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public void cancelEventByEventId(Long eventId, Long memberId) {
         Event findEvent = eventRepository.findByIdFetchAll(eventId);
 
