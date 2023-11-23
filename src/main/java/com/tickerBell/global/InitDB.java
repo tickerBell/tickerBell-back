@@ -21,6 +21,7 @@
 //import org.springframework.transaction.annotation.Transactional;
 //
 //import java.time.LocalDateTime;
+//import java.util.Random;
 //
 //@Component
 //@RequiredArgsConstructor
@@ -115,9 +116,9 @@
 //            em.persist(specialSeat);
 //            Event event = Event.builder()
 //                    .name(eventName)
-//                    .startEvent(LocalDateTime.now().plusDays(10).plusHours(1))
-//                    .endEvent(LocalDateTime.now().plusDays(10).plusHours(3))
-//                    .availablePurchaseTime(LocalDateTime.now().plusDays(10))
+//                    .startEvent(LocalDateTime.now().plusDays(20).plusHours(1))
+//                    .endEvent(LocalDateTime.now().plusDays(20).plusHours(3))
+//                    .availablePurchaseTime(LocalDateTime.now().plusDays(20))
 //                    .eventTime(100)
 //                    .normalPrice(10000)
 //                    .premiumPrice(15000)
@@ -132,7 +133,13 @@
 //                    .build();
 //            em.persist(event);
 //
-//            Casting casting = Casting.builder().event(event).castingName("배우").build();
+//
+//            // 배우들 중 하나를 무작위로 선택
+//            String[] possibleNames = {"박보검", "고윤정", "한효주", "김유정", "남주혁", "김태리"};
+//            Random random = new Random();
+//            String selectedName = possibleNames[random.nextInt(possibleNames.length)];
+//
+//            Casting casting = Casting.builder().event(event).castingName(selectedName).build();
 //            em.persist(casting);
 //
 //            Host host = Host.builder().hostName("주최자").event(event).build();
