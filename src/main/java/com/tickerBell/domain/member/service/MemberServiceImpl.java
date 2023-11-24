@@ -143,14 +143,13 @@ public class MemberServiceImpl implements MemberService {
         MyPageListResponse myPageListResponse = new MyPageListResponse();
         myPageListResponse.setUsername(findMember.getUsername());
         myPageListResponse.setPhone(findMember.getPhone());
+        myPageListResponse.setRole(findMember.getRole());
 
         List<MyPageResponse> myPageResponses = new ArrayList<>();
 
         if (findMember.getRole().equals(Role.ROLE_USER)) {
 
             // 일반 사용자 myPage
-            myPageListResponse.setIsRegistrant(false);
-
             Page<Ticketing> findTicketingsPage = ticketingRepository.findByMemberIdPage(memberId, pageable);
             long totalCount = findTicketingsPage.getTotalElements();
             List<Ticketing> findTicketings = findTicketingsPage.getContent();
@@ -178,8 +177,6 @@ public class MemberServiceImpl implements MemberService {
         } else {
 
             // 등록자 myPage
-            myPageListResponse.setIsRegistrant(true);
-
             Page<Event> findEventsPage = eventRepository.findByMemberIdFetchAllPage(findMember.getId(), pageable);
             long totalCount = findEventsPage.getTotalElements();
             List<Event> findEvents = findEventsPage.getContent();
