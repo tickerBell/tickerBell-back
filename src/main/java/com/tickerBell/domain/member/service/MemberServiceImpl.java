@@ -74,6 +74,10 @@ public class MemberServiceImpl implements MemberService {
         // Access Token 에서 User email를 가져온다.
         String username = (String) jwtTokenProvider.get(refreshToken).get("username");
 
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
         // Redis에서 저장된 Refresh Token 값을 가져온다.
         String findRefreshToken = redisTemplate.opsForValue().get(username);
         if (!refreshToken.equals(findRefreshToken)) {
@@ -86,6 +90,7 @@ public class MemberServiceImpl implements MemberService {
         LoginResponse loginResponse = LoginResponse.builder()
                 .refreshToken(new_refresh_token)
                 .accessToken(jwtTokenProvider.createAccessToken(username))
+                .role(findMember.getRole())
                 .build();
 
         // refresh 토큰 업데이트
@@ -116,6 +121,7 @@ public class MemberServiceImpl implements MemberService {
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .role(findMember.getRole())
                 .build();
     }
 
