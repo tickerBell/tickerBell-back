@@ -54,7 +54,8 @@ public class SecurityConfig {
                         "/api/join/sms-validation", "/naver-api/path", "/ticketing-nonMember",
                         "/graphql").permitAll()
                 .requestMatchers(HttpMethod.GET, "/ticketing-nonMember", "/api/main", "/api/events/{category}",
-                        "/api/event/{eventId}", "/login/oauth2/code", "/api/events", "/error").permitAll()
+                        "/api/event/{eventId}", "/login/oauth2/code", "/api/events", "/selected-seat/{eventId}",
+                        "/error").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/ticketing-nonMember/{ticketingId}").permitAll()
                 .anyRequest().authenticated()
                 .and()
