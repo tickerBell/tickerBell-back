@@ -8,14 +8,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        default_batch_fetch_size: 1000
-        dialect: org.hibernate.dialect.MySQLDialect
-
   batch:
     jdbc:
       initialize-schema: always # batch repo 테이블 자동 생성
