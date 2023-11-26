@@ -1,5 +1,6 @@
 package com.tickerBell.domain.selectedSeat.service;
 
+import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatInfoResponse;
 import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatResponse;
 import com.tickerBell.domain.selectedSeat.repository.SelectedSeatRepository;
 import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
@@ -36,7 +37,14 @@ public class SelectedSeatServiceImpl implements SelectedSeatService{
 
         if (findSelectedSeat.isPresent()) {
             log.info("이미 선택된 좌석이 선택됨");
-            throw new CustomException(findSelectedSeat.get().getSeatInfo() + "은 이미 선택된 좌석 입니다."); // 이미 선택된 좌석 에러
+            throw new CustomException(ErrorCode.ALREADY_SELECTED_SEAT, findSelectedSeat.get().getSeatInfo() + "은 이미 선택된 좌석 입니다.");
         }
+    }
+
+    @Override
+    public List<SelectedSeatInfoResponse> getSelectedSeatByEventId(Long eventId) {
+        return selectedSeatRepository.findByEventId(eventId).stream()
+                .map(selectedSeat -> SelectedSeatInfoResponse.from(selectedSeat))
+                .collect(Collectors.toList());
     }
 }
