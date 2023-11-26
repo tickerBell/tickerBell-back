@@ -30,7 +30,7 @@ public enum ErrorCode {
     CATEGORY_NOT_FOUND(HttpStatus.NO_CONTENT, "등록되지 않은 Category 입니다."),
     SEAT_INFO_NOT_VALID_FORMAT(HttpStatus.BAD_REQUEST, "선택 좌석의 형식이 올바르지 않습니다. A-1, B-1 형식으로 보내주세요"),
     SALE_DEGREE_NOT_VALID_FORMAT(HttpStatus.BAD_REQUEST, "세일 degree 형식이 올바르지 않습니다."),
-    ALREADY_SELECTED_SEAT(HttpStatus.BAD_REQUEST, "이미 선택된 좌석입니다. 다른 좌석을 선택해주세요"),
+    ALREADY_SELECTED_SEAT(HttpStatus.CONFLICT, "이미 선택된 좌석입니다. 다른 좌석을 선택해주세요"), // 409: 해당 요청의 처리 중 비지니스 로직상 불가능하거나 모순이 생긴 경우
     SMS_SEND_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "sms 문자 전송 중 에러가 발생했습니다."),
     TICKETING_NOT_FOUND(HttpStatus.NO_CONTENT, "예매내역이 존재하지 않습니다."),
     TICKETING_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "티켓 삭제 중 에러가 발생했습니다."),
