@@ -170,6 +170,7 @@ public class MemberServiceImpl implements MemberService {
                 }
 
                 MyPageResponse myPageResponse = new MyPageResponse();
+                myPageResponse.setTicketingId(findTicketing.getId());
                 myPageResponse.setEventId(findEvent.getId());
                 myPageResponse.setEventName(findEvent.getName());
                 myPageResponse.setPlace(findEvent.getPlace());
