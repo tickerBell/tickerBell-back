@@ -122,6 +122,7 @@ class MemberServiceTest {
         // stub
         when(jwtTokenProvider.isExpiration(refreshTokenRequest.getRefreshToken())).thenReturn(false);
         when(jwtTokenProvider.get(refreshTokenRequest.getRefreshToken())).thenReturn(mockClaim);
+        when(memberRepository.findByUsername(mockUsername)).thenReturn(Optional.of(Member.builder().build()));
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
         when(valueOperations.get(mockUsername)).thenReturn(refreshTokenRequest.getRefreshToken());
         when(jwtTokenProvider.createRefreshToken(mockUsername)).thenReturn("newRefreshToken");
@@ -249,7 +250,7 @@ class MemberServiceTest {
         MyPageListResponse myPageListResponse = memberService.getMyPage(memberId, pageRequest);
 
         // then
-        assertThat(myPageListResponse.getIsRegistrant()).isFalse();
+        assertThat(myPageListResponse.getRole()).isEqualTo(generalMember.getRole());
         assertThat(myPageListResponse.getMyPageResponse().get(0).getTicketHolderCounts()).isNull();
         verify(memberRepository, times(1)).findById(memberId);
         verify(ticketingRepository, times(1)).findByMemberIdPage(memberId, pageRequest);
@@ -287,7 +288,7 @@ class MemberServiceTest {
 
         // then
         assertThat(myPageListResponse.getMyPageResponse()).isNotEmpty();
-        assertThat(myPageListResponse.getIsRegistrant()).isTrue();
+        assertThat(myPageListResponse.getRole()).isEqualTo(generalMember.getRole());
         assertThat(myPageListResponse.getMyPageResponse().get(0).getTicketHolderCounts()).isNotNull();
         verify(memberRepository, times(1)).findById(memberId);
     }

@@ -2,7 +2,6 @@ package com.tickerBell.domain.member.service;
 
 import com.tickerBell.domain.member.dtos.TokenRequest;
 import com.tickerBell.domain.member.dtos.TokenResponse;
-import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.global.dto.Response;
@@ -93,7 +92,7 @@ public class OauthServiceImpl implements OauthService{
             LoginResponse loginResponse = LoginResponse.builder()
                     .accessToken(accessToken)
                     .refreshToken(refreshToken)
-                    .isMember(true)
+                    .role(findMember.get().getRole())
                     .build();
             // 로그인 완료 시 토큰과 함께 반환
             return ResponseEntity.ok(new Response(loginResponse, "카카오 로그인 성공"));

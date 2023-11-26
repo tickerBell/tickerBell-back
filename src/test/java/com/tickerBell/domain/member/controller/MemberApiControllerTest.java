@@ -219,7 +219,7 @@ class MemberApiControllerTest {
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
                 .andExpect(jsonPath("$.data.username").value("testUsername"))
-                .andExpect(jsonPath("$.data.isRegistrant").value("false"));
+                .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()));
     }
 
     @Test
@@ -236,7 +236,7 @@ class MemberApiControllerTest {
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
                 .andExpect(jsonPath("$.data.username").value("abcdefg"))
-                .andExpect(jsonPath("$.data.isRegistrant").value("true"));
+                .andExpect(jsonPath("$.data.role").value(Role.ROLE_REGISTRANT.name()));
     }
 
     @Test

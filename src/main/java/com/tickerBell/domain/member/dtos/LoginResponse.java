@@ -1,5 +1,6 @@
 package com.tickerBell.domain.member.dtos;
 
+import com.tickerBell.domain.member.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,5 @@ public class LoginResponse {
 
     private String accessToken;
     private String refreshToken;
-    private Boolean isMember; // 회원인지 여부
+    private Role role; // 권한
 }

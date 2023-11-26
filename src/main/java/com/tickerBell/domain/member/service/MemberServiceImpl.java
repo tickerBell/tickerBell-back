@@ -74,6 +74,10 @@ public class MemberServiceImpl implements MemberService {
         // Access Token 에서 User email를 가져온다.
         String username = (String) jwtTokenProvider.get(refreshToken).get("username");
 
+        Member findMember = memberRepository.findByUsername(username).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
         // Redis에서 저장된 Refresh Token 값을 가져온다.
         String findRefreshToken = redisTemplate.opsForValue().get(username);
         if (!refreshToken.equals(findRefreshToken)) {
@@ -86,6 +90,7 @@ public class MemberServiceImpl implements MemberService {
         LoginResponse loginResponse = LoginResponse.builder()
                 .refreshToken(new_refresh_token)
                 .accessToken(jwtTokenProvider.createAccessToken(username))
+                .role(findMember.getRole())
                 .build();
 
         // refresh 토큰 업데이트
@@ -116,6 +121,7 @@ public class MemberServiceImpl implements MemberService {
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .role(findMember.getRole())
                 .build();
     }
 
@@ -143,14 +149,13 @@ public class MemberServiceImpl implements MemberService {
         MyPageListResponse myPageListResponse = new MyPageListResponse();
         myPageListResponse.setUsername(findMember.getUsername());
         myPageListResponse.setPhone(findMember.getPhone());
+        myPageListResponse.setRole(findMember.getRole());
 
         List<MyPageResponse> myPageResponses = new ArrayList<>();
 
         if (findMember.getRole().equals(Role.ROLE_USER)) {
 
             // 일반 사용자 myPage
-            myPageListResponse.setIsRegistrant(false);
-
             Page<Ticketing> findTicketingsPage = ticketingRepository.findByMemberIdPage(memberId, pageable);
             long totalCount = findTicketingsPage.getTotalElements();
             List<Ticketing> findTicketings = findTicketingsPage.getContent();
@@ -178,8 +183,6 @@ public class MemberServiceImpl implements MemberService {
         } else {
 
             // 등록자 myPage
-            myPageListResponse.setIsRegistrant(true);
-
             Page<Event> findEventsPage = eventRepository.findByMemberIdFetchAllPage(findMember.getId(), pageable);
             long totalCount = findEventsPage.getTotalElements();
             List<Event> findEvents = findEventsPage.getContent();

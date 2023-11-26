@@ -1,5 +1,6 @@
 package com.tickerBell.domain.member.dtos;
 
+import com.tickerBell.domain.member.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,7 @@ public class MyPageListResponse {
     // 회원 관련
     private String username;
     private String phone;
-    private Boolean isRegistrant; // 등록자 여부
+    private Role role; // 등록자 여부
 
     // 페이징 총 개수
     private Long totalCount;
