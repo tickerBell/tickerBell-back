@@ -76,8 +76,14 @@ class TicketingControllerTest {
     @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     public void ticketingEvent() throws Exception {
         // given
+        // 등록자 저장
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        // image 저장
+        imageRepository.save(Image.builder().s3Url("url").build());
+        // event 저장
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
         TicketingRequest request = TicketingRequest.builder()
-                .eventId(1L)
+                .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
                 .build();
 
@@ -96,8 +102,14 @@ class TicketingControllerTest {
     @DisplayName("비회원일 경우 이벤트 예매")
     public void ticketingEventNonMember() throws Exception {
         // given
+        // 등록자 저장
+        Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        // image 저장
+        imageRepository.save(Image.builder().s3Url("url").build());
+        // event 저장
+        Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
-                .eventId(1L)
+                .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
                 .name("nonMember")
                 .phone("01012345678")
@@ -161,7 +173,7 @@ class TicketingControllerTest {
 
         // ticketing 저장
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
-                .eventId(1L)
+                .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
                 .name("nonMember")
                 .phone("01012345678")
@@ -220,13 +232,13 @@ class TicketingControllerTest {
         // given
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
-
+        // 이미지 저장
         imageRepository.save(Image.builder().s3Url("url").build());
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
-                .eventId(1L)
+                .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
                 .name("nonMember")
                 .phone("01012345678")
