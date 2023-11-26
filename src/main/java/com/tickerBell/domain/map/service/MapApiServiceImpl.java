@@ -60,7 +60,7 @@ public class MapApiServiceImpl implements MapApiService {
         URI uri_get_path = UriComponentsBuilder
                 .fromUriString("https://naveropenapi.apigw.ntruss.com")
                 .path("/map-direction/v1/driving")
-                .queryParam("start","126.9652628,37.4750974")
+                .queryParam("start",request.getStart())
                 .queryParam("goal", goal)
                 .queryParam("option", "tracomfort")
                 .encode()
