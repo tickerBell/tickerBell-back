@@ -14,4 +14,7 @@ import java.util.Optional;
 public interface SelectedSeatRepository extends JpaRepository<SelectedSeat, Long> {
     @Query("select s from SelectedSeat s where s.ticketing.event.id = :eventId and s.seatInfo = :seatInfo")
     Optional<SelectedSeat> findByEventIdAndSeatInfo(@Param("eventId") Long eventId, @Param("seatInfo") String seatInfo);
+
+    @Query("select s from SelectedSeat s where s.ticketing.event.id = :eventId")
+    List<SelectedSeat> findByEventId(@Param("eventId") Long eventId);
 }
