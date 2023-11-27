@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -90,6 +91,7 @@ public class EventServiceTest {
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
         LocalDateTime availablePurchaseTime = LocalDateTime.now();
+        LocalTime dailyStartEvent = LocalTime.now();
         Integer eventTime = 90;
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
@@ -112,7 +114,7 @@ public class EventServiceTest {
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url1");
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, eventTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, imageUrls);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, imageUrls);
         Event event = Event.builder().build();
 
         // stub
@@ -147,6 +149,7 @@ public class EventServiceTest {
         String name = "mockName";
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
+        LocalTime dailyStartEvent = LocalTime.now();
         LocalDateTime availablePurchaseTime = LocalDateTime.now();
         Integer eventTime = 90;
         Integer normalPrice = 100;
@@ -168,7 +171,7 @@ public class EventServiceTest {
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url1");
         imageUrls.add("url2");
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, eventTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null, imageUrls);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null, imageUrls);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
@@ -195,6 +198,7 @@ public class EventServiceTest {
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
         LocalDateTime availablePurchaseTime =  null;
+        LocalTime dailyStartEvent = LocalTime.now();
         Integer eventTime = 90;
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
@@ -216,7 +220,7 @@ public class EventServiceTest {
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, availablePurchaseTime, eventTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, imageUrls);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, imageUrls);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
