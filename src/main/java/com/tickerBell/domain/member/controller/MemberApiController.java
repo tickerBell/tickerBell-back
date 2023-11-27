@@ -74,7 +74,7 @@ public class MemberApiController {
         }
     }
 
-    @Operation(summary = "회원 정보 조회 *")
+    @Operation(summary = "회원: 정보 조회 *")
     @GetMapping("/api/member")
     public ResponseEntity<Response> getMember(@AuthenticationPrincipal MemberContext memberContext) {
         Member loginMember = memberContext.getMember();
@@ -84,7 +84,7 @@ public class MemberApiController {
         return ResponseEntity.ok(new Response(memberResponse, "회원 정보 조회 성공"));
     }
 
-    @Operation(summary = "마이 페이지 조회 *")
+    @Operation(summary = "회원: 마이 페이지 조회 *")
     @GetMapping("/api/member/my")
     public ResponseEntity<Response> myPage(@AuthenticationPrincipal MemberContext memberContext,
                                            @PageableDefault(size = 10,
@@ -98,7 +98,7 @@ public class MemberApiController {
     }
 
     @PutMapping("/api/member/password")
-    @Operation(summary = "사용자 비밀번호 변경 *")
+    @Operation(summary = "회원: 비밀번호 변경 *")
     public ResponseEntity<Response> updateMemberPassword(@RequestBody MemberPasswordRequest request,
                                                          @AuthenticationPrincipal MemberContext memberContext) {
         Member loginMember = memberContext.getMember();
@@ -109,7 +109,7 @@ public class MemberApiController {
     }
 
     @PostMapping("/api/member/password")
-    @Operation(summary = "사용자 현재 비밀번호 확인 *")
+    @Operation(summary = "회원: 현재 비밀번호 확인 *")
     public ResponseEntity<Response> checkMemberPassword(@RequestBody MemberPasswordRequest request,
                                                         @AuthenticationPrincipal MemberContext memberContext) {
 
