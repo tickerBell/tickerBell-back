@@ -40,6 +40,24 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
     @Query("select e from Event e")
     Page<Event> findAllEventsPage(Pageable pageable);
 
+    @Query("select e from Event e join e.imageList i on i.isThumbnail = true " +
+            "where e.category = :category and e.startEvent > :startEvent " +
+            "order by e.viewCount DESC")
+    List<Event> findByCategoryInMainPage(@Param("category") Category category,
+                                        @Param("startEvent") LocalDateTime startEvent,
+                                        Pageable pageable);
+
+    @Query("select e from Event e join e.imageList i on i.isThumbnail = true " +
+            "where e.saleDegree != 0 and e.startEvent > :startEvent " +
+            "order by e.startEvent asc")
+    List<Event> findBySaleInMainPage(@Param("startEvent") LocalDateTime now, Pageable pageable);
+
+    @Query("select e from Event e join e.imageList i on i.isThumbnail = true " +
+            "where e.availablePurchaseTime > :startEvent " +
+            "order by e.availablePurchaseTime asc")
+    List<Event> findByDeadLineInMainPage(@Param("startEvent") LocalDateTime now, Pageable pageable);
+
+
 
     //== graphql 에서 사용 ==//
     @Query("select e from Event e where e.place like %:place%")

@@ -1,6 +1,7 @@
 package com.tickerBell.domain.event.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tickerBell.domain.casting.entity.QCasting;
 import com.tickerBell.domain.event.dtos.EventListResponse;
 import com.tickerBell.domain.event.dtos.MainPageDto;
 import com.tickerBell.domain.event.dtos.QEventListResponse;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.tickerBell.domain.casting.entity.QCasting.*;
 import static com.tickerBell.domain.event.entity.QEvent.*;
 import static com.tickerBell.domain.image.entity.QImage.*;
 import static com.tickerBell.domain.member.entity.QMember.member;

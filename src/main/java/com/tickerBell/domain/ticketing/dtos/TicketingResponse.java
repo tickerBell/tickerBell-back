@@ -21,7 +21,6 @@ public class TicketingResponse {
     private List<SelectedSeatResponse> selectedSeatResponseList; // 선택한 좌석 정보 (위치, 가격)
     private EventHistoryResponse eventHistoryResponse; // 예매한 공연 정보
     private Boolean isPast; // 현재 시점으로부터 지난 예매인지 여부
-    private String place; // 장소
 
     public static TicketingResponse from(Ticketing ticketing) {
         // selectedSeat dto 변환
@@ -43,7 +42,6 @@ public class TicketingResponse {
                 .selectedSeatResponseList(selectedSeatResponseList)
                 .eventHistoryResponse(eventHistoryResponse)
                 .payment(payment)
-                .place(ticketing.getEvent().getPlace())
                 .isPast(isPast)
                 .build();
     }

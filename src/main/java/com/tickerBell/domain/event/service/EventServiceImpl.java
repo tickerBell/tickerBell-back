@@ -155,8 +155,30 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public MainPageDto getMainPage() {
-        MainPageDto mainPage = eventRepository.getMainPage();
-        return mainPage;
+//        return eventRepository.getMainPage();
+        LocalDateTime now = LocalDateTime.now();
+        PageRequest pageRequest = PageRequest.of(0, 7);
+        List<EventListResponse> musicalEventList = eventRepository.findByCategoryInMainPage(Category.MUSICAL, now, pageRequest).stream()
+                .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
+        List<EventListResponse> concertEventList = eventRepository.findByCategoryInMainPage(Category.CONCERT, now, pageRequest).stream()
+                        .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
+        List<EventListResponse> playEventList = eventRepository.findByCategoryInMainPage(Category.PLAY, now, pageRequest).stream()
+                        .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
+        List<EventListResponse> classicEventList = eventRepository.findByCategoryInMainPage(Category.CLASSIC, now, pageRequest).stream()
+                        .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
+        List<EventListResponse> saleEventList = eventRepository.findBySaleInMainPage(now, pageRequest).stream()
+                .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
+        List<EventListResponse> deadLineEventList = eventRepository.findByDeadLineInMainPage(now, pageRequest).stream()
+                .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
+
+        return MainPageDto.builder()
+                .rankingMusicalEventList(musicalEventList)
+                .rankingConcertEventList(concertEventList)
+                .rankingPlayEventList(playEventList)
+                .rankingClassicEventList(classicEventList)
+                .saleEventList(saleEventList)
+                .deadLineEventList(deadLineEventList)
+                .build();
     }
 
     @Override
