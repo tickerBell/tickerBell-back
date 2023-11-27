@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +22,19 @@ public class SaveEventRequest {
     @Schema(description = "이벤트 이름", example = "eventName")
     private String name;
     @NotBlank
-    @Schema(description = "이벤트 시작 시간", example = "2023-09-29T14:30:00")
+    @Schema(description = "이벤트 시작 시간", example = "2023-11-27T00:00:00.000Z")
     private LocalDateTime startEvent;
     @NotBlank
-    @Schema(description = "이벤트 시작 시간", example = "2023-09-30T14:30:00")
+    @Schema(description = "이벤트 종료 시간", example = "2023-11-27T23:59:59.000Z")
     private LocalDateTime endEvent;
+    @NotBlank
+    @Schema(description = "일단위 시작 시간", example = "20:30:00")
+    private LocalTime dailyStartEvent;
+    @NotBlank
+    @Schema(description = "상영시간 (분단위)", example = "90")
+    private Integer eventTime;
     @Schema(description = "구매 가능 시간", example = "2023-09-30T14:30:00")
     private LocalDateTime availablePurchaseTime;
-    @NotBlank
-    @Schema(description = "사영시간 (분단위)", example = "90")
-    private Integer eventTime;
     @NotBlank
     @Schema(description = "일반석 가격", example = "10000")
     private Integer normalPrice;
@@ -60,12 +64,12 @@ public class SaveEventRequest {
     @Schema(description = "C 좌석 특별석 여부", example = "true")
     private Boolean isSpecialC;
     @NotBlank
-    @Schema(description = "카테고리", example = "[MUSICAL, CONCERT, PLAY, CLASSIC, SPORTS] 중 하나만 STRING 으로 요청")
+    @Schema(description = "카테고리", example = "MUSICAL, CONCERT, PLAY, CLASSIC, SPORTS")
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags;
     @NotBlank
-    @Schema(description = "이미지 url", example = "[\"url1\", \"url2\"]")
+    @Schema(description = "이미지 url (썸네일 포함)", example = "[\"url1\", \"url2\"]")
     private List<String> imageUrls;
 
     public void setPremiumPrice(Integer premiumPrice) {
