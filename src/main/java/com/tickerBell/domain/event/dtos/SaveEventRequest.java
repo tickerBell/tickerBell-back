@@ -60,7 +60,7 @@ public class SaveEventRequest {
     @Schema(description = "C 좌석 특별석 여부", example = "true")
     private Boolean isSpecialC;
     @NotBlank
-    @Schema(description = "카테고리", example = "[MUSICAL, CONCERT, PLAY, CLASSIC, SPORTS] 중 하나만 STRING 으로 요청")
+    @Schema(description = "카테고리 (하나만 요청)", example = "MUSICAL, CONCERT, PLAY, CLASSIC, SPORTS")
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags;
