@@ -28,6 +28,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +87,7 @@ public class EventApiControllerTest {
         SaveEventRequest request = new SaveEventRequest();
         request.setStartEvent(LocalDateTime.now());
         request.setEndEvent(LocalDateTime.now());
+        request.setDailyStartEvent(LocalTime.now());
         request.setName("mockName");
         request.setNormalPrice(10000);
         request.setPremiumPrice(15000);
@@ -198,6 +200,7 @@ public class EventApiControllerTest {
         SaveEventRequest request = new SaveEventRequest();
         request.setStartEvent(LocalDateTime.now().plusDays(8));
         request.setEndEvent(LocalDateTime.now());
+        request.setDailyStartEvent(LocalTime.now());
         request.setName("mockName");
         request.setNormalPrice(10000);
         request.setPremiumPrice(15000);

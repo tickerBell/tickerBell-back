@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class Event extends BaseEntity {
     private String name; // 이벤트 이름
     private LocalDateTime startEvent; // 이벤트 시작 시간
     private LocalDateTime endEvent; // 이벤트 종료 시간
+    private LocalTime dailyStartEvent; // 하루 중 시작 시간
     private LocalDateTime availablePurchaseTime; // 구매 가능 시간
     private Integer eventTime; // 이벤트 시간
     private Integer normalPrice; // 일반 좌석 가격
@@ -53,10 +55,11 @@ public class Event extends BaseEntity {
     private List<Host> hostList = new ArrayList<>();
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer eventTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
+    public Event(String name, LocalDateTime startEvent, LocalTime dailyStartEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer eventTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
+        this.dailyStartEvent = dailyStartEvent;
         this.eventTime = eventTime;
         this.availablePurchaseTime = availablePurchaseTime;
         this.normalPrice = normalPrice;

@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -43,6 +44,7 @@ class EventRepositoryTest {
         LocalDateTime startEvent = LocalDateTime.now();
         LocalDateTime endEvent = LocalDateTime.now();
         LocalDateTime availablePurchaseTime = LocalDateTime.now();
+        LocalTime dailyStartEvent = LocalTime.now();
         Integer eventTime = 90;
         Integer normalPrice = 100;
         Integer premiumPrice = 1000;
@@ -56,6 +58,7 @@ class EventRepositoryTest {
                 .name(name)
                 .startEvent(startEvent)
                 .endEvent(endEvent)
+                .dailyStartEvent(dailyStartEvent)
                 .availablePurchaseTime(availablePurchaseTime)
                 .eventTime(eventTime)
                 .normalPrice(normalPrice)
@@ -80,6 +83,7 @@ class EventRepositoryTest {
         assertThat(savedEvent.getStartEvent()).isEqualTo(event.getStartEvent());
         assertThat(savedEvent.getEndEvent()).isEqualTo(event.getEndEvent());
         assertThat(savedEvent.getEventTime()).isEqualTo(event.getEventTime());
+        assertThat(savedEvent.getDailyStartEvent()).isEqualTo(event.getDailyStartEvent());
         assertThat(savedEvent.getNormalPrice()).isEqualTo(event.getNormalPrice());
         assertThat(savedEvent.getPremiumPrice()).isEqualTo(event.getPremiumPrice());
         assertThat(savedEvent.getSaleDegree()).isEqualTo(event.getSaleDegree());
