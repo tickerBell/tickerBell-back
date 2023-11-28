@@ -9,17 +9,24 @@ import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Ticketing extends BaseEntity {
     @Id
     @GeneratedValue
     @Column(name = "ticketing_id")
     private Long id;
+
+    private LocalDateTime selectedDate; // 예매 날짜
+
+    private String paymentId; // 구매 식별 번호
+
+    private Boolean isDelete; // 취소 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
@@ -38,9 +45,16 @@ public class Ticketing extends BaseEntity {
     private NonMember nonMember;
 
     @Builder
-    public Ticketing(Event event, Member member, NonMember nonMember) {
+    public Ticketing(LocalDateTime selectedDate, String paymentId, Event event, Member member, NonMember nonMember) {
+        this.selectedDate = selectedDate;
+        this.paymentId = paymentId;
+        this.isDelete = false;
         this.event = event;
         this.member = member;
         this.nonMember = nonMember;
+    }
+
+    public void setDelete(Boolean delete) {
+        isDelete = delete;
     }
 }

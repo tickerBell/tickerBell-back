@@ -54,8 +54,17 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
+        Boolean isValid = eventRepository.validSelectedDate(request.getEventId(), request.getSelectedDate());
+        // 선택된 예매 날짜가 event 시작 종료 날짜 사이가 아닐 때
+        if (!isValid) {
+            log.info("잘못된 날짜 선택");
+            throw new CustomException(ErrorCode.SELECTED_DATE_INVALID);
+        }
+
         // 예매 내역 저장
         Ticketing ticketing = Ticketing.builder()
+                .selectedDate(request.getSelectedDate())
+                .paymentId(request.getPaymentId())
                 .event(event)
                 .member(member)
                 .build();
@@ -74,7 +83,6 @@ public class TicketingServiceImpl implements TicketingService {
         event.setRemainSeat(event.getRemainSeat() - savedSelectedSeatCount);
         return savedTicketing.getId();
     }
-
 
 
     @Override
@@ -99,8 +107,17 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
+        Boolean isValid = eventRepository.validSelectedDate(request.getEventId(), request.getSelectedDate());
+        // 선택된 예매 날짜가 event 시작 종료 날짜 사이가 아닐 때
+        if (!isValid) {
+            log.info("잘못된 날짜 선택");
+            throw new CustomException(ErrorCode.SELECTED_DATE_INVALID);
+        }
+
         // 예매 내역 저장
         Ticketing ticketing = Ticketing.builder()
+                .selectedDate(request.getSelectedDate())
+                .paymentId(request.getPaymentId())
                 .event(event)
                 .nonMember(nonMember)
                 .build();
@@ -154,7 +171,10 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
 
-        ticketingRepository.delete(ticketing);
+        selectedSeatRepository.deleteAll(ticketing.getSelectedSeatList());
+        log.info("selectedSeat 삭제");
+
+        ticketing.setDelete(true);
     }
 
     @Override
@@ -166,8 +186,11 @@ public class TicketingServiceImpl implements TicketingService {
         // remain seat 수 업데이트
         Event event = ticketing.getEvent();
         event.setRemainSeat(event.getRemainSeat() + ticketing.getSelectedSeatList().size());
-        
-        ticketingRepository.delete(ticketing);
+
+        selectedSeatRepository.deleteAll(ticketing.getSelectedSeatList());
+        log.info("selectedSeat 삭제");
+
+        ticketing.setDelete(true);
     }
 
     private List<SelectedSeat> createSelectedSeatList(List<String> selectedSeatRequest, Event event, Ticketing ticketing, SpecialSeat specialSeat, Float saleDegree) {
@@ -176,7 +199,7 @@ public class TicketingServiceImpl implements TicketingService {
         for (String seatInfo : selectedSeatRequest) {
             // 이미 선택된 좌석인지 check
             // 선택 좌석 최대 개수가 2개이기 때문에 좌석 하나씩 체크
-            selectedSeatService.validCheckSeatInfo(event.getId(), seatInfo);
+            selectedSeatService.validCheckSeatInfo(event.getId(), seatInfo, ticketing.getSelectedDate());
             String[] parts = seatInfo.split("-");
             float seatPrice;
             // A좌석 선택
