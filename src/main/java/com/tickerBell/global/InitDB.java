@@ -21,7 +21,9 @@
 //import org.springframework.stereotype.Service;
 //import org.springframework.transaction.annotation.Transactional;
 //
+//import java.time.LocalDate;
 //import java.time.LocalDateTime;
+//import java.time.LocalTime;
 //import java.util.Random;
 //
 //@Component
@@ -120,9 +122,10 @@
 //            em.persist(specialSeat);
 //            Event event = Event.builder()
 //                    .name(eventName)
-//                    .startEvent(LocalDateTime.now().plusDays(20).plusHours(1))
-//                    .endEvent(LocalDateTime.now().plusDays(20).plusHours(3))
-//                    .availablePurchaseTime(LocalDateTime.now().plusDays(20))
+//                    .startEvent(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0).plusMonths(1))
+//                    .endEvent(LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0).plusMonths(1).plusDays(20))
+//                    .availablePurchaseTime(LocalDateTime.now().withHour(0).withMinute(0).withNano(0).withSecond(0).plusMonths(1))
+//                    .dailyStartEvent(LocalTime.now())
 //                    .eventTime(100)
 //                    .normalPrice(10000)
 //                    .premiumPrice(15000)
