@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,8 +33,8 @@ public class SelectedSeatServiceImpl implements SelectedSeatService{
 
     // 이미 선택된 좌석인지 체크
     @Override
-    public void validCheckSeatInfo(Long eventId, String seatInfo) {
-        Optional<SelectedSeat> findSelectedSeat = selectedSeatRepository.findByEventIdAndSeatInfo(eventId, seatInfo);
+    public void validCheckSeatInfo(Long eventId, String seatInfo, LocalDateTime selectedDate) {
+        Optional<SelectedSeat> findSelectedSeat = selectedSeatRepository.findByEventIdAndSeatInfo(eventId, seatInfo, selectedDate);
 
         if (findSelectedSeat.isPresent()) {
             log.info("이미 선택된 좌석이 선택됨");
@@ -42,8 +43,8 @@ public class SelectedSeatServiceImpl implements SelectedSeatService{
     }
 
     @Override
-    public List<SelectedSeatInfoResponse> getSelectedSeatByEventId(Long eventId) {
-        return selectedSeatRepository.findByEventId(eventId).stream()
+    public List<SelectedSeatInfoResponse> getSelectedSeatByEventId(Long eventId, LocalDateTime selectedDate) {
+        return selectedSeatRepository.findByEventId(eventId, selectedDate).stream()
                 .map(selectedSeat -> SelectedSeatInfoResponse.from(selectedSeat))
                 .collect(Collectors.toList());
     }
