@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long>, EventRepositoryCustom {
@@ -57,6 +58,10 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
             "order by e.availablePurchaseTime asc")
     List<Event> findByDeadLineInMainPage(@Param("startEvent") LocalDateTime now, Pageable pageable);
 
+    @Query("select case when count(e) > 0 then true else false end from Event e " +
+            "where e.id = :eventId and :selectedDate between e.startEvent and e.endEvent")
+    Boolean validSelectedDate(@Param("eventId") Long eventId, @Param("selectedDate") LocalDateTime selectedDate);
+
 
 
     //== graphql 에서 사용 ==//
@@ -64,7 +69,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
     List<Event> findByPlace(@Param("place") String place);
     @Query("select e from Event e where e.name like %:name%")
     List<Event> findByName(@Param("name") String name);
-
     @Query("select distinct e from Casting c join c.event e where c.castingName like %:casting%")
     List<Event> findByCasting(@Param("casting") String casting);
 
