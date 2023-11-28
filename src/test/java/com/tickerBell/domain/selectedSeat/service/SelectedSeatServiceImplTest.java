@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,18 +52,19 @@ class SelectedSeatServiceImplTest {
         // given
         Long eventId = 1L;
         String seatInfo = "A-1";
+        LocalDateTime now = LocalDateTime.now();
         Ticketing ticketing = Ticketing.builder().build();
         SelectedSeat selectedSeat = SelectedSeat.builder().seatInfo("A-1").ticketing(ticketing).build();
 
         // stub
-        when(selectedSeatRepository.findByEventIdAndSeatInfo(any(Long.class), any(String.class)))
+        when(selectedSeatRepository.findByEventIdAndSeatInfo(any(Long.class), any(String.class), any(LocalDateTime.class)))
                 .thenReturn(Optional.empty());
 
         // when
-        selectedSeatService.validCheckSeatInfo(eventId, seatInfo);
+        selectedSeatService.validCheckSeatInfo(eventId, seatInfo, now);
 
         // then
-        verify(selectedSeatRepository, times(1)).findByEventIdAndSeatInfo(any(Long.class), any(String.class));
+        verify(selectedSeatRepository, times(1)).findByEventIdAndSeatInfo(any(Long.class), any(String.class), any(LocalDateTime.class));
 
     }
 
@@ -72,15 +74,16 @@ class SelectedSeatServiceImplTest {
         // given
         Long eventId = 1L;
         String seatInfo = "A-1";
+        LocalDateTime now = LocalDateTime.now();
         Ticketing ticketing = Ticketing.builder().build();
         SelectedSeat selectedSeat = SelectedSeat.builder().seatInfo("A-1").ticketing(ticketing).build();
 
         // stub
-        when(selectedSeatRepository.findByEventIdAndSeatInfo(any(Long.class), any(String.class)))
+        when(selectedSeatRepository.findByEventIdAndSeatInfo(any(Long.class), any(String.class), any(LocalDateTime.class)))
                 .thenReturn(Optional.of(selectedSeat));
 
         // then
-        assertThatThrownBy(() -> selectedSeatService.validCheckSeatInfo(eventId, seatInfo))
+        assertThatThrownBy(() -> selectedSeatService.validCheckSeatInfo(eventId, seatInfo, now))
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(selectedSeat.getSeatInfo() + "은 이미 선택된 좌석 입니다.");
     }

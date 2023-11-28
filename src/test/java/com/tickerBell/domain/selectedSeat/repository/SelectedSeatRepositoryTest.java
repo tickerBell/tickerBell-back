@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,20 +35,25 @@ public class SelectedSeatRepositoryTest {
     @DisplayName("선택된 좌석 조회")
     public void findByEventIdAndSeatInfoTest() {
         // given
+//        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now().withNano(0);
+
         Event event = Event.builder().build();
         Event savedEvent = eventRepository.save(event);
-        Ticketing ticketing = Ticketing.builder().event(event).build();
+
+        Ticketing ticketing = Ticketing.builder().selectedDate(now).event(event).build();
+        System.out.println(ticketing.getSelectedDate());
         Ticketing savedTicketing = ticketingRepository.save(ticketing);
+
         String seatInfo = "A-1";
-        SelectedSeat selectedSeat = SelectedSeat.builder().ticketing(savedTicketing).seatInfo(seatInfo).build();
+        SelectedSeat selectedSeat = SelectedSeat.builder().ticketing(ticketing).seatInfo(seatInfo).build();
         SelectedSeat savedSelectedSeat = selectedSeatRepository.save(selectedSeat);
 
         // when
-        SelectedSeat findSelectedSeat = selectedSeatRepository.findByEventIdAndSeatInfo(savedEvent.getId(), seatInfo).get();
+        SelectedSeat findSelectedSeat = selectedSeatRepository.findByEventIdAndSeatInfo(savedEvent.getId(), seatInfo, now).get();
 
         // then
         assertThat(findSelectedSeat.getId()).isEqualTo(savedSelectedSeat.getId());
         assertThat(findSelectedSeat.getSeatInfo()).isEqualTo(savedSelectedSeat.getSeatInfo());
     }
-
 }

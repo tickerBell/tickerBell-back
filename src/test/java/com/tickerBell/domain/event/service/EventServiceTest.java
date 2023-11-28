@@ -20,12 +20,14 @@ import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
+import com.tickerBell.global.graphql.dtos.EventGraphqlResponse;
 import org.assertj.core.api.AbstractObjectAssert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -43,6 +45,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -503,15 +506,29 @@ public class EventServiceTest {
     public void mainPageTest() {
         // given
         MainPageDto mainPageDto = MainPageDto.builder().build();
+        Event spyEvent = spy(Event.builder().saleDegree(1000F).normalPrice(10000).premiumPrice(15000).build());
+        List<Image> imageList = List.of(Image.builder().event(spyEvent).isThumbnail(true).build());
+        List<Casting> castingList = List.of(Casting.builder().event(spyEvent).castingName("casting").build());
+        List<Event> eventList = List.of(spyEvent);
 
         // stub
-        when(eventService.getMainPage()).thenReturn(mainPageDto);
+        when(spyEvent.getCastingList()).thenReturn(castingList);
+        when(spyEvent.getImageList()).thenReturn(imageList);
+        when(eventRepository.findByCategoryInMainPage(any(Category.class), any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(eventList);
+        when(eventRepository.findBySaleInMainPage(any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(eventList);
+        when(eventRepository.findByDeadLineInMainPage(any(LocalDateTime.class), any(PageRequest.class)))
+                .thenReturn(eventList);
 
         // when
         MainPageDto mainPage = eventService.getMainPage();
 
         // then
-        verify(eventRepository, times(1)).getMainPage();
+        verify(eventRepository, times(4)).findByCategoryInMainPage(any(Category.class), any(LocalDateTime.class), any(PageRequest.class));
+        verify(eventRepository, times(1)).findBySaleInMainPage(any(LocalDateTime.class), any(PageRequest.class));
+        verify(eventRepository, times(1)).findByDeadLineInMainPage(any(LocalDateTime.class), any(PageRequest.class));
+
     }
 
     @Test
@@ -542,38 +559,79 @@ public class EventServiceTest {
         assertThat(eventListResponseList.getTotalElements()).isEqualTo(eventEntities.size());
     }
 
-    // todo: 코드 변경으로 테스트 코드 다시 작성 필요
-//    @Test
-//    @DisplayName("graphql 장소 검색 테스트")
-//    public void getEventByPlaceTest() {
-//        // given
-//        String place = "place";
-//        List<Event> eventList = List.of(Event.builder().build());
-//        // stub
-//        when(eventRepository.findByPlace(any(String.class))).thenReturn(eventList);
-//
-//        // when
-//        List<EventListResponse> eventByPlace = eventService.getEventByPlace(place);
-//
-//        // then
-//        verify(eventRepository, times(1)).findByPlace(any(String.class));
-//        assertThat(eventByPlace.size()).isEqualTo(eventList.size());
-//    }
-//
-//    @Test
-//    @DisplayName("graphql 이벤트명 검색 테스트")
-//    public void getEventByNameTest() {
-//        // given
-//        String name = "name";
-//        List<Event> eventList = List.of(Event.builder().build());
-//        // stub
-//        when(eventRepository.findByName(any(String.class))).thenReturn(eventList);
-//
-//        // when
-//        List<EventListResponse> eventByName = eventService.getEventByName(name);
-//
-//        // then
-//        verify(eventRepository, times(1)).findByName(any(String.class));
-//        assertThat(eventByName.size()).isEqualTo(eventList.size());
-//    }
+    @Test
+    @DisplayName("graphql 장소 검색 테스트")
+    public void getEventByPlaceTest() {
+        // given
+        String place = "place";
+        List<Event> eventList = List.of(Event.builder().build());
+        EventGraphqlResponse eventGraphqlResponse = EventGraphqlResponse.builder().build();
+
+        // static 메소드 mocking
+        MockedStatic<EventGraphqlResponse> eventGraphqlResponseMockedStatic = mockStatic(EventGraphqlResponse.class);
+
+
+        // stub
+        when(eventRepository.findByPlace(any(String.class))).thenReturn(eventList);
+        given(EventGraphqlResponse.from(any())).willReturn(eventGraphqlResponse);
+
+        // when
+        List<EventGraphqlResponse> eventGraphqlResponseList = eventService.getEventByPlace(place);
+
+        // then
+        verify(eventRepository, times(1)).findByPlace(any(String.class));
+        assertThat(eventGraphqlResponseList.size()).isEqualTo(eventList.size());
+
+        eventGraphqlResponseMockedStatic.close();
+    }
+
+    @Test
+    @DisplayName("graphql 이벤트명 검색 테스트")
+    public void getEventByNameTest() {
+        // given
+        String name = "name";
+        List<Event> eventList = List.of(Event.builder().build());
+        EventGraphqlResponse eventGraphqlResponse = EventGraphqlResponse.builder().build();
+
+        // static 메소드 mocking
+        MockedStatic<EventGraphqlResponse> eventGraphqlResponseMockedStatic = mockStatic(EventGraphqlResponse.class);
+
+        // stub
+        when(eventRepository.findByName(any(String.class))).thenReturn(eventList);
+        given(EventGraphqlResponse.from(any())).willReturn(eventGraphqlResponse);
+
+        // when
+        List<EventGraphqlResponse> eventByName = eventService.getEventByName(name);
+
+        // then
+        verify(eventRepository, times(1)).findByName(any(String.class));
+        assertThat(eventByName.size()).isEqualTo(eventList.size());
+
+        eventGraphqlResponseMockedStatic.close();
+    }
+
+    @Test
+    @DisplayName("graphql 캐스팅 정보로 검색")
+    public void getEventByCastingTest() {
+        // given
+        String casting = "casting";
+        List<Event> eventList = List.of(Event.builder().build());
+        EventGraphqlResponse eventGraphqlResponse = EventGraphqlResponse.builder().build();
+
+        // static 메소드 mocking
+        MockedStatic<EventGraphqlResponse> eventGraphqlResponseMockedStatic = mockStatic(EventGraphqlResponse.class);
+
+        // stub
+        when(eventRepository.findByCasting(any(String.class))).thenReturn(eventList);
+        given(EventGraphqlResponse.from(any())).willReturn(eventGraphqlResponse);
+
+        // when
+        List<EventGraphqlResponse> eventByName = eventService.getEventByCasting(casting);
+
+        // then
+        verify(eventRepository, times(1)).findByCasting(any(String.class));
+        assertThat(eventByName.size()).isEqualTo(eventList.size());
+
+        eventGraphqlResponseMockedStatic.close();
+    }
 }

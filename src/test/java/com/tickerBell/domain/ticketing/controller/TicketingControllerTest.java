@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,6 +86,8 @@ class TicketingControllerTest {
         TicketingRequest request = TicketingRequest.builder()
                 .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
+                .paymentId("paymentId")
+                .selectedDate(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
                 .build();
 
         // when
@@ -111,6 +114,8 @@ class TicketingControllerTest {
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
                 .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
+                .paymentId("paymentId")
+                .selectedDate(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
                 .name("nonMember")
                 .phone("01012345678")
                 .build();
@@ -141,6 +146,8 @@ class TicketingControllerTest {
         TicketingRequest request = TicketingRequest.builder()
                 .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
+                .paymentId("paymentId")
+                .selectedDate(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
                 .build();
         MemberResponse memberResponse = memberService.getMemberByUsername("username");
         Long ticketingId = ticketingService.saveTicketing(memberResponse.getMemberId(), request);
@@ -165,16 +172,18 @@ class TicketingControllerTest {
     @DisplayName("비회원일 때 예매내역 조회")
     public void ticketingHistoryNonMember() throws Exception {
         // given
-        // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
         // image 저장
         imageRepository.save(Image.builder().s3Url("url").build());
+        // event 저장
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
                 .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
+                .paymentId("paymentId")
+                .selectedDate(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
                 .name("nonMember")
                 .phone("01012345678")
                 .build();
@@ -212,6 +221,8 @@ class TicketingControllerTest {
         TicketingRequest request = TicketingRequest.builder()
                 .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
+                .paymentId("paymentId")
+                .selectedDate(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
                 .build();
         MemberResponse memberResponse = memberService.getMemberByUsername("username");
         Long ticketingId = ticketingService.saveTicketing(memberResponse.getMemberId(), request);
@@ -240,6 +251,8 @@ class TicketingControllerTest {
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
                 .eventId(eventId)
                 .selectedSeat(List.of("A-1", "B-2"))
+                .paymentId("paymentId")
+                .selectedDate(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0))
                 .name("nonMember")
                 .phone("01012345678")
                 .build();
@@ -267,8 +280,9 @@ class TicketingControllerTest {
 
     private SaveEventRequest createMockSaveEventRequest() {
         SaveEventRequest request = new SaveEventRequest();
-        request.setStartEvent(LocalDateTime.now().plusDays(1));
-        request.setEndEvent(LocalDateTime.now().plusDays(1).plusHours(2));
+        request.setStartEvent(LocalDateTime.now().plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0));
+        request.setEndEvent(LocalDateTime.now().plusDays(1).plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0).plusHours(2));
+        request.setDailyStartEvent(LocalTime.now());
         request.setName("mockName");
         request.setNormalPrice(10000);
         request.setPremiumPrice(15000);

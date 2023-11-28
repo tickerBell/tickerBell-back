@@ -7,6 +7,8 @@ import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.NonMember;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.repository.NonMemberRepository;
+import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
+import com.tickerBell.domain.selectedSeat.repository.SelectedSeatRepository;
 import com.tickerBell.domain.selectedSeat.service.SelectedSeatServiceImpl;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
 import com.tickerBell.domain.ticketing.dtos.TicketingNonMemberCancelRequest;
@@ -52,6 +54,8 @@ class TicketingServiceImplTest {
     private SelectedSeatServiceImpl selectedSeatService;
     @Mock
     private TicketingRepository ticketingRepository;
+    @Mock
+    private SelectedSeatRepository selectedSeatRepository;
 
     @Test
     @DisplayName("회원일 때 예매")
@@ -62,6 +66,8 @@ class TicketingServiceImplTest {
         TicketingRequest request = TicketingRequest.builder()
                 .eventId(1L)
                 .selectedSeat(List.of("A-1", "B-2"))
+                .paymentId("payment")
+                .selectedDate(LocalDateTime.now())
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(true, true, true);
@@ -73,8 +79,9 @@ class TicketingServiceImplTest {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
         when(ticketingRepository.save(any(Ticketing.class))).thenReturn(ticketing);
-        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class));
+        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class), any(LocalDateTime.class));
         when(selectedSeatService.saveSelectedSeat(any())).thenReturn(2);
+        when(eventRepository.validSelectedDate(any(Long.class), any(LocalDateTime.class))).thenReturn(true);
 
         // when
         ticketingService.saveTicketing(memberId, request);
@@ -83,7 +90,7 @@ class TicketingServiceImplTest {
         verify(memberRepository, times(1)).findById(any(Long.class));
         verify(eventRepository, times(1)).findById(any(Long.class));
         verify(ticketingRepository, times(1)).save(any(Ticketing.class));
-        verify(selectedSeatService, times(2)).validCheckSeatInfo(any(), any());
+        verify(selectedSeatService, times(2)).validCheckSeatInfo(any(), any(), any(LocalDateTime.class));
         verify(selectedSeatService, times(1)).saveSelectedSeat(any());
 
         int expectedRemainSeat = remainSeat - request.getSelectedSeat().size();
@@ -99,6 +106,8 @@ class TicketingServiceImplTest {
         TicketingRequest request = TicketingRequest.builder()
                 .eventId(1L)
                 .selectedSeat(List.of("C-1", "C-2"))
+                .paymentId("payment")
+                .selectedDate(LocalDateTime.now())
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(true, true, true);
@@ -109,8 +118,9 @@ class TicketingServiceImplTest {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
         when(ticketingRepository.save(any(Ticketing.class))).thenReturn(ticketing);
+        when(eventRepository.validSelectedDate(any(Long.class), any(LocalDateTime.class))).thenReturn(true);
         doThrow(new CustomException(ErrorCode.ALREADY_SELECTED_SEAT))
-                .when(selectedSeatService).validCheckSeatInfo(any(), any(String.class));
+                .when(selectedSeatService).validCheckSeatInfo(any(), any(String.class), any(LocalDateTime.class));
 
         // then
         assertThatThrownBy(() -> ticketingService.saveTicketing(memberId, request))
@@ -127,6 +137,8 @@ class TicketingServiceImplTest {
         TicketingRequest request = TicketingRequest.builder()
                 .eventId(1L)
                 .selectedSeat(List.of("A-1", "D-1"))
+                .paymentId("payment")
+                .selectedDate(LocalDateTime.now())
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(false, false, false);
@@ -137,7 +149,9 @@ class TicketingServiceImplTest {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
         when(ticketingRepository.save(any(Ticketing.class))).thenReturn(ticketing);
-        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class));
+        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class), any(LocalDateTime.class));
+        when(eventRepository.validSelectedDate(any(Long.class), any(LocalDateTime.class))).thenReturn(true);
+
 
         // then
         assertThatThrownBy(() -> ticketingService.saveTicketing(memberId, request))
@@ -154,6 +168,8 @@ class TicketingServiceImplTest {
         TicketingRequest request = TicketingRequest.builder()
                 .eventId(1L)
                 .selectedSeat(List.of("B-2", "C-1"))
+                .paymentId("payment")
+                .selectedDate(LocalDateTime.now())
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(false, false, false);
@@ -164,7 +180,9 @@ class TicketingServiceImplTest {
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
         when(ticketingRepository.save(any(Ticketing.class))).thenReturn(ticketing);
-        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class));
+        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class), any(LocalDateTime.class));
+        when(eventRepository.validSelectedDate(any(Long.class), any(LocalDateTime.class))).thenReturn(true);
+
 
         // then
         assertThatThrownBy(() -> ticketingService.saveTicketing(memberId, request))
@@ -182,6 +200,8 @@ class TicketingServiceImplTest {
                 .name("비회원 이름")
                 .phone("01012345678")
                 .selectedSeat(List.of("C-2", "C-3"))
+                .paymentId("paymentId")
+                .selectedDate(LocalDateTime.now())
                 .eventId(1L)
                 .build();
         NonMember nonMember = NonMember.builder().build();
@@ -193,8 +213,9 @@ class TicketingServiceImplTest {
         when(nonMemberRepository.findByNameAndPhone(any(String.class), any(String.class))).thenReturn(Optional.of(nonMember));
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
         when(ticketingRepository.save(any(Ticketing.class))).thenReturn(ticketing);
-        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class));
+        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class), any(LocalDateTime.class));
         when(selectedSeatService.saveSelectedSeat(any())).thenReturn(2);
+        when(eventRepository.validSelectedDate(any(Long.class), any(LocalDateTime.class))).thenReturn(true);
 
         // when
         ticketingService.saveTicketingNonMember(request);
@@ -204,7 +225,7 @@ class TicketingServiceImplTest {
         verify(nonMemberRepository, times(0)).save(any(NonMember.class));
         verify(eventRepository, times(1)).findById(any(Long.class));
         verify(ticketingRepository, times(1)).save(any(Ticketing.class));
-        verify(selectedSeatService, times(2)).validCheckSeatInfo(any(), any());
+        verify(selectedSeatService, times(2)).validCheckSeatInfo(any(), any(), any(LocalDateTime.class));
         verify(selectedSeatService, times(1)).saveSelectedSeat(any());
 
         int expectedRemainSeat = remainSeat - request.getSelectedSeat().size();
@@ -221,6 +242,8 @@ class TicketingServiceImplTest {
                 .phone("01012345678")
                 .selectedSeat(List.of("B-2", "C-3"))
                 .eventId(1L)
+                .selectedDate(LocalDateTime.now())
+                .paymentId("paymentId")
                 .build();
         NonMember nonMember = NonMember.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(false, false, true);
@@ -231,8 +254,9 @@ class TicketingServiceImplTest {
         when(nonMemberRepository.findByNameAndPhone(any(String.class), any(String.class))).thenReturn(Optional.empty());
         when(eventRepository.findById(any(Long.class))).thenReturn(Optional.of(event));
         when(ticketingRepository.save(any(Ticketing.class))).thenReturn(ticketing);
-        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class));
+        doNothing().when(selectedSeatService).validCheckSeatInfo(any(), any(String.class), any(LocalDateTime.class));
         when(selectedSeatService.saveSelectedSeat(any())).thenReturn(2);
+        when(eventRepository.validSelectedDate(any(Long.class), any(LocalDateTime.class))).thenReturn(true);
 
         // when
         ticketingService.saveTicketingNonMember(request);
@@ -242,7 +266,7 @@ class TicketingServiceImplTest {
         verify(nonMemberRepository, times(1)).save(any(NonMember.class));
         verify(eventRepository, times(1)).findById(any(Long.class));
         verify(ticketingRepository, times(1)).save(any(Ticketing.class));
-        verify(selectedSeatService, times(2)).validCheckSeatInfo(any(), any());
+        verify(selectedSeatService, times(2)).validCheckSeatInfo(any(), any(), any(LocalDateTime.class));
         verify(selectedSeatService, times(1)).saveSelectedSeat(any());
 
         int expectedRemainSeat = remainSeat - request.getSelectedSeat().size();
@@ -253,19 +277,32 @@ class TicketingServiceImplTest {
     @DisplayName("회원일 때 예매 내역 가져오기")
     public void getTicketingHistory() {
         // given
-        Long memberId = 1L;
+        // member
         Member member = Member.builder().build();
-        SpecialSeat specialSeat = createSpecialSeat(false, false, true);
-        Event event = createEvent(30, 1000, specialSeat);
-        Ticketing ticketing = createTicketing(member, event);
-        List<Ticketing> ticketingList = new ArrayList<>();
-        ticketingList.add(ticketing);
-        Page<Ticketing> ticketingPage = new PageImpl<>(ticketingList);
-
-        // stub
         Member spyMember = spy(member);
 
+        //event
+        Long memberId = 1L;
+        SpecialSeat specialSeat = createSpecialSeat(false, false, true);
+        Event event = createEvent(30, 1000, specialSeat);
+
+        // ticketing
+        Ticketing ticketing = createTicketing(member, event);
+        Ticketing spyTicketing = spy(ticketing);
+        List<Ticketing> ticketingList = new ArrayList<>();
+        ticketingList.add(spyTicketing);
+        Page<Ticketing> ticketingPage = new PageImpl<>(ticketingList);
+
+        // selectedSeat
+        SelectedSeat selectedSeat = SelectedSeat.builder().ticketing(spyTicketing).build();
+        SelectedSeat spySelectedSeat = spy(selectedSeat);
+        List<SelectedSeat> selectedSeatList = List.of(spySelectedSeat);
+
+        // stub
         when(spyMember.getId()).thenReturn(1L);
+        when(spyTicketing.getSelectedSeatList()).thenReturn(selectedSeatList);
+        when(spySelectedSeat.getSeatPrice()).thenReturn(1000F);
+
         when(memberRepository.findById(any())).thenReturn(Optional.of(spyMember));
         when(ticketingRepository.findByMemberId(any(Long.class), any(PageRequest.class))).thenReturn(ticketingPage);
 
@@ -282,16 +319,30 @@ class TicketingServiceImplTest {
     public void getTicketingHistoryNonMember() {
         // given
         NonMember nonMember = NonMember.builder().name("이름").phone("01012345678").build();
+        NonMember spyNonMember = spy(nonMember);
+
+        //event
+        Long memberId = 1L;
         SpecialSeat specialSeat = createSpecialSeat(false, false, true);
         Event event = createEvent(30, 1000, specialSeat);
+
+        // ticketing
         Ticketing ticketing = createTicketingNonMember(nonMember, event);
+        Ticketing spyTicketing = spy(ticketing);
         List<Ticketing> ticketingList = new ArrayList<>();
-        ticketingList.add(ticketing);
+        ticketingList.add(spyTicketing);
         Page<Ticketing> ticketingPage = new PageImpl<>(ticketingList);
 
+        // selectedSeat
+        SelectedSeat selectedSeat = SelectedSeat.builder().ticketing(spyTicketing).build();
+        SelectedSeat spySelectedSeat = spy(selectedSeat);
+        List<SelectedSeat> selectedSeatList = List.of(spySelectedSeat);
+
         // stub
-        NonMember spyNonMember = spy(nonMember);
         when(spyNonMember.getId()).thenReturn(1L);
+        when(spyTicketing.getSelectedSeatList()).thenReturn(selectedSeatList);
+        when(spySelectedSeat.getSeatPrice()).thenReturn(1000F);
+
         when(nonMemberRepository.findByNameAndPhone(any(String.class), any(String.class))).thenReturn(Optional.of(spyNonMember));
         when(ticketingRepository.findByNonMemberId(any(Long.class), any(PageRequest.class))).thenReturn(ticketingPage);
 
@@ -313,12 +364,15 @@ class TicketingServiceImplTest {
         Event event = Event.builder()
                 .remainSeat(30)
                 .build();
-        Ticketing ticketing = createTicketing(member, event);
+        Ticketing spyTicketing = spy(createTicketing(member, event));
+        SelectedSeat selectedSeat = SelectedSeat.builder().ticketing(spyTicketing).build();
+        List<SelectedSeat> selectedSeatList = List.of(selectedSeat);
 
         // stub
+        when(spyTicketing.getSelectedSeatList()).thenReturn(selectedSeatList);
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
-        when(ticketingRepository.findByIdWithEvent(any(Long.class))).thenReturn(Optional.of(ticketing));
-        doNothing().when(ticketingRepository).delete(any(Ticketing.class));
+        when(ticketingRepository.findByIdWithEvent(any(Long.class))).thenReturn(Optional.of(spyTicketing));
+        doNothing().when(selectedSeatRepository).deleteAll(any(List.class));
 
         // when
         ticketingService.cancelTicketing(memberId, ticketingId);
@@ -336,14 +390,19 @@ class TicketingServiceImplTest {
         Event event = Event.builder()
                 .remainSeat(30)
                 .build();
-        Ticketing ticketing = createTicketing(null, event);
+        NonMember nonMember = NonMember.builder().build();
+        Ticketing spyTicketing = spy(createTicketingNonMember(nonMember, event));
+        SelectedSeat selectedSeat = SelectedSeat.builder().ticketing(spyTicketing).build();
+        List<SelectedSeat> selectedSeatList = List.of(selectedSeat);
+
         TicketingNonMemberCancelRequest request = TicketingNonMemberCancelRequest.builder()
                 .name("nonMember").phone("01012345678").build();
 
         // stub
+        when(spyTicketing.getSelectedSeatList()).thenReturn(selectedSeatList);
         when(ticketingRepository.findByIdAndNonMemberWithEvent(any(Long.class), any(String.class), any(String.class)))
-                .thenReturn(Optional.of(ticketing));
-        doNothing().when(ticketingRepository).delete(any(Ticketing.class));
+                .thenReturn(Optional.of(spyTicketing));
+        doNothing().when(selectedSeatRepository).deleteAll(any(List.class));
 
         // when
         ticketingService.cancelTicketingNonMember(request, ticketingId);
