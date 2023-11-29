@@ -22,6 +22,7 @@ public class EventListResponse {
     private String name; // 이벤트 이름
     private LocalDateTime startEvent; // 이벤트 시작 시간
     private LocalDateTime endEvent; // 이벤트 종료 시간
+    private LocalDateTime availablePurchaseTime; // 구매 시작 가능 시간
     private Float saleDegree; // 세일
     private Integer normalPrice; // 일반 좌석 가격
     private Integer premiumPrice; // 특수석 좌석 가격
@@ -50,6 +51,7 @@ public class EventListResponse {
                 .name(event.getName())
                 .startEvent(event.getStartEvent())
                 .endEvent(event.getEndEvent())
+                .availablePurchaseTime(event.getAvailablePurchaseTime())
                 .saleDegree(event.getSaleDegree())
                 .normalPrice(event.getNormalPrice())
                 .premiumPrice(event.getPremiumPrice())

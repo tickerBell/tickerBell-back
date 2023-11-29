@@ -35,7 +35,7 @@ public enum ErrorCode {
     TICKETING_NOT_FOUND(HttpStatus.NO_CONTENT, "예매내역이 존재하지 않습니다."),
     TICKETING_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "티켓 삭제 중 에러가 발생했습니다."),
     MAP_API_CALL_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, "naver map api 호출 중 에러가 발생했습니다."),
-    SELECTED_DATE_INVALID(HttpStatus.BAD_REQUEST, "선택된 날짜가 이벤트 시작 종료 날짜에 벗어났거나 구매 가능한 기간이 지났습니다."),
+    SELECTED_DATE_INVALID(HttpStatus.BAD_REQUEST, "선택된 날짜가 이벤트 시작 종료 날짜에 벗어났거나 아직 구매 가능한 시간이 아닙니다."),
     SELECTED_DATE_PAST(HttpStatus.BAD_REQUEST, "이미 지난 예매에 대해선 선택할 수 없습니다.");
 
     private final HttpStatus status;

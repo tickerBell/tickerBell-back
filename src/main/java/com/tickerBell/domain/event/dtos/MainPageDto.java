@@ -21,8 +21,8 @@ public class MainPageDto {
     // 세일 이벤트
     private List<EventListResponse> saleEventList;
 
-    // 마감 임박 이벤트
-    private List<EventListResponse> deadLineEventList;
+    // 오픈 임박 이벤트
+    private List<EventListResponse> openAscEventList;
 
     // 추천 이벤트
     private List<EventListResponse> recommendEventList;

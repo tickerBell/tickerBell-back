@@ -42,25 +42,27 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
     Page<Event> findAllEventsPage(Pageable pageable);
 
     @Query("select e from Event e join e.imageList i on i.isThumbnail = true " +
-            "where e.category = :category and e.availablePurchaseTime > :now " +
+            "where e.category = :category and e.endEvent > :now " +
             "order by e.viewCount DESC")
     List<Event> findByCategoryInMainPage(@Param("category") Category category,
                                         @Param("now") LocalDateTime now,
                                         Pageable pageable);
 
     @Query("select e from Event e join e.imageList i on i.isThumbnail = true " +
-            "where e.saleDegree != 0 and e.availablePurchaseTime > :now " +
+            "where e.saleDegree != 0 and e.endEvent > :now " +
             "order by e.startEvent asc")
     List<Event> findBySaleInMainPage(@Param("now") LocalDateTime now, Pageable pageable);
 
     @Query("select e from Event e join e.imageList i on i.isThumbnail = true " +
-            "where e.availablePurchaseTime > :startEvent " +
+            "where e.availablePurchaseTime > :now " +
             "order by e.availablePurchaseTime asc")
-    List<Event> findByDeadLineInMainPage(@Param("now") LocalDateTime now, Pageable pageable);
+    List<Event> findByOpenAscInMainPage(@Param("now") LocalDateTime now, Pageable pageable);
 
     @Query("select case when count(e) > 0 then true else false end from Event e " +
-            "where e.id = :eventId and :selectedDate between e.startEvent and e.endEvent " +
-            "and e.availablePurchaseTime < :selectedDate")
+            "where e.id = :eventId and :selectedDate >= e.startEvent and :selectedDate <= e.endEvent " +
+            "and e.availablePurchaseTime <= :selectedDate")
+//@Query("select case when count(e) > 0 then true else false end from Event e " +
+//        "where e.id = :eventId and :selectedDate >= e.availablePurchaseTime and :selectedDate >= e.startEvent")
     Boolean validSelectedDate(@Param("eventId") Long eventId, @Param("selectedDate") LocalDateTime selectedDate);
 
 

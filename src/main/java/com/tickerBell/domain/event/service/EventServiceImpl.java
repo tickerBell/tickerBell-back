@@ -169,7 +169,7 @@ public class EventServiceImpl implements EventService {
                         .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
         List<EventListResponse> saleEventList = eventRepository.findBySaleInMainPage(now, pageRequest).stream()
                 .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
-        List<EventListResponse> deadLineEventList = eventRepository.findByDeadLineInMainPage(now, pageRequest).stream()
+        List<EventListResponse> openAscEventList = eventRepository.findByOpenAscInMainPage(now, pageRequest).stream()
                 .map(event -> EventListResponse.from(event)).collect(Collectors.toList());
 
         return MainPageDto.builder()
@@ -178,7 +178,7 @@ public class EventServiceImpl implements EventService {
                 .rankingPlayEventList(playEventList)
                 .rankingClassicEventList(classicEventList)
                 .saleEventList(saleEventList)
-                .deadLineEventList(deadLineEventList)
+                .openAscEventList(openAscEventList)
                 .build();
     }
 

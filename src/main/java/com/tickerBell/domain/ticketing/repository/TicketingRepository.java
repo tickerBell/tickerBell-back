@@ -26,18 +26,12 @@ public interface TicketingRepository extends JpaRepository<Ticketing, Long>, Tic
     @Query("select t from Ticketing t where t.nonMember.id = :nonMemberId")
     Page<Ticketing> findByNonMemberId(@Param("nonMemberId") Long nonMemberId, Pageable pageable);
 
-    @Modifying(clearAutomatically = true)
-    @Query("delete from Ticketing t where t.member.id = :memberId and t.id = :ticketingId")
-    void deleteByMemberAndTicketing(@Param("memberId") Long memberId, @Param("ticketingId") Long ticketingId);
-
     @Query("select t from Ticketing t join fetch t.event e where t.id = :ticketingId")
     Optional<Ticketing> findByIdWithEvent(@Param("ticketingId") Long ticketingId);
     @Query("select t from Ticketing t join fetch t.event e " +
             "where t.id = :ticketingId and t.nonMember.name = :name and t.nonMember.phone = :phone")
     Optional<Ticketing> findByIdAndNonMemberWithEvent(@Param("ticketingId") Long ticketingId,
                                                       @Param("name") String name, @Param("phone") String phone);
-    @Query("delete from Ticketing t where t.nonMember.id = :nonMemberId")
-    void deleteByNonMember(@Param("nonMemberId") Long nonMemberId);
 
     @Query("select t from Ticketing t" +
             " join fetch t.event" +

@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -135,7 +136,7 @@ public class TicketingServiceImpl implements TicketingService {
     // 예매 시 선택된 날짜가 유효한지 체크
     private void validationSelectedDate(Long eventId, LocalDateTime selectedDate) {
         Boolean isValid = eventRepository.validSelectedDate(eventId, selectedDate);
-
+        System.out.println(selectedDate);
         // 선택된 예매 날짜가 event 시작 종료 날짜 사이가 아닐 때
         if (!isValid) {
             log.info("잘못된 날짜 선택");

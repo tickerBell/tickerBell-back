@@ -141,7 +141,7 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                 .rankingClassicEventList(classicEventList)
                 .rankingSportsEventList(sportsEventList)
                 .saleEventList(saleEventList)
-                .deadLineEventList(deadLineEventList)
+                .openAscEventList(deadLineEventList)
                 .recommendEventList(null) // todo: 추천 이벤트 추가해야 함
                 .build();
         return mainPageDto;
