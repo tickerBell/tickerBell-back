@@ -22,6 +22,7 @@ public class EventResponse {
     private String name;
     private LocalDateTime startEvent;
     private LocalDateTime endEvent;
+    private LocalDateTime availablePurchaseTime; // 구매 가능 시간
     private Integer normalPrice;
     private Integer premiumPrice;
     private Float discountNormalPrice;
@@ -64,6 +65,7 @@ public class EventResponse {
                 .name(event.getName())
                 .startEvent(event.getStartEvent())
                 .endEvent(event.getEndEvent())
+                .availablePurchaseTime(event.getAvailablePurchaseTime())
                 .normalPrice(event.getNormalPrice())
                 .premiumPrice(event.getPremiumPrice())
                 .discountNormalPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getNormalPrice()))
