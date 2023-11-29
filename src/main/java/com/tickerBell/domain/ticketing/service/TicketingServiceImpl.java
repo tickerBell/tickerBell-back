@@ -28,6 +28,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,12 +57,8 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
-        Boolean isValid = eventRepository.validSelectedDate(request.getEventId(), request.getSelectedDate());
-        // 선택된 예매 날짜가 event 시작 종료 날짜 사이가 아닐 때
-        if (!isValid) {
-            log.info("잘못된 날짜 선택");
-            throw new CustomException(ErrorCode.SELECTED_DATE_INVALID);
-        }
+        // 선택 날짜가 유효 한지 확인
+        validationSelectedDate(request.getEventId(), request.getSelectedDate());
 
         // 예매 내역 저장
         Ticketing ticketing = Ticketing.builder()
@@ -107,12 +106,8 @@ public class TicketingServiceImpl implements TicketingService {
         Event event = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new CustomException(ErrorCode.EVENT_NOT_FOUND));
 
-        Boolean isValid = eventRepository.validSelectedDate(request.getEventId(), request.getSelectedDate());
-        // 선택된 예매 날짜가 event 시작 종료 날짜 사이가 아닐 때
-        if (!isValid) {
-            log.info("잘못된 날짜 선택");
-            throw new CustomException(ErrorCode.SELECTED_DATE_INVALID);
-        }
+        // 선택 날짜가 유효 한지 확인
+        validationSelectedDate(request.getEventId(), request.getSelectedDate());
 
         // 예매 내역 저장
         Ticketing ticketing = Ticketing.builder()
@@ -135,6 +130,23 @@ public class TicketingServiceImpl implements TicketingService {
         // event 남은 좌석 수 업데이트
         event.setRemainSeat(event.getRemainSeat() - savedSelectedSeatCount);
         return savedTicketing.getId();
+    }
+
+    // 예매 시 선택된 날짜가 유효한지 체크
+    private void validationSelectedDate(Long eventId, LocalDateTime selectedDate) {
+        Boolean isValid = eventRepository.validSelectedDate(eventId, selectedDate);
+
+        // 선택된 예매 날짜가 event 시작 종료 날짜 사이가 아닐 때
+        if (!isValid) {
+            log.info("잘못된 날짜 선택");
+            throw new CustomException(ErrorCode.SELECTED_DATE_INVALID);
+        }
+
+        // 예매 날짜는 잘 선택 됐지만 이미 지난 예매를 시도하는 경우
+        LocalDateTime now = LocalDateTime.now();
+        if (selectedDate.isBefore(now)) {
+            throw new CustomException(ErrorCode.SELECTED_DATE_PAST);
+        }
     }
 
     @Override
