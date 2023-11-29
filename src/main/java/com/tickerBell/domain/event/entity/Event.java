@@ -36,6 +36,7 @@ public class Event extends BaseEntity {
     private Integer totalSeat; // 전체 좌석 수
     private Integer remainSeat; // 남은 좌석 수
     private String place; // 주소
+    private String description; // 이벤트 설명
     private Boolean isAdult; // 제한연령
     private Integer viewCount; // 조회수
     private Boolean isCancelled; // 취소 여부
@@ -55,7 +56,7 @@ public class Event extends BaseEntity {
     private List<Host> hostList = new ArrayList<>();
 
     @Builder
-    public Event(String name, LocalDateTime startEvent, LocalTime dailyStartEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer eventTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
+    public Event(String name, LocalDateTime startEvent, LocalTime dailyStartEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer eventTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, String description, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
         this.name = name;
         this.startEvent = startEvent;
         this.endEvent = endEvent;
@@ -68,6 +69,7 @@ public class Event extends BaseEntity {
         this.totalSeat = totalSeat;
         this.remainSeat = remainSeat;
         this.place = place;
+        this.description = description;
         this.isAdult = isAdult;
         this.category = category;
         this.member = member;
