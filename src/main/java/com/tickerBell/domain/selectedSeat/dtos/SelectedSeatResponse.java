@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SelectedSeatResponse {
+    // 예매 내역 정보에 사용
     private Long selectedSeatId;
     private String seatInfo; // 선택 좌석
     private Float seatPrice; // 할인을 적용한 선택 좌석 가격

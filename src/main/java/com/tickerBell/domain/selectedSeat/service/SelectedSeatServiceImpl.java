@@ -1,5 +1,6 @@
 package com.tickerBell.domain.selectedSeat.service;
 
+import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatInfoRequest;
 import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatInfoResponse;
 import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatResponse;
 import com.tickerBell.domain.selectedSeat.repository.SelectedSeatRepository;
@@ -43,8 +44,8 @@ public class SelectedSeatServiceImpl implements SelectedSeatService{
     }
 
     @Override
-    public List<SelectedSeatInfoResponse> getSelectedSeatByEventId(Long eventId, LocalDateTime selectedDate) {
-        return selectedSeatRepository.findByEventId(eventId, selectedDate).stream()
+    public List<SelectedSeatInfoResponse> getSelectedSeatByEventId(SelectedSeatInfoRequest request) {
+        return selectedSeatRepository.findByEventId(request.getEventId(), request.getSelectedDate()).stream()
                 .map(selectedSeat -> SelectedSeatInfoResponse.from(selectedSeat))
                 .collect(Collectors.toList());
     }

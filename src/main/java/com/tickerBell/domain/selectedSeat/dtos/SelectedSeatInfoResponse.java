@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SelectedSeatInfoResponse {
+    // 이벤트에 이미 선택된 좌석 정보에 사용
     private String selectedSeat; // 선택된 좌석
 
     public static SelectedSeatInfoResponse from(SelectedSeat selectedSeat) {
