@@ -99,6 +99,7 @@ public class EventApiControllerTest {
         hosts.add("host1");
         request.setHosts(hosts);
         request.setPlace("mockPlace");
+        request.setDescription("mockDescription");
         request.setIsAdult(false);
         request.setIsSpecialA(true);
         request.setIsSpecialB(true);
@@ -212,6 +213,7 @@ public class EventApiControllerTest {
         hosts.add("host1");
         request.setHosts(hosts);
         request.setPlace("mockPlace");
+        request.setDescription("mockDescription");
         request.setIsAdult(false);
         request.setIsSpecialA(true);
         request.setIsSpecialB(true);
