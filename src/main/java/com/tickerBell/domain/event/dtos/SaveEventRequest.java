@@ -51,6 +51,8 @@ public class SaveEventRequest {
     @NotBlank
     @Schema(description = "이벤트 장소", example = "서울특별시")
     private String place;
+    @Schema(description = "이벤트 설명", example = "공연 설명")
+    private String description;
     @NotBlank
     @Schema(description = "성인여부", example = "true")
     private Boolean isAdult;
