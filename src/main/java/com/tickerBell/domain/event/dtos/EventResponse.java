@@ -9,6 +9,7 @@ import com.tickerBell.domain.utils.SeatPriceCalculator;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class EventResponse {
     private LocalDateTime startEvent;
     private LocalDateTime endEvent;
     private LocalDateTime availablePurchaseTime; // 구매 가능 시간
+    private LocalTime dailyStartEvent; // 하루 중 시작 시간
     private Integer normalPrice;
     private Integer premiumPrice;
     private Float discountNormalPrice;
@@ -66,6 +68,7 @@ public class EventResponse {
                 .startEvent(event.getStartEvent())
                 .endEvent(event.getEndEvent())
                 .availablePurchaseTime(event.getAvailablePurchaseTime())
+                .dailyStartEvent(event.getDailyStartEvent())
                 .normalPrice(event.getNormalPrice())
                 .premiumPrice(event.getPremiumPrice())
                 .discountNormalPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getNormalPrice()))
