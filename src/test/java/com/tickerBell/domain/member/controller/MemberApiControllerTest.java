@@ -1,14 +1,12 @@
 package com.tickerBell.domain.member.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tickerBell.domain.member.dtos.JoinMemberRequest;
-import com.tickerBell.domain.member.dtos.MemberResponse;
-import com.tickerBell.domain.member.dtos.MemberPasswordRequest;
+import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.service.MemberService;
-import com.tickerBell.domain.member.dtos.LoginRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.global.config.MockRedisConfig;
 import org.junit.jupiter.api.*;
@@ -51,6 +49,7 @@ class MemberApiControllerTest {
         transactionStatus = transactionManager.getTransaction(new DefaultTransactionDefinition());
 
         memberService.join("testUsername", "testPassword1!", "testPhone", true, Role.ROLE_USER, null);
+        memberService.join("registrant", "testPassword1!", "testPhone", true, Role.ROLE_REGISTRANT, null);
     }
 
     @AfterEach
@@ -179,6 +178,35 @@ class MemberApiControllerTest {
     }
 
     @Test
+    @DisplayName("refresh 토큰 요청 테스트")
+    void regenerateTokenTest() throws Exception {
+        // given
+        String username = "testUsername";
+        String password = "testPassword1!";
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username);
+        loginRequest.setPassword(password);
+
+        ResultActions perform = mockMvc.perform(post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)));
+        JsonNode jsonNode = objectMapper.readTree(perform.andReturn().getResponse().getContentAsString());
+        String refreshToken = objectMapper.readTree(perform.andReturn().getResponse().getContentAsString()).get("data").get("refreshToken").textValue();
+
+        RefreshTokenRequest request = new RefreshTokenRequest();
+        request.setRefreshToken(refreshToken);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/reissue")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("refresh 토큰으로 access 토큰 재발행"));
+    }
+
+    @Test
     @DisplayName("회원 정보 조회 테스트")
     @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void getMemberTest() throws Exception {
@@ -224,7 +252,7 @@ class MemberApiControllerTest {
 
     @Test
     @DisplayName("등록자 회원 마이페이지 조회 테스트")
-    @WithUserDetails(value = "abcdefg", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "registrant", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void registrantMyPageTest() throws Exception {
         // given
 
@@ -235,13 +263,13 @@ class MemberApiControllerTest {
         // then
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
-                .andExpect(jsonPath("$.data.username").value("abcdefg"))
+                .andExpect(jsonPath("$.data.username").value("registrant"))
                 .andExpect(jsonPath("$.data.role").value(Role.ROLE_REGISTRANT.name()));
     }
 
     @Test
     @DisplayName("사용자 비밀번호 변경 테스트")
-    @WithUserDetails(value = "abcdefg", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void updateMemberPasswordTest() throws Exception {
         // given
         MemberPasswordRequest memberPasswordRequest = new MemberPasswordRequest("mockPassword");
@@ -251,7 +279,7 @@ class MemberApiControllerTest {
         ResultActions perform = mockMvc.perform(put("/api/member/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(request));
-        MemberResponse memberResponse = memberService.getMemberByUsername("abcdefg");
+        MemberResponse memberResponse = memberService.getMemberByUsername("testUsername");
         Boolean passCheck = memberService.checkCurrentPassword(memberResponse.getMemberId(), "mockPassword");
 
         // then
@@ -262,10 +290,10 @@ class MemberApiControllerTest {
 
     @Test
     @DisplayName("사용자 현재 비밀번호 확인 테스트")
-    @WithUserDetails(value = "abcdefg", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void checkMemberPasswordTest() throws Exception {
         // given
-        MemberPasswordRequest memberPasswordRequest = new MemberPasswordRequest("abcdefg1");
+        MemberPasswordRequest memberPasswordRequest = new MemberPasswordRequest("testPassword1!");
         String request = objectMapper.writeValueAsString(memberPasswordRequest);
 
         // when

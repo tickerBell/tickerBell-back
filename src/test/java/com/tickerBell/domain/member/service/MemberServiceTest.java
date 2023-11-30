@@ -144,7 +144,86 @@ class MemberServiceTest {
         assertThat("mockAccessToken").isEqualTo(result.getAccessToken());
     }
 
-    // todo regenerate Fail Test
+    @Test
+    @DisplayName("토큰 재발급 토큰만료 실패 테스트")
+    void regenerateExpirationFailTest() {
+        // given
+        RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest();
+        String mockRefreshToken = "mockRefreshToken";
+        String mockUsername = "mockUsername";
+        refreshTokenRequest.setRefreshToken(mockRefreshToken);
+        Claims mockClaim = Jwts.claims();
+        mockClaim.put("username", mockUsername);
+
+        // stub
+        when(jwtTokenProvider.isExpiration(refreshTokenRequest.getRefreshToken())).thenReturn(true);
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.regenerateToken(refreshTokenRequest))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.REFRESH_TOKEN_EXPIRED);
+        });
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 회원조회 실패 테스트")
+    void regenerateTokenMemberFailTest() {
+        // given
+        RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest();
+        String mockRefreshToken = "mockRefreshToken";
+        String mockUsername = "mockUsername";
+        refreshTokenRequest.setRefreshToken(mockRefreshToken);
+        Claims mockClaim = Jwts.claims();
+        mockClaim.put("username", mockUsername);
+
+        // stub
+        when(jwtTokenProvider.isExpiration(refreshTokenRequest.getRefreshToken())).thenReturn(false);
+        when(jwtTokenProvider.get(refreshTokenRequest.getRefreshToken())).thenReturn(mockClaim);
+        when(memberRepository.findByUsername(mockUsername)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.regenerateToken(refreshTokenRequest))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+        });
+    }
+
+    @Test
+    @DisplayName("토큰 재발급 리프레쉬토큰 비교실패 테스트")
+    void regenerateTokenRefreshFailTest() {
+        // given
+        RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest();
+        String mockRefreshToken = "mockRefreshToken";
+        String mockUsername = "mockUsername";
+        refreshTokenRequest.setRefreshToken(mockRefreshToken);
+        Claims mockClaim = Jwts.claims();
+        mockClaim.put("username", mockUsername);
+
+        // stub
+        when(jwtTokenProvider.isExpiration(refreshTokenRequest.getRefreshToken())).thenReturn(false);
+        when(jwtTokenProvider.get(refreshTokenRequest.getRefreshToken())).thenReturn(mockClaim);
+        when(memberRepository.findByUsername(mockUsername)).thenReturn(Optional.of(Member.builder().build()));
+        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+        when(valueOperations.get(mockUsername)).thenReturn("fail");
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.regenerateToken(refreshTokenRequest))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.REFRESH_TOKEN_NOT_MATCH);
+        });
+    }
 
     @Test
     @DisplayName("로그인 성공 테스트")
@@ -291,6 +370,28 @@ class MemberServiceTest {
         assertThat(myPageListResponse.getRole()).isEqualTo(generalMember.getRole());
         assertThat(myPageListResponse.getMyPageResponse().get(0).getTicketHolderCounts()).isNotNull();
         verify(memberRepository, times(1)).findById(memberId);
+    }
+
+    @Test
+    @DisplayName("마이페이지 조회 실패 테스트")
+    void getMyPageFailTest() {
+        // given
+        Long memberId = 1L;
+        Member generalMember = Member.builder().role(Role.ROLE_REGISTRANT).build();
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        // stub
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+
+        // when
+        AbstractObjectAssert<?, CustomException> extracting = assertThatThrownBy(() -> memberService.getMyPage(memberId, pageRequest))
+                .isInstanceOf(CustomException.class)
+                .extracting(ex -> (CustomException) ex);
+
+        // then
+        extracting.satisfies(ex -> {
+            assertThat(ex.getErrorCode()).isEqualTo(ErrorCode.MEMBER_NOT_FOUND);
+        });
     }
 
     @Test
