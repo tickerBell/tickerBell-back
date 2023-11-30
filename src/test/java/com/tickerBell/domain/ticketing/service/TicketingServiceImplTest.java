@@ -67,7 +67,7 @@ class TicketingServiceImplTest {
                 .eventId(1L)
                 .selectedSeat(List.of("A-1", "B-2"))
                 .paymentId("payment")
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDateTime.now().plusDays(1))
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(true, true, true);
@@ -107,7 +107,7 @@ class TicketingServiceImplTest {
                 .eventId(1L)
                 .selectedSeat(List.of("C-1", "C-2"))
                 .paymentId("payment")
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDateTime.now().plusDays(1))
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(true, true, true);
@@ -138,7 +138,7 @@ class TicketingServiceImplTest {
                 .eventId(1L)
                 .selectedSeat(List.of("A-1", "D-1"))
                 .paymentId("payment")
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDateTime.now().plusDays(1))
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(false, false, false);
@@ -169,7 +169,7 @@ class TicketingServiceImplTest {
                 .eventId(1L)
                 .selectedSeat(List.of("B-2", "C-1"))
                 .paymentId("payment")
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDateTime.now().plusDays(1))
                 .build();
         Member member = Member.builder().build();
         SpecialSeat specialSeat = createSpecialSeat(false, false, false);
@@ -201,7 +201,7 @@ class TicketingServiceImplTest {
                 .phone("01012345678")
                 .selectedSeat(List.of("C-2", "C-3"))
                 .paymentId("paymentId")
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDateTime.now().plusDays(1))
                 .eventId(1L)
                 .build();
         NonMember nonMember = NonMember.builder().build();
@@ -242,7 +242,7 @@ class TicketingServiceImplTest {
                 .phone("01012345678")
                 .selectedSeat(List.of("B-2", "C-3"))
                 .eventId(1L)
-                .selectedDate(LocalDateTime.now())
+                .selectedDate(LocalDateTime.now().plusDays(1))
                 .paymentId("paymentId")
                 .build();
         NonMember nonMember = NonMember.builder().build();

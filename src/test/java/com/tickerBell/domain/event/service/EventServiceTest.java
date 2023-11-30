@@ -521,7 +521,7 @@ public class EventServiceTest {
                 .thenReturn(eventList);
         when(eventRepository.findBySaleInMainPage(any(LocalDateTime.class), any(PageRequest.class)))
                 .thenReturn(eventList);
-        when(eventRepository.findByDeadLineInMainPage(any(LocalDateTime.class), any(PageRequest.class)))
+        when(eventRepository.findByOpenAscInMainPage(any(LocalDateTime.class), any(PageRequest.class)))
                 .thenReturn(eventList);
 
         // when
@@ -530,7 +530,7 @@ public class EventServiceTest {
         // then
         verify(eventRepository, times(4)).findByCategoryInMainPage(any(Category.class), any(LocalDateTime.class), any(PageRequest.class));
         verify(eventRepository, times(1)).findBySaleInMainPage(any(LocalDateTime.class), any(PageRequest.class));
-        verify(eventRepository, times(1)).findByDeadLineInMainPage(any(LocalDateTime.class), any(PageRequest.class));
+        verify(eventRepository, times(1)).findByOpenAscInMainPage(any(LocalDateTime.class), any(PageRequest.class));
 
     }
 
