@@ -2,9 +2,7 @@ package com.tickerBell.domain.image.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.image.entity.Image;
-import com.tickerBell.domain.image.repository.ImageRepository;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -17,12 +15,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -88,5 +86,22 @@ class ImageS3HandlerTest {
 
         // then
         verifyNoInteractions(amazonS3Client);
+    }
+
+    @Test
+    @DisplayName("multipartFiles 이 null 일 때 테스트")
+    void multipartNullTest() throws MalformedURLException {
+        MultipartFile thumbnailImage = new MockMultipartFile("thumbnail.jpg", "thumbnail.jpg", "image/jpeg", new byte[0]);
+
+        // stub
+        when(amazonS3Client.getUrl(any(), any())).thenReturn(new URL("https://example-image.jpg"));
+        when(amazonS3Client.putObject(any())).thenReturn(any());
+
+        // when
+        List<Image> savedImageList = imageS3Handler.uploadImage(thumbnailImage, null);
+
+        // then
+        verify(amazonS3Client, times(1)).putObject(any(PutObjectRequest.class)); // s3 업로드 횟수 확인
+        verify(amazonS3Client, times(1)).getUrl(any(), any()); // s3 조회 횟수 확인
     }
 }
