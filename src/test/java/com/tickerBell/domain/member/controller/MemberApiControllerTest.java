@@ -1,14 +1,12 @@
 package com.tickerBell.domain.member.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tickerBell.domain.member.dtos.JoinMemberRequest;
-import com.tickerBell.domain.member.dtos.MemberResponse;
-import com.tickerBell.domain.member.dtos.MemberPasswordRequest;
+import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.member.service.MemberService;
-import com.tickerBell.domain.member.dtos.LoginRequest;
 import com.tickerBell.domain.ticketing.dtos.TicketingRequest;
 import com.tickerBell.global.config.MockRedisConfig;
 import org.junit.jupiter.api.*;
@@ -177,6 +175,35 @@ class MemberApiControllerTest {
 
         // then
         perform.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("refresh 토큰 요청 테스트")
+    void regenerateTokenTest() throws Exception {
+        // given
+        String username = "testUsername";
+        String password = "testPassword1!";
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username);
+        loginRequest.setPassword(password);
+
+        ResultActions perform = mockMvc.perform(post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)));
+        JsonNode jsonNode = objectMapper.readTree(perform.andReturn().getResponse().getContentAsString());
+        String refreshToken = objectMapper.readTree(perform.andReturn().getResponse().getContentAsString()).get("data").get("refreshToken").textValue();
+
+        RefreshTokenRequest request = new RefreshTokenRequest();
+        request.setRefreshToken(refreshToken);
+
+        // when
+        ResultActions result = mockMvc.perform(post("/reissue")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("refresh 토큰으로 access 토큰 재발행"));
     }
 
     @Test
