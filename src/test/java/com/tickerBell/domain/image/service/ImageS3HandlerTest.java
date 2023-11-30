@@ -1,6 +1,7 @@
 package com.tickerBell.domain.image.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.global.exception.CustomException;
@@ -103,5 +104,22 @@ class ImageS3HandlerTest {
         // then
         verify(amazonS3Client, times(1)).putObject(any(PutObjectRequest.class)); // s3 업로드 횟수 확인
         verify(amazonS3Client, times(1)).getUrl(any(), any()); // s3 조회 횟수 확인
+    }
+
+    @Test
+    @DisplayName("이미지 삭제 테스트")
+    void deleteImageTest() {
+        // given
+        List<String> storeImgList = new ArrayList<>();
+        storeImgList.add("url1");
+
+        // stub
+        doNothing().when(amazonS3Client).deleteObject(any(DeleteObjectRequest.class));
+
+        // when
+        imageS3Handler.deleteImage(storeImgList);
+
+        // then
+        verify(amazonS3Client, times(1)).deleteObject(any(DeleteObjectRequest.class));
     }
 }
