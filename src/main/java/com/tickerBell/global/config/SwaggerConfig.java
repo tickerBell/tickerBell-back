@@ -38,11 +38,14 @@ public class SwaggerConfig {
         Server server2 = new Server();
         server2.setUrl("https://tickerbell.p-e.kr");
 
+        Server server3 = new Server();
+        server3.setUrl("https://localhost:8080");
+
 
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
                 .security(Arrays.asList(securityRequirement))
-                .servers(List.of(server1, server2));
+                .servers(List.of(server1, server2, server3));
     }
 
 }
