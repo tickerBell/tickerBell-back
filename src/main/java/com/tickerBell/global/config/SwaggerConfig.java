@@ -9,6 +9,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.ForwardedHeaderFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,7 @@ public class SwaggerConfig {
 
         Server server1 = new Server();
         server1.setUrl("https://tickerbell.p-e.kr");
-        
+
         Server server2 = new Server();
         server2.setUrl("http://localhost:9090");
 
@@ -47,4 +48,8 @@ public class SwaggerConfig {
                 .servers(List.of(server1, server2, server3));
     }
 
+    @Bean
+    ForwardedHeaderFilter forwardedHeaderFilter() {
+        return new ForwardedHeaderFilter();
+    }
 }
