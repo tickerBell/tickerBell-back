@@ -28,6 +28,17 @@ public class TestScheduled {
         }
     }
 
+    @Scheduled(cron = "0 0/3 15-17 * * ?")
+    public void selfTestSchedule() {
+        List<Member> findMembers = memberRepository.findAll();
+
+        for (Member findMember : findMembers) {
+            String message = makeMessage("이벤트가", 1L, 10L);
+            emitterService.notify(findMember.getId(), message);
+        }
+    }
+
+
     private String makeMessage(String name, Long hour, Long minute) {
         return "예매하신 " + name + "가 "
                 + hour + " 시간 "
