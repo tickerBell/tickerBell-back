@@ -33,10 +33,10 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
         Server server1 = new Server();
-        server1.setUrl("http://localhost:9090");
-
+        server1.setUrl("https://tickerbell.p-e.kr");
+        
         Server server2 = new Server();
-        server2.setUrl("http://3.37.206.141:8080");
+        server2.setUrl("http://localhost:9090");
 
 
         return new OpenAPI()
