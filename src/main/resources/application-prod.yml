@@ -13,5 +13,5 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
 
-#server:
-#  forward-headers-strategy: framework
+server:
+  forward-headers-strategy: framework
