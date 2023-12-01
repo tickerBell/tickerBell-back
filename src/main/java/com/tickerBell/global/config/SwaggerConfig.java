@@ -2,6 +2,7 @@ package com.tickerBell.global.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 @OpenAPIDefinition(
+        servers = {@Server(url = "https://tickerbell.p-e.kr", description = "배포용 스웨거 url"), @Server(url = "http://127.0.0.1:9090", description = "로컬 테스트용 스웨거 url")},
         info = @Info(title = "tickerBell API 명세서",
                 description = "tickerBell API 명세서입니다.",
                 version = "v1"))
