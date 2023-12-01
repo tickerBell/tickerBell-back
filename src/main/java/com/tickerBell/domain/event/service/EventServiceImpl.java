@@ -106,6 +106,9 @@ public class EventServiceImpl implements EventService {
         Event savedEvent = eventRepository.save(event);
         Long savedEventId = savedEvent.getId();
 
+        String thumbNailUrl = request.getThumbNailUrl();
+        imageService.updateEventByImageUrl(thumbNailUrl, savedEventId);
+
         List<String> imageUrls = request.getImageUrls();
         for (String imageUrl : imageUrls) {
             imageService.updateEventByImageUrl(imageUrl, savedEventId);

@@ -116,9 +116,10 @@ public class EventServiceTest {
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        String thumbNailUrl = "thumbNailUrl";
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url1");
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, description, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, imageUrls);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, description, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, thumbNailUrl, imageUrls);
         Event event = Event.builder().build();
 
         // stub
@@ -127,6 +128,7 @@ public class EventServiceTest {
         when(tagService.saveTagList(any(List.class))).thenReturn(1);
         when(hostRepository.save(any(Host.class))).thenReturn(Host.builder().event(event).build());
         when(castingRepository.save(any(Casting.class))).thenReturn(Casting.builder().event(event).build());
+        doNothing().when(imageService).updateEventByImageUrl("thumbNailUrl", null);
         doNothing().when(imageService).updateEventByImageUrl("url1", null);
 
         when(eventRepository.save(any(Event.class))).thenReturn(event);
@@ -173,10 +175,11 @@ public class EventServiceTest {
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
+        String thumbNailUrl = "thumbNailUrl";
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url1");
         imageUrls.add("url2");
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, description, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null, imageUrls);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, description, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, null, thumbNailUrl, imageUrls);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
@@ -220,13 +223,14 @@ public class EventServiceTest {
         Category category = Category.PLAY;
         List<String> tags = new ArrayList<>();
         MockMultipartFile thumbNailImage = new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]);
+        String thumbNailUrl = "thumbNailUrl";
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url1");
         imageUrls.add("url2");
         List<MultipartFile> eventImages = new ArrayList<>();
         eventImages.add(new MockMultipartFile("image1.jpg", "image1.jpg", "image/jpeg", new byte[0]));
         eventImages.add(new MockMultipartFile("image2.png", "image2.png", "image/png", new byte[0]));
-        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, description, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, imageUrls);
+        SaveEventRequest saveEventRequest = new SaveEventRequest(name, startEvent, endEvent, dailyStartEvent, eventTime, availablePurchaseTime, normalPrice, premiumPrice, saleDegree, castings, hosts, place, description, isAdult, Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, category, tags, thumbNailUrl, imageUrls);
 
         // stub
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(Member.builder().build()));
