@@ -32,6 +32,7 @@ public class EventResponse {
     private List<String> hosts;
     private List<String> castings;
     private String place;
+    private String description;
     private Boolean isAdult;
     private Category category;
     private Boolean isSpecialSeatA;
@@ -74,6 +75,7 @@ public class EventResponse {
                 .discountNormalPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getNormalPrice()))
                 .discountPremiumPrice(SeatPriceCalculator.getSeatPrice(event.getSaleDegree(), event.getPremiumPrice()))
                 .place(event.getPlace())
+                .description(event.getDescription())
                 .isAdult(event.getIsAdult())
                 .category(event.getCategory())
                 .isSpecialSeatA(event.getSpecialSeat().getIsSpecialSeatA())

@@ -71,8 +71,10 @@ public class SaveEventRequest {
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags;
     @NotBlank
-    @Schema(description = "이미지 url (썸네일 포함)", example = "[\"url1\", \"url2\"]")
-    private List<String> imageUrls;
+    @Schema(description = "썸네일 url", example = "thumbNailUrl")
+    private String thumbNailUrl;
+    @Schema(description = "이미지 url", example = "[\"url1\", \"url2\"]")
+    private List<String> imageUrls = new ArrayList<>();
 
     public void setPremiumPrice(Integer premiumPrice) {
         this.premiumPrice = premiumPrice == null ? -1 :premiumPrice;

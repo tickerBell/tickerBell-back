@@ -80,7 +80,7 @@ class TicketingControllerTest {
         // 등록자 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
         // image 저장
-        imageRepository.save(Image.builder().s3Url("url").build());
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(true).build());
         // event 저장
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
         TicketingRequest request = TicketingRequest.builder()
@@ -108,7 +108,7 @@ class TicketingControllerTest {
         // 등록자 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
         // image 저장
-        imageRepository.save(Image.builder().s3Url("url").build());
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(true).build());
         // event 저장
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
         TicketingNonMemberRequest request = TicketingNonMemberRequest.builder()
@@ -139,7 +139,7 @@ class TicketingControllerTest {
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
         // image 저장
-        imageRepository.save(Image.builder().s3Url("url").build());
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(true).build());
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
@@ -174,7 +174,7 @@ class TicketingControllerTest {
         // given
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
         // image 저장
-        imageRepository.save(Image.builder().s3Url("url").build());
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(true).build());
         // event 저장
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
@@ -214,7 +214,7 @@ class TicketingControllerTest {
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
         // image 저장
-        imageRepository.save(Image.builder().s3Url("url").build());
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(true).build());
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
@@ -244,7 +244,7 @@ class TicketingControllerTest {
         // event 저장
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
         // 이미지 저장
-        imageRepository.save(Image.builder().s3Url("url").build());
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(true).build());
         Long eventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
         // ticketing 저장
@@ -302,7 +302,8 @@ class TicketingControllerTest {
         List<String> tags = new ArrayList<>();
         tags.add("tag1");
         request.setTags(tags);
-        request.setImageUrls(List.of("url"));
+        request.setThumbNailUrl("url");
+//        request.setImageUrls(List.of("url"));
         return request;
     }
 }

@@ -71,7 +71,8 @@ public class EventApiControllerTest {
     void saveEventTest() throws Exception {
         // given
         SaveEventRequest mockRequest = createMockSaveEventRequest();
-        imageRepository.save(Image.builder().s3Url("url").build());
+        imageRepository.save(Image.builder().s3Url("thumbNailUrl").isThumbnail(true).build());
+        imageRepository.save(Image.builder().s3Url("url").isThumbnail(false).build());
 
         // when
         ResultActions perform = mockMvc.perform(post("/api/event")
@@ -108,6 +109,7 @@ public class EventApiControllerTest {
         List<String> tags = new ArrayList<>();
         tags.add("tag1");
         request.setTags(tags);
+        request.setThumbNailUrl("thumbNailUrl");
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url");
         request.setImageUrls(imageUrls);
@@ -132,6 +134,7 @@ public class EventApiControllerTest {
     void getEventById() throws Exception {
         // given
         Long testUserId = memberService.join("testUsername", "testPass1!", "010-1234-5679", true, Role.ROLE_REGISTRANT, null);
+        imageRepository.save(Image.builder().s3Url("thumbNailUrl").isThumbnail(true).build());
         imageRepository.save(Image.builder().s3Url("url").isThumbnail(false).build());
         Long testEventId = eventService.saveEvent(testUserId, createMockSaveEventRequest());
 
@@ -166,6 +169,7 @@ public class EventApiControllerTest {
         // given
         MemberResponse username = memberService.getMemberByUsername("username");
         Long memberId = username.getMemberId();
+        imageRepository.save(Image.builder().s3Url("thumbNailUrl").isThumbnail(true).build());
         imageRepository.save(Image.builder().s3Url("url").isThumbnail(false).build());
         Long eventId = eventService.saveEvent(memberId, createMockCancelEventRequest());
 
@@ -222,6 +226,7 @@ public class EventApiControllerTest {
         List<String> tags = new ArrayList<>();
         tags.add("tag1");
         request.setTags(tags);
+        request.setThumbNailUrl("thumbNailUrl");
         List<String> imageUrls = new ArrayList<>();
         imageUrls.add("url");
         request.setImageUrls(imageUrls);
