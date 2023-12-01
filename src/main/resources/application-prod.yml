@@ -11,3 +11,4 @@ spring:
       hibernate:
         default_batch_fetch_size: 1000
         dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
