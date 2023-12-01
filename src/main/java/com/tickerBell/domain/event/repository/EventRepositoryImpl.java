@@ -35,7 +35,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event
                 ))
                 .from(event)
-                .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
                 .where(
                         event.category.eq(Category.MUSICAL),
                         event.startEvent.after(LocalDateTime.now())
@@ -50,7 +49,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event
                 ))
                 .from(event)
-                .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
                 .where(
                         event.category.eq(Category.CONCERT),
                         event.startEvent.after(LocalDateTime.now())
@@ -65,7 +63,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event
                 ))
                 .from(event)
-                .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
                 .where(
                         event.category.eq(Category.PLAY),
                         event.startEvent.after(LocalDateTime.now())
@@ -80,7 +77,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event
                 ))
                 .from(event)
-                .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
                 .where(
                         event.category.eq(Category.CLASSIC),
                         event.startEvent.after(LocalDateTime.now())
@@ -95,7 +91,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event
                 ))
                 .from(event)
-                .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
                 .where(
                         event.category.eq(Category.SPORTS),
                         event.startEvent.after(LocalDateTime.now())
@@ -110,7 +105,6 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event
                 ))
                 .from(event)
-                .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
                 .where(
                         event.saleDegree.ne(0F), // sale 하지 않는 event 제외
                         event.startEvent.after(LocalDateTime.now())
@@ -125,12 +119,11 @@ public class EventRepositoryImpl implements EventRepositoryCustom {
                         event
                 ))
                 .from(event)
-                .join(image).on(image.event.id.eq(event.id).and(image.isThumbnail.eq(true)))
                 .where(
                         event.availablePurchaseTime.after(LocalDateTime.now())
                 )
                 .orderBy(event.availablePurchaseTime.asc()) // 최근에 개봉 하는 순으로 정렬
-                .limit(7) // 5개만 추출
+                .limit(7) // 5개만 추출ㅋㅋ
                 .fetch();
 
 

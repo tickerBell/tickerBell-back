@@ -2,18 +2,18 @@ package com.tickerBell.global.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
+import java.util.List;
 
 @OpenAPIDefinition(
-        servers = {@Server(url = "/", description = "default server url")},
         info = @Info(title = "tickerBell API 명세서",
                 description = "tickerBell API 명세서입니다.",
                 version = "v1"))
@@ -32,9 +32,17 @@ public class SwaggerConfig {
                 .in(SecurityScheme.In.HEADER).name("Authorization");
         SecurityRequirement securityRequirement = new SecurityRequirement().addList("bearerAuth");
 
+        Server server1 = new Server();
+        server1.setUrl("http:localhost:9090");
+
+        Server server2 = new Server();
+        server2.setUrl("https://tickerbell.p-e.kr");
+
+
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("bearerAuth", securityScheme))
-                .security(Arrays.asList(securityRequirement));
+                .security(Arrays.asList(securityRequirement))
+                .servers(List.of(server1, server2));
     }
 
 }
