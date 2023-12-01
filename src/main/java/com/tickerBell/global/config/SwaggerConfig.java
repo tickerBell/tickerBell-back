@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Arrays;
 
 @OpenAPIDefinition(
-        servers = {@Server(url = "https://tickerbell.p-e.kr", description = "배포용 스웨거 url"), @Server(url = "http://127.0.0.1:9090", description = "로컬 테스트용 스웨거 url")},
+        servers = {@Server(url = "/", description = "default server url")},
         info = @Info(title = "tickerBell API 명세서",
                 description = "tickerBell API 명세서입니다.",
                 version = "v1"))
