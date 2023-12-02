@@ -138,7 +138,6 @@ class MemberServiceTest {
         verify(valueOperations, times(1)).get(mockUsername);
         verify(jwtTokenProvider, times(1)).createRefreshToken(mockUsername);
         verify(jwtTokenProvider, times(1)).createAccessToken(mockUsername);
-        verify(jwtTokenProvider, times(1)).saveRefreshTokenInRedis(mockUsername, "newRefreshToken");
         assertThat(result).isNotNull();
         assertThat("newRefreshToken").isEqualTo(result.getRefreshToken());
         assertThat("mockAccessToken").isEqualTo(result.getAccessToken());
@@ -240,7 +239,6 @@ class MemberServiceTest {
         when(passwordEncoder.matches(password, mockMember.getPassword())).thenReturn(true);
         when(jwtTokenProvider.createAccessToken(username)).thenReturn(accessToken);
         when(jwtTokenProvider.createRefreshToken(username)).thenReturn(refreshToken);
-        doNothing().when(jwtTokenProvider).saveRefreshTokenInRedis(username, refreshToken);
 
         // when
         LoginResponse loginResponse = memberService.login(username, password);
@@ -250,7 +248,6 @@ class MemberServiceTest {
         verify(passwordEncoder, times(1)).matches(password, mockMember.getPassword());
         verify(jwtTokenProvider, times(1)).createAccessToken(username);
         verify(jwtTokenProvider, times(1)).createRefreshToken(username);
-        verify(jwtTokenProvider, times(1)).saveRefreshTokenInRedis(username, refreshToken);
         assertThat(loginResponse.getAccessToken()).isEqualTo(accessToken);
         assertThat(loginResponse.getRefreshToken()).isEqualTo(refreshToken);
     }

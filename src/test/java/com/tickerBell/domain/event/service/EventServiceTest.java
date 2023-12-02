@@ -71,19 +71,6 @@ public class EventServiceTest {
     private TicketingRepository ticketingRepository;
     @Mock
     private ImageRepository imageRepository;
-//    private static MockedStatic<EventListResponse> eventListResponseMockedStatic; // static 메소드 mocking
-//
-//    @BeforeEach
-//    void setUp() {
-//        eventListResponseMockedStatic = Mockito.mockStatic(EventListResponse.class);
-//    }
-//
-//    @AfterEach
-//    void afterEach() {
-//        // static 을 mocking 할 경우 다른 테스트 케이스에도 영향을 미치기 때문에 close
-//        eventListResponseMockedStatic.close();
-//    }
-
 
     @Test
     @DisplayName("이벤트 저장 테스트")

@@ -1,5 +1,7 @@
 package com.tickerBell.domain.selectedSeat.service;
 
+import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatInfoRequest;
+import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatInfoResponse;
 import com.tickerBell.domain.selectedSeat.entity.SelectedSeat;
 import com.tickerBell.domain.selectedSeat.repository.SelectedSeatRepository;
 import com.tickerBell.domain.ticketing.entity.Ticketing;
@@ -86,6 +88,30 @@ class SelectedSeatServiceImplTest {
         assertThatThrownBy(() -> selectedSeatService.validCheckSeatInfo(eventId, seatInfo, now))
                 .isInstanceOf(CustomException.class)
                 .hasMessageContaining(selectedSeat.getSeatInfo() + "은 이미 선택된 좌석 입니다.");
+    }
+
+    @Test
+    @DisplayName("event 에 해당하는 선택된 좌석 조회")
+    public void getSelectedSeatByEventIdTest() {
+        // given
+        // request
+        Long eventId = 1L;
+        String seatInfo = "A-1";
+        LocalDateTime selectedDate = LocalDateTime.now();
+        SelectedSeatInfoRequest request = SelectedSeatInfoRequest.builder().eventId(eventId).selectedDate(selectedDate).build();
+
+        // selectedSeatList
+        List<SelectedSeat> selectedSeatList = createSelectedSeatList();
+
+        // stub
+        when(selectedSeatRepository.findByEventId(any(Long.class), any(LocalDateTime.class))).thenReturn(selectedSeatList);
+
+        // when
+        List<SelectedSeatInfoResponse> selectedSeatInfoResponses = selectedSeatService.getSelectedSeatByEventId(request);
+
+        // then
+        verify(selectedSeatRepository, times(1)).findByEventId(any(Long.class), any(LocalDateTime.class));
+        assertThat(selectedSeatInfoResponses.size()).isEqualTo(selectedSeatList.size());
     }
 
     private List<SelectedSeat> createSelectedSeatList() {

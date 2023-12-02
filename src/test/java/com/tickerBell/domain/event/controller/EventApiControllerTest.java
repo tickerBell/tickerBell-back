@@ -183,6 +183,19 @@ public class EventApiControllerTest {
     }
 
     @Test
+    @DisplayName("메인 페이지 조회")
+    public void getMainPageTest() throws Exception {
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/main")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("메인 페이지 데이터 반환 완료"));
+    }
+
+    @Test
     @DisplayName("이벤트 전체 조회 테스트")
     public void findAllEventTest() throws Exception {
         // given
