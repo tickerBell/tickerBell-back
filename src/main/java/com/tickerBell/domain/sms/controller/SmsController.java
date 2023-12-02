@@ -24,9 +24,9 @@ public class SmsController {
 
     private final SmsService smsService;
 
-    @PostMapping("/sms/send")
-    public ResponseEntity<Response> sendSms(@RequestBody MessageRequest messageDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException, ParseException {
-        SendSmsResponse sendSmsResponse = smsService.sendSms(messageDto.getTo(), messageDto.getContent());
-        return ResponseEntity.ok(new Response(sendSmsResponse, "문자 발송 완료"));
-    }
+//    @PostMapping("/sms/send")
+//    public ResponseEntity<Response> sendSms(@RequestBody MessageRequest messageDto) throws JsonProcessingException, RestClientException, URISyntaxException, InvalidKeyException, NoSuchAlgorithmException, UnsupportedEncodingException, ParseException {
+//        SendSmsResponse sendSmsResponse = smsService.sendSms(messageDto.getTo(), messageDto.getContent());
+//        return ResponseEntity.ok(new Response(sendSmsResponse, "문자 발송 완료"));
+//    }
 }
