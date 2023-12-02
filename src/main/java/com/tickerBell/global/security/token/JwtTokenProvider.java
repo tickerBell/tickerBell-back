@@ -45,6 +45,8 @@ public class JwtTokenProvider {
         HashMap<String, Object> claim = new HashMap<>();
         claim.put("username", username); // 사용자 ID
         String refreshToken = createJwt("REFRESH_TOKEN", REFRESH_TOKEN_EXPIRATION_TIME, claim);
+
+        // refresh token update
         saveRefreshTokenInRedis(username, refreshToken);
         return refreshToken;
     }

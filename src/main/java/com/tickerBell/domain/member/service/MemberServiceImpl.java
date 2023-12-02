@@ -93,9 +93,6 @@ public class MemberServiceImpl implements MemberService {
                 .role(findMember.getRole())
                 .build();
 
-        // refresh 토큰 업데이트
-        jwtTokenProvider.saveRefreshTokenInRedis(username, new_refresh_token);
-
         return loginResponse;
     }
 
@@ -114,9 +111,6 @@ public class MemberServiceImpl implements MemberService {
         // access & refresh Token 생성
         String accessToken = jwtTokenProvider.createAccessToken(findMember.getUsername());
         String refreshToken = jwtTokenProvider.createRefreshToken(findMember.getUsername());
-
-        // refresh Token redis 저장
-        jwtTokenProvider.saveRefreshTokenInRedis(findMember.getUsername(), refreshToken);
 
         return LoginResponse.builder()
                 .accessToken(accessToken)
