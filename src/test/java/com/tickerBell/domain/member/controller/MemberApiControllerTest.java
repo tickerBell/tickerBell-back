@@ -155,7 +155,7 @@ class MemberApiControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequest)));
 
         // then
-        perform.andExpect(status().isNoContent());
+        perform.andExpect(status().isNotFound());
     }
 
     @Test
