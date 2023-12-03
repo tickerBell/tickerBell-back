@@ -69,7 +69,7 @@ public class SaveEventRequest {
     @Schema(description = "카테고리", example = "MUSICAL, CONCERT, PLAY, CLASSIC, SPORTS")
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
-    private List<String> tags;
+    private List<String> tags = new ArrayList<>();
     @NotBlank
     @Schema(description = "썸네일 url", example = "thumbNailUrl")
     private String thumbNailUrl;
