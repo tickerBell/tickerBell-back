@@ -50,6 +50,7 @@ public class EmitterServiceImpl implements EmitterService{
 
         if (findSseEmitter != null) {
             try {
+                log.info("in send to client");
                 findSseEmitter.send(SseEmitter.event().id(String.valueOf(memberId)).name("sse").data(data));
             } catch (IOException e) {
                 emitterRepository.deleteById(memberId);
