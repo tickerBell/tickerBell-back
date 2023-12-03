@@ -28,7 +28,7 @@ public class TestScheduled {
         }
     }
 
-    @Scheduled(cron = "0 0/3 15-17 * * ?")
+    @Scheduled(cron = "0 0/3 20-22 * * ?")
     public void selfTestSchedule() {
         List<Member> findMembers = memberRepository.findAll();
 
