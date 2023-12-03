@@ -27,7 +27,7 @@ public class SaveEventRequest {
     @NotBlank
     @Schema(description = "이벤트 종료 시간", example = "2023-11-27T23:59:59.000Z")
     private LocalDateTime endEvent;
-    @NotBlank
+    @NotNull
     @Schema(description = "일단위 시작 시간", example = "20:30:00")
     private LocalTime dailyStartEvent;
     @NotBlank
