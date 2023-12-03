@@ -7,6 +7,7 @@ import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.global.dto.Response;
 import com.tickerBell.global.security.context.MemberContext;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public class EventApiController {
 
     @PostMapping(value = "/api/event")
     @Operation(summary = "이벤트 등록 *")
-    public ResponseEntity<Response> saveEvent(@RequestBody SaveEventRequest request,
+    public ResponseEntity<Response> saveEvent(@RequestBody @Valid SaveEventRequest request,
                                               @AuthenticationPrincipal MemberContext memberContext) {
         // 로그인한 회원 객체 조회
         Member loginMember = memberContext.getMember();
