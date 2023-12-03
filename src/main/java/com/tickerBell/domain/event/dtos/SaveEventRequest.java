@@ -21,31 +21,31 @@ public class SaveEventRequest {
     @NotBlank
     @Schema(description = "이벤트 이름", example = "eventName")
     private String name;
-    @NotBlank
+    @NotNull
     @Schema(description = "이벤트 시작 시간", example = "2023-11-27T00:00:00.000Z")
     private LocalDateTime startEvent;
-    @NotBlank
+    @NotNull
     @Schema(description = "이벤트 종료 시간", example = "2023-11-27T23:59:59.000Z")
     private LocalDateTime endEvent;
-    @NotBlank
+    @NotNull
     @Schema(description = "일단위 시작 시간", example = "20:30:00")
     private LocalTime dailyStartEvent;
-    @NotBlank
+    @NotNull
     @Schema(description = "상영시간 (분단위)", example = "90")
     private Integer eventTime;
     @Schema(description = "구매 가능 시간", example = "2023-09-30T14:30:00")
     private LocalDateTime availablePurchaseTime;
-    @NotBlank
+    @NotNull
     @Schema(description = "일반석 가격", example = "10000")
     private Integer normalPrice;
     @Schema(description = "특수석 가격", example = "15000")
     private Integer premiumPrice;
     @Schema(description = "자체할인", example = "1000")
     private Float saleDegree;
-    @NotBlank
+    @NotNull
     @Schema(description = "배우", example = "[\"출연자1\", \"출연자2\"]")
     private List<String> castings;
-    @NotBlank
+    @NotNull
     @Schema(description = "주최자", example = "[\"host1\", \"host2\"]")
     private List<String> hosts;
     @NotBlank
@@ -53,7 +53,7 @@ public class SaveEventRequest {
     private String place;
     @Schema(description = "이벤트 설명", example = "공연 설명")
     private String description;
-    @NotBlank
+    @NotNull
     @Schema(description = "성인여부", example = "true")
     private Boolean isAdult;
     @NotNull
@@ -70,7 +70,7 @@ public class SaveEventRequest {
     private Category category;
     @Schema(description = "태그", example = "[\"tag1\", \"tag2\"]")
     private List<String> tags = new ArrayList<>();
-    @NotBlank
+    @NotNull
     @Schema(description = "썸네일 url", example = "thumbNailUrl")
     private String thumbNailUrl;
     @Schema(description = "이미지 url", example = "[\"url1\", \"url2\"]")
