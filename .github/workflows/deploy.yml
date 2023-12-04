@@ -70,7 +70,13 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          script: "sudo docker-compose pull && sudo docker-compose up -d"
+          script: |
+            sudo docker rm -f $(sudo docker ps -q -f "expose=8080")
+            sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
+            sudo docker-compose up -d
+            sudo docker image prune -f
+#          "sudo docker-compose pull && sudo docker-compose up -d"
 
 # docker build 배포 방식
 
