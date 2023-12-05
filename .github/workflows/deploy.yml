@@ -76,7 +76,6 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
             sudo docker-compose up -d
             sudo docker image prune -f
-#          "sudo docker-compose pull && sudo docker-compose up -d"
 
 # docker build 배포 방식
 
