@@ -20,7 +20,7 @@ public class SelectedSeatController {
     private final SelectedSeatService selectedSeatService;
 
     @Operation(summary = "이벤트에 선택된 좌석 리스트 반환", description = "예매 시 이미 선택된 좌석들을 확인하기 위한 api")
-    @PostMapping("/selected-seat/{eventId}")
+    @PostMapping("/selected-seat")
     public ResponseEntity<Response> getSelectedSeatByEventId(@RequestBody SelectedSeatInfoRequest request) {
         List<SelectedSeatInfoResponse> selectedSeatInfoResponseList = selectedSeatService.getSelectedSeatByEventId(request);
         return ResponseEntity.ok(new Response(selectedSeatInfoResponseList, "해당 이벤트에 선택된 좌석 정보 반환"));

@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/event/**", "/api/members", "/reissue", "/api/login", "/api/join/sms-validation").permitAll()
                 .requestMatchers(HttpMethod.POST, "/reissue", "/api/members", "/api/login",
                         "/api/join/sms-validation", "/naver-api/path", "/ticketing-nonMember",
-                        "/graphql", "/selected-seat/{eventId}").permitAll()
+                        "/graphql", "/selected-seat").permitAll()
                 .requestMatchers(HttpMethod.GET, "/ticketing-nonMember", "/api/main", "/api/events/{category}",
                         "/api/event/{eventId}", "/login/oauth2/code", "/api/events",
                         "/error").permitAll()
