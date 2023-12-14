@@ -1,6 +1,7 @@
 package com.tickerBell.domain.member.controller;
 
 import com.tickerBell.domain.member.dtos.*;
+import com.tickerBell.domain.member.dtos.myPage.MyPageResponse_V2;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -95,6 +97,18 @@ public class MemberApiController {
         MyPageListResponse myPageListResponse = memberService.getMyPage(loginMember.getId(), pageable);
 
         return ResponseEntity.ok(new Response(myPageListResponse, "마이페이지 조회 성공"));
+    }
+
+    @Operation(summary = "회원: 마이 페이지 조회 *")
+    @GetMapping("/api/member/myPage")
+    public ResponseEntity<Response> getMyPage(@AuthenticationPrincipal MemberContext memberContext,
+                                              @RequestParam(name = "page", required = false, defaultValue = "0") int page,
+                                              @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
+
+        Member loginMember = memberContext.getMember();
+        MyPageResponse_V2 myPageResponseV2 = memberService.getMyPage_(loginMember.getId(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
+
+        return ResponseEntity.ok(new Response(myPageResponseV2, "마이페이지 조회 성공"));
     }
 
     @PutMapping("/api/member/password")

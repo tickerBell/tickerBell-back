@@ -2,23 +2,26 @@ package com.tickerBell.domain.member.service;
 
 import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
+import com.tickerBell.domain.event.dtos.EventHistoryRegisterResponse;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.member.dtos.*;
+import com.tickerBell.domain.member.dtos.myPage.MyPageResponse_V2;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.domain.sms.service.SmsService;
+import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
 import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
+import com.tickerBell.domain.ticketing.service.TicketingService;
 import com.tickerBell.global.exception.CustomException;
 import com.tickerBell.global.exception.ErrorCode;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,6 +46,7 @@ public class MemberServiceImpl implements MemberService {
     private final TicketingRepository ticketingRepository;
     private final CastingRepository castingRepository;
     private final EventRepository eventRepository;
+    private final TicketingService ticketingService;
 
     @Override
     @Transactional
@@ -131,6 +136,38 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomException(ErrorCode.SMS_SEND_FAIL);
         }
         return new JoinSmsValidationResponse(randomNumber);
+    }
+
+    @Override
+    public MyPageResponse_V2 getMyPage_(Long memberId, PageRequest pageRequest) {
+        Member findMember = memberRepository.findById(memberId).orElseThrow(
+                () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        MyPageResponse_V2 myPageResponse_v2 = MyPageResponse_V2.builder()
+                .username(findMember.getUsername())
+                .phone(findMember.getPhone())
+                .role(findMember.getRole())
+                .build();
+
+        if (findMember.getRole() == Role.ROLE_USER) {
+            Page<Ticketing> ticketingListPage = ticketingRepository.findByMemberId(findMember.getId(), pageRequest);
+            List<TicketingResponse> ticketingResponseList = ticketingListPage.stream()
+                    .map(ticketing -> TicketingResponse.from(ticketing))
+                    .collect(Collectors.toList());
+            PageImpl<TicketingResponse> ticketingPageResponseList = new PageImpl<>(ticketingResponseList, ticketingListPage.getPageable(), ticketingListPage.getTotalElements());
+            myPageResponse_v2.setTicketingResponseList(ticketingPageResponseList);
+        }
+
+        if (findMember.getRole() == Role.ROLE_REGISTRANT) {
+            Page<Event> eventPageList = eventRepository.findByMemberIdPage(findMember.getId(), pageRequest);
+            List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
+                    .map(event -> EventHistoryRegisterResponse.from(event))
+                    .collect(Collectors.toList());
+
+            PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
+            myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
+        }
+        return myPageResponse_v2;
     }
 
     @Override

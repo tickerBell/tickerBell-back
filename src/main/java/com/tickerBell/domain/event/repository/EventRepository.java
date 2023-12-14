@@ -75,4 +75,6 @@ public interface EventRepository extends JpaRepository<Event, Long>, EventReposi
     @Query("select distinct e from Casting c join c.event e where c.castingName like %:casting%")
     List<Event> findByCasting(@Param("casting") String casting);
 
+    @Query("select e from Event e where e.member.id = :memberId")
+    Page<Event> findByMemberIdPage(@Param("memberId") Long memberId, Pageable pageable);
 }

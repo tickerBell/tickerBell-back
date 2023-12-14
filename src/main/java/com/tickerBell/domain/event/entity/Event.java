@@ -6,6 +6,7 @@ import com.tickerBell.domain.host.entity.Host;
 import com.tickerBell.domain.image.entity.Image;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.specialseat.entity.SpecialSeat;
+import com.tickerBell.domain.ticketing.entity.Ticketing;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -54,6 +55,8 @@ public class Event extends BaseEntity {
     private List<Image> imageList = new ArrayList<>();
     @OneToMany(mappedBy = "event")
     private List<Host> hostList = new ArrayList<>();
+    @OneToMany(mappedBy = "event")
+    private List<Ticketing> ticketingList = new ArrayList<>(); // ticketing 양방향 연관 관계 추가
 
     @Builder
     public Event(String name, LocalDateTime startEvent, LocalTime dailyStartEvent, LocalDateTime endEvent, LocalDateTime availablePurchaseTime, Integer eventTime, Integer normalPrice, Integer premiumPrice, Float saleDegree, Integer totalSeat, Integer remainSeat, String place, String description, Boolean isAdult, Category category, Member member, SpecialSeat specialSeat) {
