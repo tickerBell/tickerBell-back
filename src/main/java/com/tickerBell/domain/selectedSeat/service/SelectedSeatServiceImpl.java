@@ -1,5 +1,6 @@
 package com.tickerBell.domain.selectedSeat.service;
 
+import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatCountResponse;
 import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatInfoRequest;
 import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatInfoResponse;
 import com.tickerBell.domain.selectedSeat.dtos.SelectedSeatResponse;
@@ -48,5 +49,11 @@ public class SelectedSeatServiceImpl implements SelectedSeatService{
         return selectedSeatRepository.findByEventId(request.getEventId(), request.getSelectedDate()).stream()
                 .map(selectedSeat -> SelectedSeatInfoResponse.from(selectedSeat))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public SelectedSeatCountResponse getSelectedSeatCount(SelectedSeatInfoRequest request) {
+        Integer selectedSeatCount = selectedSeatRepository.findSelectedSeatCount(request.getEventId(), request.getSelectedDate());
+        return new SelectedSeatCountResponse(selectedSeatCount);
     }
 }

@@ -50,7 +50,7 @@ public class TicketingResponse {
                 .selectedDate(ticketing.getSelectedDate())
                 .paymentId(ticketing.getPaymentId())
                 .isPast(isPast)
-                .isDelete(ticketing.getIsDelete())
+                .isTicketingCancelled(ticketing.getIsDelete())
                 .build();
     }
 }

@@ -20,4 +20,7 @@ public interface SelectedSeatRepository extends JpaRepository<SelectedSeat, Long
 
     @Query("select s from SelectedSeat s where s.ticketing.event.id = :eventId and s.ticketing.selectedDate = :selectedDate")
     List<SelectedSeat> findByEventId(@Param("eventId") Long eventId, @Param("selectedDate") LocalDateTime selectedDate);
+
+    @Query("select count(s) from SelectedSeat s where s.ticketing.event.id = :eventId and s.ticketing.selectedDate = :selectedDate")
+    Integer findSelectedSeatCount(@Param("eventId") Long eventId, @Param("selectedDate") LocalDateTime selectedDate);
 }

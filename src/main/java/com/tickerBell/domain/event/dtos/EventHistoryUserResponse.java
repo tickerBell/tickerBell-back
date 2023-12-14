@@ -37,6 +37,7 @@ public class EventHistoryUserResponse {
                 .place(event.getPlace())
                 .castingList(castingList)
                 .startEvent(event.getStartEvent())
+                .endEvent(event.getEndEvent())
                 .build();
     }
 }
