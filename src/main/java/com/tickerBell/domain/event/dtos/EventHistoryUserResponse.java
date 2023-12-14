@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 public class EventHistoryUserResponse {
     /**
-     * 예매 내역 볼 때 필요한 이벤트 정보 반환 클래스
+     * 예매자 회원 myPage 조회 시 예매 내역 리스트에 사용 되는 event dto
      */
     private Long eventId;
     private String eventName; // 이벤트 명

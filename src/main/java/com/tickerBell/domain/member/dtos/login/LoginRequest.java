@@ -1,4 +1,4 @@
-package com.tickerBell.domain.member.dtos;
+package com.tickerBell.domain.member.dtos.login;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;

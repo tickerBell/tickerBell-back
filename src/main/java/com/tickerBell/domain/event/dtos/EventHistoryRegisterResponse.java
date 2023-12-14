@@ -15,6 +15,9 @@ import java.util.List;
 @Builder
 @Getter
 public class EventHistoryRegisterResponse {
+    /**
+     * 등록자 회원 myPage 조회 시 등록 event list 에 사용 되는 event dto
+     */
     private Long eventId;
     private String eventName; // 이벤트 명
     private String place; // 이벤트 장소

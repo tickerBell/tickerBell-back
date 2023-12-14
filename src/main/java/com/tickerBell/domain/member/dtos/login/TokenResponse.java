@@ -1,4 +1,4 @@
-package com.tickerBell.domain.member.dtos;
+package com.tickerBell.domain.member.dtos.login;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;

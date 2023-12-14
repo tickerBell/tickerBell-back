@@ -1,6 +1,6 @@
 package com.tickerBell.domain.member.controller;
 
-import com.tickerBell.domain.member.dtos.TokenRequest;
+import com.tickerBell.domain.member.dtos.login.TokenRequest;
 import com.tickerBell.domain.member.service.OauthService;
 import com.tickerBell.global.dto.Response;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 

@@ -1,4 +1,4 @@
-package com.tickerBell.domain.member.dtos;
+package com.tickerBell.domain.member.dtos.join;
 
 import lombok.*;
 

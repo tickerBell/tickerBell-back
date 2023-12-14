@@ -1,4 +1,4 @@
-package com.tickerBell.domain.member.dtos;
+package com.tickerBell.domain.member.dtos.myPage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,7 +1,7 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.member.dtos.TokenRequest;
-import com.tickerBell.domain.member.dtos.TokenResponse;
+import com.tickerBell.domain.member.dtos.login.TokenRequest;
+import com.tickerBell.domain.member.dtos.login.TokenResponse;
 import com.tickerBell.global.dto.Response;
 import org.springframework.http.ResponseEntity;
 

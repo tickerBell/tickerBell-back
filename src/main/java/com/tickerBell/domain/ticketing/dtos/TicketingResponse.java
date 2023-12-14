@@ -24,7 +24,7 @@ public class TicketingResponse {
     private LocalDateTime selectedDate; // 예매 날짜
     private String paymentId; // 구매 식별 번호
     private Boolean isPast; // 현재 시점으로부터 지난 예매인지 여부
-    private Boolean isDelete; // 취소한 예매인지 여부
+    private Boolean isTicketingCancelled; // 취소한 예매인지 여부
 
 
     public static TicketingResponse from(Ticketing ticketing) {

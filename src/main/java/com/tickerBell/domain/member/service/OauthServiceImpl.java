@@ -1,11 +1,11 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.member.dtos.TokenRequest;
-import com.tickerBell.domain.member.dtos.TokenResponse;
+import com.tickerBell.domain.member.dtos.login.TokenRequest;
+import com.tickerBell.domain.member.dtos.login.TokenResponse;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.repository.MemberRepository;
 import com.tickerBell.global.dto.Response;
-import com.tickerBell.domain.member.dtos.LoginResponse;
+import com.tickerBell.domain.member.dtos.login.LoginResponse;
 import com.tickerBell.global.security.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
