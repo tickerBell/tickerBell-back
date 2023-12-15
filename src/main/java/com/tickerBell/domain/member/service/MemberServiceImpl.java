@@ -147,6 +147,7 @@ public class MemberServiceImpl implements MemberService {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
+        // 공통 부분 (회원 정보)
         MyPageResponse_V2 myPageResponse_v2 = MyPageResponse_V2.builder()
                 .username(findMember.getUsername())
                 .phone(findMember.getPhone())
@@ -154,20 +155,33 @@ public class MemberServiceImpl implements MemberService {
                 .build();
 
         if (findMember.getRole() == Role.ROLE_USER) {
+            // 페이징 처리 된 예매 내역
             Page<Ticketing> ticketingListPage = ticketingRepository.findByMemberId(findMember.getId(), pageRequest);
+
+            // 위에서 구한 list 를 dto 로 변환
+            // 공연 시간이 현재 시간 보다 지난 공연 인지 여부와
+            // selectedSeat 리스트,
+            // 각 좌석의 가격 합 추가해서 반환
             List<TicketingResponse> ticketingResponseList = ticketingListPage.stream()
                     .map(ticketing -> TicketingResponse.from(ticketing))
                     .collect(Collectors.toList());
+
+            // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
             PageImpl<TicketingResponse> ticketingPageResponseList = new PageImpl<>(ticketingResponseList, ticketingListPage.getPageable(), ticketingListPage.getTotalElements());
             myPageResponse_v2.setTicketingResponseList(ticketingPageResponseList);
         }
 
         if (findMember.getRole() == Role.ROLE_REGISTRANT) {
+            // 페이징 처리 된 이벤트 등록 내역
             Page<Event> eventPageList = eventRepository.findByMemberIdPage(findMember.getId(), pageRequest);
+
+            // event -> ticketing -> selectedSeat.size() 를 사용해 전체 예매 좌석 구함
+            // 나머진 기존과 거의 비슷
             List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
                     .map(event -> EventHistoryRegisterResponse.from(event))
                     .collect(Collectors.toList());
 
+            // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
             PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
             myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
         }
