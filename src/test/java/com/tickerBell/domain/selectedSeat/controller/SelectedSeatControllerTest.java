@@ -53,7 +53,7 @@ class SelectedSeatControllerTest {
                 .build();
 
         // when
-        ResultActions perform = mockMvc.perform(post("/selected-seat/{eventId}", eventId)
+        ResultActions perform = mockMvc.perform(post("/selected-seat", eventId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
 

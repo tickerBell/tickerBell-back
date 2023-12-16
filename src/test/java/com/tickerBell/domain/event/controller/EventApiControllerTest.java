@@ -90,6 +90,7 @@ public class EventApiControllerTest {
         request.setEndEvent(LocalDateTime.now());
         request.setDailyStartEvent(LocalTime.now());
         request.setName("mockName");
+        request.setEventTime(100);
         request.setNormalPrice(10000);
         request.setPremiumPrice(15000);
         request.setSaleDegree(1000F);
@@ -220,6 +221,7 @@ public class EventApiControllerTest {
         request.setEndEvent(LocalDateTime.now());
         request.setDailyStartEvent(LocalTime.now());
         request.setName("mockName");
+        request.setAvailablePurchaseTime(LocalDateTime.now());
         request.setNormalPrice(10000);
         request.setPremiumPrice(15000);
         request.setSaleDegree(1000F);
