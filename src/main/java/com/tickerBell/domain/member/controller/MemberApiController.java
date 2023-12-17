@@ -94,19 +94,6 @@ public class MemberApiController {
     }
 
     @Operation(summary = "회원: 마이 페이지 조회 *")
-    @GetMapping("/api/member/my")
-    public ResponseEntity<Response> myPage(@AuthenticationPrincipal MemberContext memberContext,
-                                           @PageableDefault(size = 10,
-                                           sort = "createdDate",
-                                           direction = Sort.Direction.DESC)Pageable pageable) {
-
-        Member loginMember = memberContext.getMember();
-        MyPageListResponse myPageListResponse = memberService.getMyPage(loginMember.getId(), pageable);
-
-        return ResponseEntity.ok(new Response(myPageListResponse, "마이페이지 조회 성공"));
-    }
-
-    @Operation(summary = "회원: 마이 페이지 조회 *")
     @GetMapping("/api/member/myPage")
     public ResponseEntity<Response> getMyPage(@AuthenticationPrincipal MemberContext memberContext,
                                               @RequestParam(name = "page", required = false, defaultValue = "0") int page,

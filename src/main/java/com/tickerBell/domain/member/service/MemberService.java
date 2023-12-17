@@ -17,7 +17,6 @@ public interface MemberService {
     LoginResponse regenerateToken(RefreshTokenRequest refreshTokenRequest);
     LoginResponse login(String username, String password);
     JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request);
-    MyPageListResponse getMyPage(Long memberId, Pageable pageable);
     MyPageResponse_V2 getMyPage_(Long memberId, PageRequest pageRequest);
     MemberResponse getMember(Long memberId);
     MemberResponse getMemberByUsername(String username);

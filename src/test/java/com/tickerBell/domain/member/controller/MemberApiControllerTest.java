@@ -230,48 +230,6 @@ class MemberApiControllerTest {
     }
 
     @Test
-    @DisplayName("일반회원 마이페이지 조회 테스트")
-    @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    void generalMyPageTest() throws Exception {
-        // given
-
-        List<String> selectedSeats = new ArrayList<>();
-        selectedSeats.add("A1");
-        TicketingRequest ticketingRequest = TicketingRequest.builder().selectedSeat(selectedSeats).eventId(1L).build();
-        String request = objectMapper.writeValueAsString(ticketingRequest);
-        mockMvc.perform(post("/ticketing")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(request));
-
-        // when
-        ResultActions perform = mockMvc.perform(get("/api/member/my")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        // then
-        perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
-                .andExpect(jsonPath("$.data.username").value("testUsername"))
-                .andExpect(jsonPath("$.data.role").value(Role.ROLE_USER.name()));
-    }
-
-    @Test
-    @DisplayName("등록자 회원 마이페이지 조회 테스트")
-    @WithUserDetails(value = "registrant", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    void registrantMyPageTest() throws Exception {
-        // given
-
-        // when
-        ResultActions perform = mockMvc.perform(get("/api/member/my")
-                .contentType(MediaType.APPLICATION_JSON));
-
-        // then
-        perform.andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"))
-                .andExpect(jsonPath("$.data.username").value("registrant"))
-                .andExpect(jsonPath("$.data.role").value(Role.ROLE_REGISTRANT.name()));
-    }
-
-    @Test
     @DisplayName("사용자 비밀번호 변경 테스트")
     @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void updateMemberPasswordTest() throws Exception {
