@@ -7,10 +7,12 @@ import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.dtos.login.LoginResponse;
 import com.tickerBell.domain.member.dtos.login.RefreshTokenRequest;
+import com.tickerBell.domain.member.dtos.myPage.MyPageResponse;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
 import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
 import com.tickerBell.global.exception.CustomException;
@@ -24,9 +26,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,12 +39,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -513,5 +520,38 @@ class MemberServiceTest {
         });
         verify(memberRepository, times(1)).findById(memberId);
         verify(passwordEncoder, times(1)).matches(password, currentMember.getPassword());
+    }
+
+    @Test
+    @DisplayName("마이페이지 조회: 예매자")
+    public void getMyPageUserTest() {
+        // given
+        Member member = spy(Member.builder().role(Role.ROLE_USER).build()); // 예매자
+        Long memberId = 1L;
+
+        Ticketing ticketing1 = Ticketing.builder().build(); // ticketing 1
+        Ticketing ticketing2 = Ticketing.builder().build(); // ticketing 2
+        List<Ticketing> ticketingList = List.of(ticketing1, ticketing2);
+
+        PageRequest pageRequest = PageRequest.of(0, 10); // pageRequest
+        Page<Ticketing> ticketingListPage = new PageImpl<>(ticketingList, pageRequest, ticketingList.size()); // ticketing page
+
+        TicketingResponse ticketingResponse = TicketingResponse.builder().build(); // ticketingResponse1
+
+        MockedStatic<TicketingResponse> ticketingResponseMockedStatic = mockStatic(TicketingResponse.class);
+
+        // stub
+        when(member.getId()).thenReturn(memberId);
+        when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
+        when(ticketingRepository.findByMemberId(any(Long.class), any(PageRequest.class))).thenReturn(ticketingListPage);
+        given(TicketingResponse.from(any(Ticketing.class))).willReturn(ticketingResponse);
+
+        // when
+        MyPageResponse myPageResponse = memberService.getMyPage(memberId, pageRequest);
+
+        // then
+
+        ticketingResponseMockedStatic.close();
+
     }
 }
