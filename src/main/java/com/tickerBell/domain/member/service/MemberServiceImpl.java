@@ -1,6 +1,5 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
 import com.tickerBell.domain.event.dtos.EventHistoryRegisterResponse;
 import com.tickerBell.domain.event.entity.Event;
@@ -10,7 +9,7 @@ import com.tickerBell.domain.member.dtos.join.JoinSmsValidationRequest;
 import com.tickerBell.domain.member.dtos.join.JoinSmsValidationResponse;
 import com.tickerBell.domain.member.dtos.login.LoginResponse;
 import com.tickerBell.domain.member.dtos.login.RefreshTokenRequest;
-import com.tickerBell.domain.member.dtos.myPage.MyPageResponse_V2;
+import com.tickerBell.domain.member.dtos.myPage.MyPageResponse;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
@@ -31,7 +30,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -143,12 +141,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MyPageResponse_V2 getMyPage_(Long memberId, PageRequest pageRequest) {
+    public MyPageResponse getMyPage(Long memberId, PageRequest pageRequest) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         // 공통 부분 (회원 정보)
-        MyPageResponse_V2 myPageResponse_v2 = MyPageResponse_V2.builder()
+        MyPageResponse myPageResponse_v2 = MyPageResponse.builder()
                 .username(findMember.getUsername())
                 .phone(findMember.getPhone())
                 .role(findMember.getRole())

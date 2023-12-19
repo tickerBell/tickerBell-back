@@ -8,7 +8,7 @@ import com.tickerBell.domain.member.dtos.login.LoginRequest;
 import com.tickerBell.domain.member.dtos.login.LoginResponse;
 import com.tickerBell.domain.member.dtos.login.RefreshTokenRequest;
 import com.tickerBell.domain.member.dtos.myPage.MemberPasswordRequest;
-import com.tickerBell.domain.member.dtos.myPage.MyPageResponse_V2;
+import com.tickerBell.domain.member.dtos.myPage.MyPageResponse;
 import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
@@ -20,9 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -100,7 +98,7 @@ public class MemberApiController {
                                               @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
 
         Member loginMember = memberContext.getMember();
-        MyPageResponse_V2 myPageResponseV2 = memberService.getMyPage_(loginMember.getId(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
+        MyPageResponse myPageResponseV2 = memberService.getMyPage(loginMember.getId(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
 
         return ResponseEntity.ok(new Response(myPageResponseV2, "마이페이지 조회 성공"));
     }
