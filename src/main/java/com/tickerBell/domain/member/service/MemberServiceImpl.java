@@ -141,7 +141,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MyPageResponse getMyPage(Long memberId, PageRequest pageRequest) {
+    public MyPageResponse getMyPage(Long memberId, Boolean isEventCancelledFilter, PageRequest pageRequest) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
@@ -170,18 +170,34 @@ public class MemberServiceImpl implements MemberService {
         }
 
         if (findMember.getRole() == Role.ROLE_REGISTRANT) {
-            // 페이징 처리 된 이벤트 등록 내역
-            Page<Event> eventPageList = eventRepository.findByMemberIdPage(findMember.getId(), pageRequest);
 
-            // event -> ticketing -> selectedSeat.size() 를 사용해 전체 예매 좌석 구함
-            // 나머진 기존과 거의 비슷
-            List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
-                    .map(event -> EventHistoryRegisterResponse.from(event))
-                    .collect(Collectors.toList());
+            if (isEventCancelledFilter == null) {
+                // 페이징 처리 된 이벤트 등록 내역
+                Page<Event> eventPageList = eventRepository.findByMemberIdPage(findMember.getId(), pageRequest);
 
-            // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
-            PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
-            myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
+                // event -> ticketing -> selectedSeat.size() 를 사용해 전체 예매 좌석 구함
+                // 나머진 기존과 거의 비슷
+                List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
+                        .map(event -> EventHistoryRegisterResponse.from(event))
+                        .collect(Collectors.toList());
+
+                // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
+                PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
+                myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
+            } else {
+                // 페이징 처리 된 이벤트 등록 내역
+                Page<Event> eventPageList = eventRepository.findByMemberIdPageByIsCancelled(findMember.getId(), isEventCancelledFilter, pageRequest);
+
+                // event -> ticketing -> selectedSeat.size() 를 사용해 전체 예매 좌석 구함
+                // 나머진 기존과 거의 비슷
+                List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
+                        .map(event -> EventHistoryRegisterResponse.from(event))
+                        .collect(Collectors.toList());
+
+                // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
+                PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
+                myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
+            }
         }
         return myPageResponse_v2;
     }
