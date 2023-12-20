@@ -1,8 +1,6 @@
 package com.tickerBell.domain.member.service;
 
-import com.tickerBell.domain.casting.entity.Casting;
 import com.tickerBell.domain.casting.repository.CastingRepository;
-import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.dtos.login.LoginResponse;
@@ -31,15 +29,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -528,6 +522,7 @@ class MemberServiceTest {
         // given
         Member member = spy(Member.builder().role(Role.ROLE_USER).build()); // 예매자
         Long memberId = 1L;
+        Boolean isEventCancelledFilter = true;
 
         Ticketing ticketing1 = Ticketing.builder().build(); // ticketing 1
         Ticketing ticketing2 = Ticketing.builder().build(); // ticketing 2
@@ -547,7 +542,7 @@ class MemberServiceTest {
         given(TicketingResponse.from(any(Ticketing.class))).willReturn(ticketingResponse);
 
         // when
-        MyPageResponse myPageResponse = memberService.getMyPage(memberId, pageRequest);
+        MyPageResponse myPageResponse = memberService.getMyPage(memberId, isEventCancelledFilter, pageRequest);
 
         // then
 
