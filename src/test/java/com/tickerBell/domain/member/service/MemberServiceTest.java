@@ -523,6 +523,7 @@ class MemberServiceTest {
         Member member = spy(Member.builder().role(Role.ROLE_USER).build()); // 예매자
         Long memberId = 1L;
         Boolean isEventCancelledFilter = true;
+        Boolean isTicketingCancelledFilter = true;
 
         Ticketing ticketing1 = Ticketing.builder().build(); // ticketing 1
         Ticketing ticketing2 = Ticketing.builder().build(); // ticketing 2
@@ -542,7 +543,7 @@ class MemberServiceTest {
         given(TicketingResponse.from(any(Ticketing.class))).willReturn(ticketingResponse);
 
         // when
-        MyPageResponse myPageResponse = memberService.getMyPage(memberId, isEventCancelledFilter, pageRequest);
+        MyPageResponse myPageResponse = memberService.getMyPage(memberId, isEventCancelledFilter, isTicketingCancelledFilter, pageRequest);
 
         // then
 

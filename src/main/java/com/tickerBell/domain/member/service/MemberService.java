@@ -16,7 +16,7 @@ public interface MemberService {
     LoginResponse regenerateToken(RefreshTokenRequest refreshTokenRequest);
     LoginResponse login(String username, String password);
     JoinSmsValidationResponse joinSmsValidation(JoinSmsValidationRequest request);
-    MyPageResponse getMyPage(Long memberId, Boolean isEventCancelledFilter, PageRequest pageRequest);
+    MyPageResponse getMyPage(Long memberId, Boolean isEventCancelled, Boolean isTicketingCancelled, PageRequest pageRequest);
     MemberResponse getMember(Long memberId);
     MemberResponse getMemberByUsername(String username);
     void updatePassword(Long memberId, String password);

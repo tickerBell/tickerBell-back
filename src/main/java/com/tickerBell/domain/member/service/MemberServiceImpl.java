@@ -141,7 +141,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MyPageResponse getMyPage(Long memberId, Boolean isEventCancelledFilter, PageRequest pageRequest) {
+    public MyPageResponse getMyPage(Long memberId, Boolean isEventCancelled, Boolean isTicketingCancelled, PageRequest pageRequest) {
         Member findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
@@ -153,51 +153,40 @@ public class MemberServiceImpl implements MemberService {
                 .build();
 
         if (findMember.getRole() == Role.ROLE_USER) {
-            // 페이징 처리 된 예매 내역
-            Page<Ticketing> ticketingListPage = ticketingRepository.findByMemberId(findMember.getId(), pageRequest);
+            Page<Ticketing> ticketingListPage; // 페이징 처리 된 티켓 예매 내역
+            if (isTicketingCancelled) {
+                // 취소된 예매 내역
+                ticketingListPage = ticketingRepository.findByMemberIdAndIsDeleted(findMember.getId(), true, pageRequest);
+            }
+            else {
+                ticketingListPage = ticketingRepository.findByMemberIdAndIsDeleted(findMember.getId(), false, pageRequest);
+            }
 
-            // 위에서 구한 list 를 dto 로 변환
-            // 공연 시간이 현재 시간 보다 지난 공연 인지 여부와
-            // selectedSeat 리스트,
-            // 각 좌석의 가격 합 추가해서 반환
             List<TicketingResponse> ticketingResponseList = ticketingListPage.stream()
                     .map(ticketing -> TicketingResponse.from(ticketing))
                     .collect(Collectors.toList());
 
-            // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
+            // pageImpl 생성
             PageImpl<TicketingResponse> ticketingPageResponseList = new PageImpl<>(ticketingResponseList, ticketingListPage.getPageable(), ticketingListPage.getTotalElements());
             myPageResponse_v2.setTicketingResponseList(ticketingPageResponseList);
         }
 
         if (findMember.getRole() == Role.ROLE_REGISTRANT) {
-
-            if (isEventCancelledFilter == null) {
-                // 페이징 처리 된 이벤트 등록 내역
-                Page<Event> eventPageList = eventRepository.findByMemberIdPage(findMember.getId(), pageRequest);
-
-                // event -> ticketing -> selectedSeat.size() 를 사용해 전체 예매 좌석 구함
-                // 나머진 기존과 거의 비슷
-                List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
-                        .map(event -> EventHistoryRegisterResponse.from(event))
-                        .collect(Collectors.toList());
-
-                // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
-                PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
-                myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
+            Page<Event> eventPageList; // 페이징 처리 된 이벤트 등록 내역
+            if (isEventCancelled) {
+                // 취소한 이벤트 등록 내역
+                eventPageList = eventRepository.findByMemberIdPageByIsCancelled(findMember.getId(), true, pageRequest);
             } else {
-                // 페이징 처리 된 이벤트 등록 내역
-                Page<Event> eventPageList = eventRepository.findByMemberIdPageByIsCancelled(findMember.getId(), isEventCancelledFilter, pageRequest);
-
-                // event -> ticketing -> selectedSeat.size() 를 사용해 전체 예매 좌석 구함
-                // 나머진 기존과 거의 비슷
-                List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
-                        .map(event -> EventHistoryRegisterResponse.from(event))
-                        .collect(Collectors.toList());
-
-                // PageImpl 을 사용할 경우 page 관련 데이터가 자동으로 추가되서 다시 dto 리스트를 pageImpl 로 감싸줌
-                PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
-                myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
+                eventPageList = eventRepository.findByMemberIdPageByIsCancelled(findMember.getId(), false, pageRequest);
             }
+
+            List<EventHistoryRegisterResponse> eventHistoryRegisterResponseList = eventPageList.stream()
+                    .map(event -> EventHistoryRegisterResponse.from(event))
+                    .collect(Collectors.toList());
+
+            // pageImpl 생성
+            PageImpl<EventHistoryRegisterResponse> eventHistoryResponseList = new PageImpl<>(eventHistoryRegisterResponseList, eventPageList.getPageable(), eventPageList.getTotalElements());
+            myPageResponse_v2.setEventHistoryRegisterResponseList(eventHistoryResponseList);
         }
         return myPageResponse_v2;
     }

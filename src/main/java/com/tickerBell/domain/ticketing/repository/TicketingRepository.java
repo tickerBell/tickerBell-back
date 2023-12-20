@@ -39,4 +39,9 @@ public interface TicketingRepository extends JpaRepository<Ticketing, Long>, Tic
             " join fetch t.selectedSeatList ts" +
             " where t.event.id = :eventId")
     List<Ticketing> findByEventId(@Param("eventId") Long eventId);
+
+    @Query("select t from Ticketing t where t.member.id = :memberId and t.isDelete = :isDeleted ")
+    Page<Ticketing> findByMemberIdAndIsDeleted(@Param("memberId") Long memberId,
+                                               @Param("isDeleted") Boolean isDeleted,
+                                               Pageable pageable);
 }
