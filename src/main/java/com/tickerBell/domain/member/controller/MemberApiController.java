@@ -94,11 +94,12 @@ public class MemberApiController {
     @Operation(summary = "회원: 마이 페이지 조회 *")
     @GetMapping("/api/member/myPage")
     public ResponseEntity<Response> getMyPage(@AuthenticationPrincipal MemberContext memberContext,
+                                              @RequestParam(name = "isEventCancelledFilter", required = false) Boolean isEventCancelledFilter,
                                               @RequestParam(name = "page", required = false, defaultValue = "0") int page,
                                               @RequestParam(name = "size", required = false, defaultValue = "10") int size) {
 
         Member loginMember = memberContext.getMember();
-        MyPageResponse myPageResponseV2 = memberService.getMyPage(loginMember.getId(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
+        MyPageResponse myPageResponseV2 = memberService.getMyPage(loginMember.getId(), isEventCancelledFilter, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdDate")));
 
         return ResponseEntity.ok(new Response(myPageResponseV2, "마이페이지 조회 성공"));
     }
