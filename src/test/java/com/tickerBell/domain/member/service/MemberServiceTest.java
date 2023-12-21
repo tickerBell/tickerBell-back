@@ -1,6 +1,8 @@
 package com.tickerBell.domain.member.service;
 
 import com.tickerBell.domain.casting.repository.CastingRepository;
+import com.tickerBell.domain.event.dtos.EventHistoryRegisterResponse;
+import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.member.dtos.*;
 import com.tickerBell.domain.member.dtos.login.LoginResponse;
@@ -517,13 +519,13 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("마이페이지 조회: 예매자")
-    public void getMyPageUserTest() {
+    @DisplayName("예매자: 마이페이지 조회, 취소하지 않은 예매 내역")
+    public void getMyPageUserNotCancelledTest() {
         // given
         Member member = spy(Member.builder().role(Role.ROLE_USER).build()); // 예매자
         Long memberId = 1L;
-        Boolean isEventCancelledFilter = true;
-        Boolean isTicketingCancelledFilter = true;
+        Boolean isEventCancelledFilter = false;
+        Boolean isTicketingCancelledFilter = false;
 
         Ticketing ticketing1 = Ticketing.builder().build(); // ticketing 1
         Ticketing ticketing2 = Ticketing.builder().build(); // ticketing 2
@@ -532,22 +534,146 @@ class MemberServiceTest {
         PageRequest pageRequest = PageRequest.of(0, 10); // pageRequest
         Page<Ticketing> ticketingListPage = new PageImpl<>(ticketingList, pageRequest, ticketingList.size()); // ticketing page
 
-        TicketingResponse ticketingResponse = TicketingResponse.builder().build(); // ticketingResponse1
+        TicketingResponse ticketingResponse = TicketingResponse.builder().isTicketingCancelled(false).build(); // ticketingResponse (취소하지 않은 예매 내역 dto)
 
         MockedStatic<TicketingResponse> ticketingResponseMockedStatic = mockStatic(TicketingResponse.class);
 
         // stub
         when(member.getId()).thenReturn(memberId);
         when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
-        when(ticketingRepository.findByMemberId(any(Long.class), any(PageRequest.class))).thenReturn(ticketingListPage);
+        when(ticketingRepository.findByMemberIdAndIsDeleted(any(Long.class), any(Boolean.class), any(PageRequest.class))).thenReturn(ticketingListPage);
         given(TicketingResponse.from(any(Ticketing.class))).willReturn(ticketingResponse);
 
         // when
         MyPageResponse myPageResponse = memberService.getMyPage(memberId, isEventCancelledFilter, isTicketingCancelledFilter, pageRequest);
 
         // then
-
+        verify(memberRepository, times(1)).findById(any(Long.class));
+        verify(ticketingRepository, times(1)).findByMemberIdAndIsDeleted(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        verify(eventRepository, times(0)).findByMemberIdPageByIsCancelled(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        assertThat(myPageResponse.getTicketingResponseList().getTotalElements()).isEqualTo(ticketingListPage.getTotalElements());
+        assertThat(myPageResponse.getTicketingResponseList().getContent().get(0).getIsTicketingCancelled()).isFalse(); // 취소된 예매 체크
+        assertThat(myPageResponse.getTicketingResponseList().getContent().get(1).getIsTicketingCancelled()).isFalse(); // 취소된 예매 체크
         ticketingResponseMockedStatic.close();
-
     }
+
+    @Test
+    @DisplayName("예매자: 마이페이지 조회, 취소한 예매 내역")
+    public void getMyPageUserCancelledTest() {
+        // given
+        Member member = spy(Member.builder().role(Role.ROLE_USER).build()); // 예매자
+        Long memberId = 1L;
+        Boolean isEventCancelledFilter = false;
+        Boolean isTicketingCancelledFilter = true;
+
+        Ticketing ticketing1 = Ticketing.builder().build(); // ticketing 1
+        Ticketing ticketing2 = Ticketing.builder().build(); // ticketing 2
+        ticketing1.setDelete(true);
+        ticketing2.setDelete(true);
+        List<Ticketing> ticketingList = List.of(ticketing1, ticketing2);
+
+        PageRequest pageRequest = PageRequest.of(0, 10); // pageRequest
+        Page<Ticketing> ticketingListPage = new PageImpl<>(ticketingList, pageRequest, ticketingList.size()); // ticketing page
+
+        TicketingResponse ticketingResponse = TicketingResponse.builder().isTicketingCancelled(true).build(); // ticketingResponse (취소한 예매 내역 dto)
+
+        MockedStatic<TicketingResponse> ticketingResponseMockedStatic = mockStatic(TicketingResponse.class);
+
+        // stub
+        when(member.getId()).thenReturn(memberId);
+        when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
+        when(ticketingRepository.findByMemberIdAndIsDeleted(any(Long.class), any(Boolean.class), any(PageRequest.class))).thenReturn(ticketingListPage);
+        given(TicketingResponse.from(any(Ticketing.class))).willReturn(ticketingResponse);
+
+        // when
+        MyPageResponse myPageResponse = memberService.getMyPage(memberId, isEventCancelledFilter, isTicketingCancelledFilter, pageRequest);
+
+        // then
+        verify(memberRepository, times(1)).findById(any(Long.class));
+        verify(ticketingRepository, times(1)).findByMemberIdAndIsDeleted(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        verify(eventRepository, times(0)).findByMemberIdPageByIsCancelled(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        assertThat(myPageResponse.getTicketingResponseList().getTotalElements()).isEqualTo(ticketingListPage.getTotalElements());
+        assertThat(myPageResponse.getTicketingResponseList().getContent().get(0).getIsTicketingCancelled()).isEqualTo(true); // 취소된 예매 체크
+        assertThat(myPageResponse.getTicketingResponseList().getContent().get(1).getIsTicketingCancelled()).isEqualTo(true); // 취소된 예매 체크
+        ticketingResponseMockedStatic.close();
+    }
+
+    @Test
+    @DisplayName("등록자: 마이페이지 조회, 취소하지 않은 이벤트 내역")
+    public void getMyPageRegisterNotCancelledTest() {
+        // given
+        Member member = spy(Member.builder().role(Role.ROLE_REGISTRANT).build()); // 예매자
+        Long memberId = 1L;
+        Boolean isEventCancelledFilter = false;
+        Boolean isTicketingCancelledFilter = false;
+
+        Event event1 = Event.builder().build();
+        Event event2 = Event.builder().build();
+        List<Event> evnetList = List.of(event1, event2);
+
+        PageRequest pageRequest = PageRequest.of(0, 10); // pageRequest
+        Page<Event> eventListPage = new PageImpl<>(evnetList, pageRequest, evnetList.size()); // event page
+
+        EventHistoryRegisterResponse eventHistoryRegisterResponse = EventHistoryRegisterResponse.builder().isEventCancelled(false).build(); // eventHistoryRegisterResponse (취소하지 않은 이벤트 내역 dto)
+
+        MockedStatic<EventHistoryRegisterResponse> eventHistoryRegisterResponseMockedStatic = mockStatic(EventHistoryRegisterResponse.class);
+
+        // stub
+        when(member.getId()).thenReturn(memberId);
+        when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
+        when(eventRepository.findByMemberIdPageByIsCancelled(any(Long.class), any(Boolean.class), any(PageRequest.class))).thenReturn(eventListPage);
+        given(EventHistoryRegisterResponse.from(any(Event.class))).willReturn(eventHistoryRegisterResponse);
+
+        // when
+        MyPageResponse myPageResponse = memberService.getMyPage(memberId, isEventCancelledFilter, isTicketingCancelledFilter, pageRequest);
+
+        // then
+        verify(memberRepository, times(1)).findById(any(Long.class));
+        verify(eventRepository, times(1)).findByMemberIdPageByIsCancelled(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        verify(ticketingRepository, times(0)).findByMemberIdAndIsDeleted(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        assertThat(myPageResponse.getEventHistoryRegisterResponseList().getTotalElements()).isEqualTo(eventListPage.getTotalElements());
+        assertThat(myPageResponse.getEventHistoryRegisterResponseList().getContent().get(0).getIsEventCancelled()).isFalse(); // 취소하지 않은 이벤트 체크
+        assertThat(myPageResponse.getEventHistoryRegisterResponseList().getContent().get(1).getIsEventCancelled()).isFalse(); // 취소하지 않은 이벤트 체크
+        eventHistoryRegisterResponseMockedStatic.close();
+    }
+
+    @Test
+    @DisplayName("등록자: 마이페이지 조회, 취소한 이벤트 내역")
+    public void getMyPageRegisterCancelledTest() {
+        // given
+        Member member = spy(Member.builder().role(Role.ROLE_REGISTRANT).build()); // 예매자
+        Long memberId = 1L;
+        Boolean isEventCancelledFilter = true;
+        Boolean isTicketingCancelledFilter = false;
+
+        Event event1 = Event.builder().build();
+        Event event2 = Event.builder().build();
+        List<Event> evnetList = List.of(event1, event2);
+
+        PageRequest pageRequest = PageRequest.of(0, 10); // pageRequest
+        Page<Event> eventListPage = new PageImpl<>(evnetList, pageRequest, evnetList.size()); // event page
+
+        EventHistoryRegisterResponse eventHistoryRegisterResponse = EventHistoryRegisterResponse.builder().isEventCancelled(true).build(); // eventHistoryRegisterResponse (취소한 이벤트 내역 dto)
+
+        MockedStatic<EventHistoryRegisterResponse> eventHistoryRegisterResponseMockedStatic = mockStatic(EventHistoryRegisterResponse.class);
+
+        // stub
+        when(member.getId()).thenReturn(memberId);
+        when(memberRepository.findById(any(Long.class))).thenReturn(Optional.of(member));
+        when(eventRepository.findByMemberIdPageByIsCancelled(any(Long.class), any(Boolean.class), any(PageRequest.class))).thenReturn(eventListPage);
+        given(EventHistoryRegisterResponse.from(any(Event.class))).willReturn(eventHistoryRegisterResponse);
+
+        // when
+        MyPageResponse myPageResponse = memberService.getMyPage(memberId, isEventCancelledFilter, isTicketingCancelledFilter, pageRequest);
+
+        // then
+        verify(memberRepository, times(1)).findById(any(Long.class));
+        verify(eventRepository, times(1)).findByMemberIdPageByIsCancelled(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        verify(ticketingRepository, times(0)).findByMemberIdAndIsDeleted(any(Long.class), any(Boolean.class), any(PageRequest.class));
+        assertThat(myPageResponse.getEventHistoryRegisterResponseList().getTotalElements()).isEqualTo(eventListPage.getTotalElements());
+        assertThat(myPageResponse.getEventHistoryRegisterResponseList().getContent().get(0).getIsEventCancelled()).isTrue(); // 취소한 이벤트 체크
+        assertThat(myPageResponse.getEventHistoryRegisterResponseList().getContent().get(1).getIsEventCancelled()).isTrue(); // 취소한 이벤트 체크
+        eventHistoryRegisterResponseMockedStatic.close();
+    }
+
 }
