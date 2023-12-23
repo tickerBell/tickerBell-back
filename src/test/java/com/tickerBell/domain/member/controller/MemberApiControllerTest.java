@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -248,6 +249,26 @@ class MemberApiControllerTest {
         perform.andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("비밀번호 변경 성공"));
         assertThat(passCheck).isTrue();
+    }
+
+    @Test
+    @DisplayName("myPage 조회 테스트")
+    @WithUserDetails(value = "testUsername", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    public void getMyPageTest() throws Exception {
+        // given
+        Boolean isEventCancelled = false;
+        Boolean isTicketingCancelled = false;
+        int page = 10;
+        int size = 0;
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/member/myPage")
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        perform
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("마이페이지 조회 성공"));
     }
 
     @Test
