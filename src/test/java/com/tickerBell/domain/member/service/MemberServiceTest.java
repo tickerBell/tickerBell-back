@@ -1,10 +1,13 @@
 package com.tickerBell.domain.member.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tickerBell.domain.casting.repository.CastingRepository;
 import com.tickerBell.domain.event.dtos.EventHistoryRegisterResponse;
 import com.tickerBell.domain.event.entity.Event;
 import com.tickerBell.domain.event.repository.EventRepository;
 import com.tickerBell.domain.member.dtos.*;
+import com.tickerBell.domain.member.dtos.join.JoinSmsValidationRequest;
+import com.tickerBell.domain.member.dtos.join.JoinSmsValidationResponse;
 import com.tickerBell.domain.member.dtos.login.LoginResponse;
 import com.tickerBell.domain.member.dtos.login.RefreshTokenRequest;
 import com.tickerBell.domain.member.dtos.myPage.MyPageResponse;
@@ -12,6 +15,8 @@ import com.tickerBell.domain.member.entity.AuthProvider;
 import com.tickerBell.domain.member.entity.Member;
 import com.tickerBell.domain.member.entity.Role;
 import com.tickerBell.domain.member.repository.MemberRepository;
+import com.tickerBell.domain.sms.dtos.SendSmsResponse;
+import com.tickerBell.domain.sms.service.SmsService;
 import com.tickerBell.domain.ticketing.dtos.TicketingResponse;
 import com.tickerBell.domain.ticketing.entity.Ticketing;
 import com.tickerBell.domain.ticketing.repository.TicketingRepository;
@@ -35,7 +40,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,6 +76,8 @@ class MemberServiceTest {
     private CastingRepository castingRepository;
     @Mock
     private EventRepository eventRepository;
+    @Mock
+    private SmsService smsService;
 
     @Test
     @DisplayName("회원가입 테스트")
@@ -674,6 +686,39 @@ class MemberServiceTest {
         assertThat(myPageResponse.getEventHistoryRegisterResponseList().getContent().get(0).getIsEventCancelled()).isTrue(); // 취소한 이벤트 체크
         assertThat(myPageResponse.getEventHistoryRegisterResponseList().getContent().get(1).getIsEventCancelled()).isTrue(); // 취소한 이벤트 체크
         eventHistoryRegisterResponseMockedStatic.close();
+    }
+
+    @Test
+    @DisplayName("SMS 인증 테스트")
+    public void joinSMSValidationTest() throws UnsupportedEncodingException, ParseException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+        // given
+        JoinSmsValidationRequest request = new JoinSmsValidationRequest("01012345678");
+        SendSmsResponse sendSmsResponse = SendSmsResponse.builder().build();
+
+        // stub
+        when(smsService.sendSms(any(String.class), any(String.class))).thenReturn(sendSmsResponse);
+
+        // when
+        JoinSmsValidationResponse joinSmsValidationResponse = memberService.joinSmsValidation(request);
+
+        // then
+        verify(smsService, times(1)).sendSms(any(String.class), any(String.class));
+    }
+
+    @Test
+    @DisplayName("SMS 인증 실패 테스트")
+    public void joinSMSValidationFailTest() throws UnsupportedEncodingException, ParseException, NoSuchAlgorithmException, URISyntaxException, InvalidKeyException, JsonProcessingException {
+        // given
+        JoinSmsValidationRequest request = new JoinSmsValidationRequest("01012345678");
+        SendSmsResponse sendSmsResponse = SendSmsResponse.builder().build();
+
+        // stub
+        when(smsService.sendSms(any(String.class), any(String.class))).thenThrow(new RuntimeException());
+
+        // when
+        assertThatThrownBy(() -> memberService.joinSmsValidation(request))
+                .isInstanceOf(CustomException.class)
+                .hasMessageContaining(ErrorCode.SMS_SEND_FAIL.getErrorMessage());
     }
 
 }
