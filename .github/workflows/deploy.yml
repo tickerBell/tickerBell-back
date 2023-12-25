@@ -50,7 +50,7 @@ jobs:
     needs: build-docker-image
     runs-on: ubuntu-latest
     steps:
-      # docker-compose.yml 파일을 ec2 /home/ubuntu 에 scp
+      # docker-compose.a.yml 파일을 ec2 /home/ubuntu 에 scp
       - uses: actions/checkout@master
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
@@ -59,11 +59,32 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: "./docker-compose.yml"
+          source: "./docker-compose.a.yml"
           target: "/home/ubuntu/"
 
-      # ec2에 접속해 script 명령어 실행
-      - name: executing remote ssh commands using password
+      # docker-compose.b.yml 파일을 ec2 /home/ubuntu 에 scp
+      - uses: actions/checkout@master
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "./docker-compose.b.yml"
+          target: "/home/ubuntu/"
+
+      - name: Copy deploy.sh to remote server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ubuntu
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          source: "./deploy.sh"
+          target: "/home/ubuntu/"
+
+      - name: Execute deploy.sh script remotely
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -71,11 +92,29 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: 22
           script: |
-            sudo docker rm -f $(sudo docker ps -q -f "expose=8080")
-            sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
-            sudo docker-compose up -d
-            sudo docker image prune -f
+            chmod +x /home/ubuntu/deploy.sh
+            /home/ubuntu/deploy.sh
+
+      # ec2에 접속해 script 명령어 실행
+#      - name: executing remote ssh commands using password
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.SSH_HOST }}
+#          username: ubuntu
+#          key: ${{ secrets.SSH_KEY }}
+#          port: 22
+#          script: |
+#            sudo docker rm -f $(sudo docker ps -q -f "expose=8080")
+#            sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
+#            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
+#            sudo docker-compose up -d
+#            sudo docker image prune -f
+
+
+
+
+
+
 
 # docker build 배포 방식
 
