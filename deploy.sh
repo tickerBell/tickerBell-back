@@ -1,6 +1,9 @@
 #sudo chmod +x ./gradlew # gradlew 읽기 권한 부여
 #sudo ./gradlew bootJar # jar 파일 생성
 
+# redis 종료
+sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
+
 # 실행 중인 도커 컴포즈 확인
 EXIST_A=$(sudo docker-compose -p tickerBell-a -f docker-compose.a.yml ps | grep Up)
 
