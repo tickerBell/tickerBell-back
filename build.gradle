@@ -95,6 +95,9 @@ dependencies {
 	// graphql
 	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
+
+	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {

@@ -60,3 +60,9 @@ naver-cloud-sms:
 naver-cloud-map:
   api-key-id: ${MAP_API_KEY_ID}
   api-key: ${MAP_API_KEY}
+
+management:
+  endpoint:
+  endpoints:
+    web:
+      base-path: /tickerBell
