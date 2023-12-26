@@ -5,6 +5,9 @@
 sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
 echo "redis 컨테이너 종료"
 
+RUNNING_CONTAINER=$(sudo docker ps)
+echo "실행중인 컨테이너 목록: ${RUNNING_CONTAINER}"
+
 # 실행 중인 도커 컴포즈 확인
 EXIST_A=$(sudo docker ps -q -f name=tickerbell-a)
 
