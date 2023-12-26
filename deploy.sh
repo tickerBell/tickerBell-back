@@ -3,6 +3,7 @@
 
 # redis 종료
 sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
+echo "redis 컨테이너 종료"
 
 # 실행 중인 도커 컴포즈 확인
 EXIST_A=$(sudo docker-compose -p tickerBell-a -f docker-compose.a.yml ps | grep Up)
