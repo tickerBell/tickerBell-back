@@ -6,9 +6,7 @@ sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
 echo "redis 컨테이너 종료"
 
 # 실행 중인 도커 컴포즈 확인
-#EXIST_A=$(sudo docker-compose -p tickerBell-a -f docker-compose.a.yml ps | grep Up)
-#EXIST_A=$(sudo docker-compose -f docker-compose.a.yml ps | grep Up)
-EXIST_A=$(sudo docker ps -f name=tickerBell-a)
+EXIST_A=$(sudo docker ps -q -f name=tickerbell-a)
 
 echo "EXIST_A 값: ${EXIST_A}"
 
@@ -27,12 +25,11 @@ else
         TERMINATE_PORT=8080
 fi
 
-echo "tickerBell-${START_CONTAINER} up"
+echo "tickerbell-${START_CONTAINER} up"
 
 # 실행해야하는 컨테이너 docker-compose로 실행. -p는 docker-compose 프로젝트에 이름을 부여
 # -f는 docker-compose파일 경로를 지정
 sudo docker-compose -f docker-compose.${START_CONTAINER}.yml up -d --build
-#sudo docker-compose -p tickerBell-${START_CONTAINER} -f docker-compose.${START_CONTAINER}.yml up -d --build
 
 for cnt in {1..10} # 10번 실행
 do
@@ -70,6 +67,6 @@ echo "nginx reload.."
 sudo service nginx reload
 
 # 기존에 실행 중이었던 docker-compose는 종료시켜줍니다.
-echo "tickerBell-${TERMINATE_CONTAINER} down"
-sudo docker-compose -p tickerBell-${TERMINATE_CONTAINER} -f docker-compose.${TERMINATE_CONTAINER}.yml down
+echo "tickerbell-${TERMINATE_CONTAINER} down"
+sudo docker-compose -p tickerbell-${TERMINATE_CONTAINER} -f docker-compose.${TERMINATE_CONTAINER}.yml down
 echo "success deployment"

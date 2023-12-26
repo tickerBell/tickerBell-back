@@ -7,7 +7,7 @@ services:
     ports:
       - "16379:6379"
   spring:
-    container_name: tickerBell-a
+    container_name: tickerbell-a
     image: ${DOCKERHUB_USERNAME}/tickerbell
     depends_on:
       - redis
