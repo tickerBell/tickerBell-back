@@ -42,9 +42,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 5. Docker Hub 이미지 푸시
-      - name: docker Hub push
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
+      # 5. Docker Hub 이미지 푸시 - 1
+      - name: docker Hub push - 1
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-a
+
+      # 5. Docker Hub 이미지 푸시 - 2
+      - name: docker Hub push - 2
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-b
 
   cd-pipeline:
     needs: build-docker-image
