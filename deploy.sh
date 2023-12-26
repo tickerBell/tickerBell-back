@@ -2,8 +2,8 @@
 #sudo ./gradlew bootJar # jar 파일 생성
 
 # redis 종료
-sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
-echo "redis 컨테이너 종료"
+#sudo docker rm -f $(sudo docker ps -q -f "expose=6379")
+#echo "redis 컨테이너 종료"
 
 RUNNING_CONTAINER=$(sudo docker ps)
 echo "실행중인 컨테이너 목록: ${RUNNING_CONTAINER}"

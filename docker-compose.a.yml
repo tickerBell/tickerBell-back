@@ -1,16 +1,16 @@
 version: "3.8"
 services:
-  redis:
-    image: redis:latest
-    container_name: redis
-    hostname: redis
-    ports:
-      - "16379:6379"
+#  redis:
+#    image: redis:latest
+#    container_name: redis
+#    hostname: redis
+#    ports:
+#      - "16379:6379"
   spring:
     container_name: tickerbell-a
     image: ${DOCKERHUB_USERNAME}/tickerbell
-    depends_on:
-      - redis
+#    depends_on:
+#      - redis
     volumes:
       - ./redis/data:/data
     environment:
@@ -31,4 +31,8 @@ services:
     ports:
       - "8080:8080"
     restart: always
+networks:
+  default:
+    external:
+      name: tickerbellnet
 
