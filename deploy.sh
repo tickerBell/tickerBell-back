@@ -34,6 +34,9 @@ echo "tickerbell-${START_CONTAINER} up"
 # -f는 docker-compose파일 경로를 지정
 sudo docker-compose -f docker-compose.${START_CONTAINER}.yml up -d --build
 
+RUNNING_CONTAINER=$(sudo docker ps)
+echo "실행중인 컨테이너 목록: ${RUNNING_CONTAINER}"
+
 for cnt in {1..10} # 10번 실행
 do
         echo "check server start.."
@@ -71,5 +74,5 @@ sudo service nginx reload
 
 # 기존에 실행 중이었던 docker-compose는 종료시켜줍니다.
 echo "tickerbell-${TERMINATE_CONTAINER} down"
-sudo docker-compose -p tickerbell-${TERMINATE_CONTAINER} -f docker-compose.${TERMINATE_CONTAINER}.yml down
+sudo docker-compose -p -f docker-compose.${TERMINATE_CONTAINER}.yml down
 echo "success deployment"
