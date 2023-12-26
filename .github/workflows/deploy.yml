@@ -31,9 +31,13 @@ jobs:
         with:
           arguments: clean bootJar -Pspring.profiles.active=prod
 
-      # 3. Docker 이미지 빌드
-      - name: docker image build
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell .
+      # 3. Docker 이미지 빌드 - 1
+      - name: docker image build - 1
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-a .
+
+      # 3. Docker 이미지 빌드 - 2
+      - name: docker image build - 2
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-b .
 
       # 4. DockerHub 로그인
       - name: docker login
