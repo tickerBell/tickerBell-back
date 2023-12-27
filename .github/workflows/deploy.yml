@@ -31,13 +31,9 @@ jobs:
         with:
           arguments: clean bootJar -Pspring.profiles.active=prod
 
-      # 3. Docker 이미지 빌드 - 1
+      # 3. Docker 이미지 빌드
       - name: docker image build - 1
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-a .
-
-      # 3. Docker 이미지 빌드 - 2
-      - name: docker image build - 2
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-b .
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell .
 
       # 4. DockerHub 로그인
       - name: docker login
@@ -46,13 +42,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 5. Docker Hub 이미지 푸시 - 1
+      # 5. Docker Hub 이미지 푸시
       - name: docker Hub push - 1
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-a
-
-      # 5. Docker Hub 이미지 푸시 - 2
-      - name: docker Hub push - 2
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell-b
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/tickerbell
 
   cd-pipeline:
     needs: build-docker-image
@@ -60,7 +52,7 @@ jobs:
     steps:
       # docker-compose.a.yml 파일을 ec2 /home/ubuntu 에 scp
       - uses: actions/checkout@master
-      - name: copy file via ssh password
+      - name: copy docker-compose.a.yml to remote server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -72,7 +64,7 @@ jobs:
 
       # docker-compose.b.yml 파일을 ec2 /home/ubuntu 에 scp
       - uses: actions/checkout@master
-      - name: copy file via ssh password
+      - name: copy docker-compose.b.yml to remote server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -82,7 +74,7 @@ jobs:
           source: "./docker-compose.b.yml"
           target: "/home/ubuntu/"
 
-      - name: Copy deploy.sh to remote server
+      - name: copy deploy.sh to remote server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SSH_HOST }}
