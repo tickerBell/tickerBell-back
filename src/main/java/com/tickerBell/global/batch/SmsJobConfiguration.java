@@ -55,13 +55,9 @@ public class SmsJobConfiguration {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         // 00:00로 설정
-        LocalDateTime tomorrowStart = tomorrow.withHour(0).withMinute(0);
-        String tomorrowStartFormat = tomorrowStart.format(formatter);
+        LocalDateTime tomorrowStart = tomorrow.withHour(0).withMinute(0).withSecond(0).withNano(0);
         // 23:59로 설정
         LocalDateTime tomorrowEnd = tomorrow.withHour(23).withMinute(59);
-        String tomorrowEndFormat = tomorrowEnd.format(formatter);
-        log.info("tomorrowStart: " + tomorrowStartFormat);
-        log.info("tomorrowEnd: " + tomorrowEndFormat);
 
         return new JpaCursorItemReaderBuilder<Ticketing>()
                 .name("itemReader")
