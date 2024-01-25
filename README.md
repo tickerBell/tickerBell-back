@@ -1,9 +1,12 @@
 # 🎞️ ticker-bell
 > 각종 공연 예매 및 알림을 받아 볼 수 있는 서비스
 
+<br><br>
 
 ## 프로젝트 배경
 Spring boot, spring batch, test code, Docker CI/CD, 무중단 배포, AWS, 협업 등 백엔드 설계 및 개발 공부 목적의 프로젝트입니다.
+
+<br><br>
 
 ## 📌 주요 기능
 ### 회원
@@ -28,7 +31,17 @@ Spring boot, spring batch, test code, Docker CI/CD, 무중단 배포, AWS, 협�
 * 서비스 내 실시간 알림(SSE)를 통해 공연 시작 전 알림
 * 각종 결제 관련 알림
 
+<br><br>
+
 ## 🔧 Architecture
+
+<br><br>
 
 ## 🛠️ ERD
 ![image](https://github.com/dgjinsu/tickerBell-back/assets/97269799/aa91e9ae-fa24-48e2-927d-abb07e687573)
+
+<br><br>
+
+## 팀원
+backend: [김진수](https://github.com/dgjinsu), [최준혁](https://github.com/cjunhyeok)
+frontend: [이경주](https://github.com/jiimy), [이인국](https://github.com/inggu96)
