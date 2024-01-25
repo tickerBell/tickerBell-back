@@ -34,6 +34,8 @@ Spring boot, spring batch, test code, Docker CI/CD, 무중단 배포, AWS, 협�
 <br><br>
 
 ## 🔧 Architecture
+![image](https://github.com/dgjinsu/tickerBell-back/assets/97269799/8aa03e39-be80-431f-b243-60647b052036)
+
 
 <br><br>
 
