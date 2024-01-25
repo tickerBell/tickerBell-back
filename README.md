@@ -46,4 +46,5 @@ Spring boot, spring batch, test code, Docker CI/CD, 무중단 배포, AWS, 협�
 
 ## 팀원
 backend: [김진수](https://github.com/dgjinsu), [최준혁](https://github.com/cjunhyeok)
+<br>
 frontend: [이경주](https://github.com/jiimy), [이인국](https://github.com/inggu96)
