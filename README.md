@@ -1,12 +1,19 @@
 # 🎞️ ticker-bell
 > 각종 공연 예매 및 알림을 받아 볼 수 있는 서비스
 
-<br><br>
+<br><br><br><br>
 
-## 프로젝트 배경
-Spring boot, spring batch, test code, Docker CI/CD, 무중단 배포, AWS, 협업 등 백엔드 설계 및 개발 공부 목적의 프로젝트입니다.
-
-<br><br>
+## 🎯프로젝트 목표
+아래와 같은 내용들을 학습하기 위해 진행한 학습 목적의 협업 프로젝트입니다.
+- Spring Batch를 활용한 일괄 처리
+- 통합테스트, 단위테스트를 작성하고 Jacoco를 활용하여 커버리지 측정
+- Docker, Github Action을 활용해 CI/CD 구축
+- Nginx의 Blue/Green 무중단 배포
+- Spring Security, Oauth2.0 을 활용한 인증, 인가 구현
+- 불필요한 어노테이션을 제거해 최적화
+- 데이터베이스 및 아키텍처 설계
+- 백엔드 팀원과 컨벤션을 지키며 협업하기
+<br><br><br><br>
 
 ## 📌 주요 기능
 ### 회원
@@ -31,18 +38,46 @@ Spring boot, spring batch, test code, Docker CI/CD, 무중단 배포, AWS, 협�
 * 서비스 내 실시간 알림(SSE)를 통해 공연 시작 전 알림
 * 각종 결제 관련 알림
 
-<br><br>
+<br><br><br><br>
 
-## 🔧 Architecture
+## 🗂 디렉토리 구조
+```markdown
+jikgong
+|-- 📂domain
+    └-- 📂alarm
+    └-- 📂casting
+    └-- 📂common
+    └-- 📂emitter
+    └-- 📂event
+    └-- 📂host
+    └-- 📂image
+    └-- 📂map
+    └-- 📂member
+    └-- 📂selectedSeat
+    └-- 📂sms
+    └-- 📂specialseat
+    └-- 📂tag
+    └-- 📂ticketing
+    └-- 📂utils
+|-- 📂global
+    |-- 📂batch
+    |-- 📂config
+    |-- 📂dto
+    |-- 📂exception
+    |-- 📂graphql
+    |-- 📂security
+```
+<br><br><br><br>
+
+## 🛠️ Architecture
 ![image](https://github.com/dgjinsu/tickerBell-back/assets/97269799/8aa03e39-be80-431f-b243-60647b052036)
 
 
-<br><br>
+<br><br><br><br>
 
 ## 🛠️ ERD
 ![image](https://github.com/dgjinsu/tickerBell-back/assets/97269799/aa91e9ae-fa24-48e2-927d-abb07e687573)
 
-<br><br>
 
 ## 팀원
 backend: [김진수](https://github.com/dgjinsu), [최준혁](https://github.com/cjunhyeok)
