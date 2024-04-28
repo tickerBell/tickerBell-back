@@ -66,6 +66,10 @@ jikgong
     |-- 📂exception
     |-- 📂graphql
     |-- 📂security
+test
+|-- 📂config
+|-- 📂domain
+|-- 📂global
 ```
 <br><br><br><br>
 
